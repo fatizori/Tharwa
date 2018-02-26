@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Wn\Generators\CommandsServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

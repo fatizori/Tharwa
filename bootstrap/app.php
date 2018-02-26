@@ -71,9 +71,10 @@ $app->configure('oauth');
 |
 */
 
-// $app->middleware([
-//    //App\Http\Middleware\ExampleMiddleware::class,
-// ]);
+ $app->middleware([
+    //App\Http\Middleware\ExampleMiddleware::class,
+     App\Http\Middleware\CorsMiddleware::class,
+ ]);
 
 $app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
@@ -94,6 +95,7 @@ $app->routeMiddleware([
  $app->register(App\Providers\AppServiceProvider::class);
  $app->register(App\Providers\AuthServiceProvider::class);
  $app->register(App\Providers\EventServiceProvider::class);
+ $app->register(App\Providers\CatchAllOptionsRequestsProvider::class);
 // register original one and Lumen adapter
   $app->register(Laravel\Passport\PassportServiceProvider::class);
   $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
