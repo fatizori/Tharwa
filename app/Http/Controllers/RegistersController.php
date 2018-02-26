@@ -11,12 +11,19 @@ class RegistersController extends Controller {
 
     public function register(Request $request){
 
-        $this->validate($request, [
+        //Validation of data
+        $rules = [
             'email' => 'required| email',
             'password' => 'required',
             'role' => 'required| regex:([(customer)(banker)]+)',
-        ]);
+        ];
+        $data=$request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            return response()->json(['message' => $validator->errors()->all()], 400);
+        }
 
+        //Traitement
         $user=new User();
         $user->email=$request->input('email');
         $user->password=app('hash')->make($request->input('password'));

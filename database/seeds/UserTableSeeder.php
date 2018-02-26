@@ -15,7 +15,7 @@ class UserTableSeeder extends Seeder
 
         //Set the first created user as manager (role == 2) TODO We have juste one?
 
-        DB::table( 'users' )->where( 'id_user', 1 )->update(
+        DB::table( 'users' )->where( 'id', 1 )->update(
             ['role' => 2]
         );
 

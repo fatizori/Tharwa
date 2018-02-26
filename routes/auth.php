@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Http\Request;
 
 
 //route to subscribe (in general like user)

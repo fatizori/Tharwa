@@ -20,10 +20,12 @@ class CorsMiddleware {
                 return $next($request);
             }
         }
+
         $response = $next($request);
         $response->header('Access-Control-Allow-Methods', 'HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->header('Access-Control-Allow-Headers', $request->header('Access-Control-Request-Headers, Accept, Content-Type, Authorization'));
         $response->header('Access-Control-Allow-Origin', '*');
+
         return $response;
 
     }
