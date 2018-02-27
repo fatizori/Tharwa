@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Models\User;
 
+//Added for mail
+use App\Mail\AuthConfirmationMail;
+use illuminate\Support\Facades\Mail;
+
 class LoginsController extends Controller {
 
     public $errorMessage= 'The credentials not found in our database.';
@@ -132,7 +136,7 @@ class LoginsController extends Controller {
          foreach($headers as $headerType => $headerValue) {
              $response->header($headerType, $headerValue);
          }
-
+        sendAuthentificationCodeMAil();
          return $response;
         }
 
@@ -154,6 +158,12 @@ class LoginsController extends Controller {
             'message' => 'You are Logged out',
         ];
         return response()->json($json, '200');
+    }
+
+    //This added function for mail
+    public function sendAuthentificationCodeMAil()
+    {
+        Mail::to("test+receiver@email.es")->send(new AuthConfirmationMail());
     }
 
 
