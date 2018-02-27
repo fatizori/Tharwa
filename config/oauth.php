@@ -8,5 +8,5 @@ return [
         'customer' => 'customer',
         'banker' => 'banker',
         'manager' => 'manager',
-    ]
+    ],
 ];

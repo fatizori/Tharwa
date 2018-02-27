@@ -1,24 +1,28 @@
 <?php
-
-use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
+use \App\Models\User;
 
 class UserLoginTest extends TestCase
 {
-    use DatabaseTransactions;
+
     /**
      * Test if the used can correctly login.
      *
      * @return void
+     * @throws Exception
      */
     public function testLogin()
     {
-        /* - Create user (register)
+        //Create a new test user
+        $user= factory(User::class,1)->create();
 
-            $response = $this->call('POST', '/login',['username' => 'test@email.com',
-                'password' => 'password'],[],[], ['Accept' => 'application/json'],[]);
+        //Login the test user
+        $credentials=['email' => $user[0]->email,'password' => 'password'];
+        $response=$this->json('POST', '/login',$credentials);
 
-            $this->assertEquals(200, $response->status(), 'Unexpected status');
-        */
+        //delete the test user
+        $user[0]->delete();
+
+        //Test
+        $response->assertResponseStatus(200);
     }
 }

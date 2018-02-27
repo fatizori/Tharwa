@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 //Added for mail
 use App\Mail\AuthConfirmationMail;
@@ -21,18 +22,24 @@ class LoginsController extends Controller {
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \LogicException
      * @throws \InvalidArgumentException
      */
     public function login(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required',
-            'password' => 'required',
-        ]);
+        $rules = [
+            'email' => 'required',
+            'password' => 'required'
+        ];
+        $data=$request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            return response()->json(['message' => $validator->errors()->all()], 400);
+        }
 
         $credentials = [
-            'username' => $request->input('username'),
-            'password' => $request->input('password'),
+            'username' => $request->json()->get('email'),
+            'password' => $request->json()->get('password'),
         ];
 
         if (! $this->checkUser($credentials)) {
