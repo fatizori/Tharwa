@@ -11,6 +11,7 @@
 |
 */
 use App\Models\User;
+use \Carbon\Carbon;
 
 $factory->define(User::class, function (Faker\Generator $faker) {
     static $password;
@@ -19,5 +20,7 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'email' => $faker->unique()->safeEmail,
         'role' => rand(0,1),
         'password' => $password ?: $password = app('hash')->make('password'),
+        'nonce_auth' => sprintf('%04u', $faker->numberBetween(0,9999)),
+        'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()
     ];
 });

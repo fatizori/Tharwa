@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dina
- * Date: 25/02/18
- * Time: 16:57
- */
-
 
 return [
     /*
