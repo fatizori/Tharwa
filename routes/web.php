@@ -9,6 +9,8 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+use App\Mail\AuthConfirmationMail;
+use Illuminate\Support\Facades\Mail;
 
 $app->get('/', function () use ($app) {
     //return $app->version();
@@ -17,9 +19,7 @@ $app->get('/', function () use ($app) {
    
 });
 
-
-
-// for example the users are managed only by the manager
+   // for example the users are managed only by the manager
 $app->group(['prefix' => 'user',
     ['middleware' => ['auth', 'role:manager']]],
     function () use ($app){

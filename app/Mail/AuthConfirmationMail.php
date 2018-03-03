@@ -3,33 +3,40 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
+use Illuminate\Mail;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class AuthConfirmationMail extends Mailable
+class AuthConfirmationMail extends Mail\Mailable
 {
     use Queueable, SerializesModels;
+
+    private $email_to;
+    private $auth_code;
+    public $subject='THARWA - Mail de confirmation';
 
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param $email_to
+     * @param $auth_code
      */
-    public function __construct()
+    public function __construct($email_to,$auth_code)
     {
-        //
+        $this->email_to=$email_to;
+        $this->auth_code=$auth_code;
     }
 
     /**
      * Build the message.
      *
-     * @return $this
+     * @return AuthConfirmationMail
      */
     public function build()
     {
-        //return $this->view('view.name');
-        //we could use raw if we do not want to use views
-        return $this->raw();
+        return $this->view('auth_mail', ['email' => $this->email_to,'code' => $this->auth_code],
+            function ($message){
+            $message->subject($this->subject)
+                    ->from(config('mail.from.address'));
+        });
     }
 }

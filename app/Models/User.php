@@ -26,7 +26,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'email',
         'password',
         'role',
-        'image'
+        'nonce_auth',
+        'expire_date_nonce'
     ];
 
     /**
@@ -60,17 +61,4 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
-    public function compte(){
-        return $this->hasMany('App\Compte');
-    }
-
-    public function banquier()
-    {
-        return $this->hasOne('App\Banquier');
-    }
-
-    public function gestionnaire()
-    {
-        return $this->hasOne('App\Gestionnaire');
-    }
 }

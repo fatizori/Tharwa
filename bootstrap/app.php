@@ -78,7 +78,7 @@ $app->configure('mail');
 
  $app->middleware([
     //App\Http\Middleware\ExampleMiddleware::class,
-    // App\Http\Middleware\CorsMiddleware::class,
+    App\Http\Middleware\CorsMiddleware::class,
  ]);
 
 $app->routeMiddleware([
@@ -107,6 +107,7 @@ $app->routeMiddleware([
 // register 'registered routes' service provider
   $app->register(Appzcoder\LumenRoutesList\RoutesCommandServiceProvider::class);
   $app->register(Illuminate\Cookie\CookieServiceProvider::class);
+  $app->register(\Illuminate\Mail\MailServiceProvider::class);
 // register additional laravel commands Flipbox
   $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
