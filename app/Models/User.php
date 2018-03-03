@@ -25,7 +25,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'email',
         'password',
-        'role'
+        'role',
+        'image'
     ];
 
     /**
@@ -59,4 +60,17 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
+    public function compte(){
+        return $this->hasMany('App\Compte');
+    }
+
+    public function banquier()
+    {
+        return $this->hasOne('App\Banquier');
+    }
+
+    public function gestionnaire()
+    {
+        return $this->hasOne('App\Gestionnaire');
+    }
 }

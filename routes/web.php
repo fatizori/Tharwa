@@ -13,6 +13,8 @@
 $app->get('/', function () use ($app) {
     //return $app->version();
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    
+   
 });
 
 
@@ -28,5 +30,13 @@ $app->group(['prefix' => 'user',
     $app->delete('/{id_user}', ['uses' =>'UsersController@destroy']);
 
 });
+
+//get list of bankers
+$app->get('get_bankers_list',['uses' => 'BanquiersController@index']);
+//route to subscribe a customer
+$app->post('register_customer',['uses' => 'RegistersController@registerCustomer']);
+//route to subscribe a banker
+$app->post('register_banker/{id_manager}',['uses' => 'RegistersController@registerBanker']);
+
 
 
