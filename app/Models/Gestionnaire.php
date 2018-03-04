@@ -30,8 +30,7 @@ class Gestionnaire extends Model implements AuthenticatableContract, Authorizabl
 
     protected $fillable = [
         'nom',
-        'prenom',
-        'num_tel'
+        'prenom'
 
     ];
 

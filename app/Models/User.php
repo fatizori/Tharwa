@@ -25,6 +25,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $fillable = [
         'email',
         'password',
+        'phone_number',
         'role',
         'nonce_auth',
         'expire_date_nonce'

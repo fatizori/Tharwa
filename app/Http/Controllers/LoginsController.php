@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Mail;
 
 class LoginsController extends Controller {
 
-    public $errorMessage= 'The credentials not found in our database.';
+    public $errorMessage= 'Vos informations non trouvées dans notre base de donnée.';
 
-    //************************ The first step of Authentication ******************//
+    //************************ The first step of Authentication ************************//
 
     /**
      * Handle a first login request to the application to send auth code.
@@ -30,7 +30,8 @@ class LoginsController extends Controller {
     {
         $rules = [
             'email' => 'required',
-            'password' => 'required'
+            'password' => 'required',
+            'channel' => 'required | integer | between:0,1',
         ];
 
        $data=$request->json()->all();
@@ -39,6 +40,8 @@ class LoginsController extends Controller {
            return response()->json(['message' => 'invalid input data'], 400);
        }
 
+        $channel=$data['channel'];
+        unset($data['channel']);
         $user=$this->checkUser($data);
 
         if (! $user) {
@@ -52,9 +55,14 @@ class LoginsController extends Controller {
         $user->update(['nonce_auth' => $nonce,
                         'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()]);
 
+        if (0 == $channel) {
+            //Send the auth nonce via email
+            return $this->sendAuthentificationCodeMAil($data['email'],$nonce);
 
-        //Send the auth number by email
-        return $this->sendAuthentificationCodeMAil($data['email'],$nonce);
+        }else if (1 == $channel) {
+            //Send the auth nonce via SMS
+            return $this-> sendAuthentificationCodeSMS($user['phone_number'],$nonce);
+        }
     }
 
     /**
@@ -85,11 +93,7 @@ class LoginsController extends Controller {
        try{
            $response='Consultez vos emails SVP';
 
-//           TODO incomment the suitable mail
-//           Mail::to($email)
-//                 ->send(new AuthConfirmationMail($email,$auth_code));
-
-           Mail::to('mahfoud10info@gmail.com')   //For testing
+           Mail::to($email)
                ->send(new AuthConfirmationMail($email,$auth_code));
 
               return response()->json(['message' => $response], 200);
@@ -97,7 +101,33 @@ class LoginsController extends Controller {
        }catch (\Exception $exception){
             return response()->json(['message' => $exception->getMessage()], 500);
         }
+    }
 
+    /**
+     * This added function for sending auth SMS message
+     *
+     * @param $phone_number
+     * @param $auth_code
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function sendAuthentificationCodeSMS($phone_number,$auth_code)
+    {
+        try{
+            $response='Consultez vos messages SMS SVP';
+
+            $nexmo = app(\Nexmo\Client::class);
+
+            $nexmo->message()->send([
+                'to'   => $phone_number,
+                'from' => config('nexmo.tharwa_phone'),
+                'text' => 'THARWA code: '.$auth_code.' Valide pour 1 heure'
+            ]);
+
+            return response()->json(['message' => $response], 200);
+
+        }catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
     /**
@@ -160,9 +190,11 @@ class LoginsController extends Controller {
             && $user->nonce_auth == $nonce
             && $user->expire_date_nonce > Carbon::now()->toDateTimeString()){
             return $user;
+
         }
         return false;
     }
+
 
     /**
      * Send request to the laravel passport.
@@ -233,7 +265,7 @@ class LoginsController extends Controller {
     }
 
 
-    //****************************General methodes******************************//
+    //***************************** General methodes ******************************//
     /**
      * Get the failed login response instance.
      *

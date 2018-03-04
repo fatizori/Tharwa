@@ -31,7 +31,6 @@ class Customer extends Model implements AuthenticatableContract, AuthorizableCon
     protected $fillable = [
         'nom',
         'adresse',
-        'telephone',
         'fonction',
         'wilaya',
         'commune',
