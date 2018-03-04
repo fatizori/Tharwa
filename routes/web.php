@@ -14,9 +14,8 @@ use Illuminate\Support\Facades\Mail;
 
 $app->get('/', function () use ($app) {
     //return $app->version();
+   // return response(config('nexmo.tharwa_phone'));
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-    
-   
 });
 
    // for example the users are managed only by the manager

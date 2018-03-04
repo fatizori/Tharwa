@@ -21,7 +21,6 @@ class CreateGestionnairesTable extends Migration
             // Schema declaration
             $table->string('nom');
             $table->string('prenom');
-            $table->string('num_tel');
             $table->timestamps();
 
         });

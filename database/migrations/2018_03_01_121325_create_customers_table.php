@@ -21,7 +21,6 @@ class CreateCustomersTable extends Migration
             // Schema declaration
             $table->string('nom');
             $table->string('adresse');
-            $table->string('telephone');
             $table->string('fonction');
             $table->string('wilaya');
             $table->string('commune');

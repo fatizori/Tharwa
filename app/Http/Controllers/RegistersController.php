@@ -97,7 +97,6 @@ class RegistersController extends Controller {
      */
     public function registerCustomer(Request $request){
 
-
     try{
 
         DB::beginTransaction();
@@ -126,7 +125,6 @@ class RegistersController extends Controller {
        $rulesCustomer = [
             'nom' => 'required',
             'adresse' => 'required',
-            'telephone'=>'required',
             'fonction'=>'required',
             'wilaya'=>'required',
             'commune'=>'required',
@@ -160,7 +158,7 @@ class RegistersController extends Controller {
         $imagename = time().'.'.$image->getClientOriginalExtension();
         $destinationPath = 'images/';
         $image->move($destinationPath, $imagename);
-        RegistersController::insertMiniImage($destinationPath.$imagename,'uploads/',$imagename,100,100);
+        $this->insertMiniImage($destinationPath.$imagename,'uploads/',$imagename,100,100);
         $customer->photo= $destinationPath.$imagename ;
         $customer->save();
     

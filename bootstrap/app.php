@@ -64,6 +64,8 @@ $app->configure('oauth');
 //this configuration for mail
 $app->configure('services');
 $app->configure('mail');
+//this configuration for sms
+$app->configure('nexmo');
 
 /*
 |--------------------------------------------------------------------------
@@ -110,6 +112,8 @@ $app->routeMiddleware([
   $app->register(\Illuminate\Mail\MailServiceProvider::class);
 // register additional laravel commands Flipbox
   $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+// register the SMS provider
+$app->register(Nexmo\Laravel\NexmoServiceProvider::class);
 
 
 Dusterio\LumenPassport\LumenPassport::routes($app);

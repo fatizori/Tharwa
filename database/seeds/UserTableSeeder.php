@@ -16,7 +16,10 @@ class UserTableSeeder extends Seeder
         //Set the first created user as manager (role == 2) TODO We have juste one?
 
         DB::table( 'users' )->where( 'id', 1 )->update(
-            ['role' => 2]
+            [   'role' => 2 ,
+                'phone_number' => '213697332045',
+                'email' => 'mahfoud10info@gmail.com'
+            ]
         );
 
     }
