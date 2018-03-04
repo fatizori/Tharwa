@@ -1,8 +1,7 @@
 <?php
 
 
-//route to subscribe (in general like user)
-$app->post('register',['uses' => 'RegistersController@register']);
+
 //route to authenticate (1st step send credentials)
 $app->post('login', 'LoginsController@sendCodeLogin');
 //route to authenticate (2nd step send code)

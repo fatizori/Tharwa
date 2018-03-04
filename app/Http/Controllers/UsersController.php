@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
@@ -18,13 +18,21 @@ class UsersController extends Controller
     }
 
 
-    public function store(Request $request){
+    /**
+     * Create a new User
+     * @param Request $request, user role
+     * @return integer id
+     */
+    public function store(Request $request,$role){
         $this->validateRequest($request);
+        $data =  $request->json()->all();
         $user = User::create([
-            'email' => $request->get('email'),
-            'password'=> app('hash')->make($request->get('password'))
+            'email' => $data['email'],
+            'password'=> app('hash')->make($data['password']),
+            'role'=>$role
         ]);
-        return response()->json(['message' =>"The user  with  id {$user->id} has been created"], 201);
+        
+        return $user->id;
     }
 
     public function show($id){
@@ -58,13 +66,21 @@ class UsersController extends Controller
         return response()->json(['message' =>"The user with  id {$id} has been deleted"], 200);
     }
 
-
+    /**
+     * Ipnut validation for user
+     */
     public function validateRequest(Request $request){
         $rules = [
-            'email' => 'required|email|unique:users',
-            'password' => 'required'
+            'email' => 'required| email',
+            'password' => 'required',
+           
         ];
-        $this->validate($request, $rules);
+        $data=$request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            return  response()->json(['message' => $validator->errors()->all()], 400);
+
+        }
     }
 
 }

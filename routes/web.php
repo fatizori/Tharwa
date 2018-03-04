@@ -19,17 +19,7 @@ $app->get('/', function () use ($app) {
    
 });
 
-   // for example the users are managed only by the manager
-$app->group(['prefix' => 'user',
-    ['middleware' => ['auth', 'role:manager']]],
-    function () use ($app){
-    $app->get('',['uses' => 'UsersController@index']);
-    $app->get('/{id_user}', ['uses' =>'UsersController@show']);
-    $app->post('' ,['uses' =>'UsersController@store']);
-    $app->put('/{id_user}', ['uses' =>'UsersController@update']);
-    $app->delete('/{id_user}', ['uses' =>'UsersController@destroy']);
 
-});
 
 //get list of bankers
 $app->get('get_bankers_list',['uses' => 'BanquiersController@index']);
