@@ -12,7 +12,7 @@ class ManagerTableSeeder extends Seeder
     public function run()
     {
         DB::table('managers')->insert([
-            'id'=> 1,
+            'id'=> 4,
             'name' => 'mahfoud',
             'firstname' => 'mahfoud',
             'address'=> 'ex domaine morsli ahmed routes des dunes cheraga'

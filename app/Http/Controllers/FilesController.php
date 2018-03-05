@@ -85,13 +85,16 @@ class FilesController extends Controller {
      * @param file, original path , path after minimization
      * @return string
      */
-    public function uploadImage($file,$path, $path_min)
+    public function uploadImage($file,$path, $path_min,$id_user)
     {  
-
-        $imagename = time().'-'.str_random(10).'.'.$file->getClientOriginalExtension();
+        //the nameof the original picture
+        $imagename = $this->generateNameImageUser($id_user,$file->getClientOriginalExtension());
+        //the destination of the original picture
         $destinationPath = $path;
         $file->move($destinationPath, $imagename);
-        $this->insertMiniImage($destinationPath.$imagename,$path_min,$imagename,100,100);
+        //the name of the new picture (after minimisation)
+        $imageMinName = $this->generateNameImageMinUser($id_user,$imagename);
+        $this->insertMiniImage($destinationPath.$imagename,$path_min,$imageMinName,100,100);
         return  $imagename ;
    
     }

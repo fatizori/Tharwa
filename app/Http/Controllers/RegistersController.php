@@ -14,8 +14,8 @@ use Illuminate\Http\UploadedFile;
 
 class RegistersController extends Controller {
 
-    const IMAGE_USER = 'images/customer';
-    const IMAGE_MIN = 'images/cutomer_min';
+    const IMAGE_USER = 'images/customer/';
+    const IMAGE_MIN = 'images/customer_min/';
 
     public function __construct()
     {
@@ -49,7 +49,7 @@ class RegistersController extends Controller {
           $file = new FilesController;
     
         //Create a new user
-      /*  $user_id = $user->store($request,0);
+       $user_id = $user->store($request,0);
 
          //Validation of data for Customer
        $rulesCustomer = [
@@ -66,7 +66,7 @@ class RegistersController extends Controller {
         if (!$validator->passes()) {
              return   response()->json(['message' => $validator->errors()->all()], 400);
 
-        }*/
+        }
 
         //picture validation
        $photoRule =[
@@ -75,24 +75,24 @@ class RegistersController extends Controller {
         $this->validate($request,$photoRule);
         //Client Traitement
         $customer  = new Customer();
-       /* $customer->name = strip_tags($data['name']);
+        $customer->name = strip_tags($data['name']);
         $customer->address = strip_tags($data['address']);
         $customer->function = strip_tags($data['function']);
         $customer->wilaya = strip_tags($data['wilaya']);
         $customer->commune = strip_tags($data['commune']);
         $customer->type = $data['type'];
-        $customer->id = $user_id;*/
+        $customer->id = $user_id;
 
         //customer avatar
         /*$path = base_path('public/test/test.png');
         $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK, true);*/
-        $picture_url = $file->uploadImage($request->file('photo'),self::IMAGE_USER,self::IMAGE_MIN);
+        $picture_url = $file->uploadImage($request->file('photo'),self::IMAGE_USER,self::IMAGE_MIN,$user_id);
         $customer->photo= $picture_url ;
         $customer->save();
     
         
         //Account Traitement
-       // $this->createAccount($user_id,0); //the default account is the current account
+         $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
         return response(json_encode(['message' =>"new user  has been registered"]),201);
@@ -136,8 +136,8 @@ class RegistersController extends Controller {
         }
         //Banker Traitement 
         $banker=new Banker();
-        $banker->name=strip_tags($data['nom']);
-        $banker->firstname=strip_tags($data['prenom']);
+        $banker->name=strip_tags($data['name']);
+        $banker->firstname=strip_tags($data['firstname']);
         $banker->id=$user_id;
         $banker->id_creator = $id_manager;  // the id of the manager who create the banker account
         $banker->save();

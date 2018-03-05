@@ -1,6 +1,6 @@
 <?php
+
 use Illuminate\Database\Seeder;
-use App\Models\Banker;
 
 class BankerTableSeeder extends Seeder
 {

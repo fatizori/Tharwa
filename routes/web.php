@@ -23,7 +23,7 @@ $app->get('/', function () use ($app) {
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
 //get a manager by id
-$app->get('managers/{id}',['uses' => 'GestionnairesController@show','middleware' => ['auth','role:manager']]);
+$app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker

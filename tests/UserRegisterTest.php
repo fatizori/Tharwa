@@ -19,17 +19,18 @@ class UserRegisterTest extends TestCase
      */
     public function testRegisterCustomer()
     {
+
         $path = base_path('public/test/test.png');
         $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK,true);
 
-        $data = ['email' => 'test@gmail.com', 'password' => 'test','nom'=>'test','phone_number'=>'+213557854578',
-            'adresse'=>'adrtest','fonction'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client'];
+        $data = ['email' => 'test@gmail.com', 'password' => 'test','name'=>'test','phone_number'=>'+213557854578',
+            'address'=>'adrtest','function'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client'];
 
-        $response = $this->call('POST', '/register_customer', [],[],['photo'=>$photo],[],$data);
+        $response = $this->call('POST', '/customers', [],[],['photo'=>$photo],[],$data);
 
-       // $this->seeInDatabase('users', ['email' => 'test@gmail.com']);
-        /*$this->seeInDatabase('customers', ['nom'=>'test',
-            'adresse'=>'adrtest','telephone'=>'0558794512','fonction'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client']);*/
+        $this->seeInDatabase('users', ['email' => 'test@gmail.com']);
+        $this->seeInDatabase('customers', ['name'=>'test',
+            'address'=>'adrtest','phone_number'=>'0558794512','function'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client']);
 
           //$response->assertResponseStatus(201);
         $this->assertEquals(201,$response->status(),"unexpected status");
@@ -44,7 +45,7 @@ class UserRegisterTest extends TestCase
         $data = ['images/customer/','images/customer_min/'];
         //$response = $this->call('POST', '/upload', [],[],['photo'=>$photo],[],$data);
         //$response = $this->call('POST', '/upload', [],$data,[],['photo'=>$photo]);
-        $this->assertEquals(201,$response->status(),"unexpected status");
+       // $this->assertEquals(201,$response->status(),"unexpected status");
 
     }
 
@@ -56,11 +57,11 @@ class UserRegisterTest extends TestCase
     public function testRegisterBanker()
     {
 
-        $response = $this->json('POST', '/register_banker/31', ['email' => 'testB@gmail.com', 'password' => 'testB','nom'=>'testB',
-            'prenom'=>'testBP']);
+        $response = $this->json('POST', '/bankers/1', ['email' => 'testB@gmail.com', 'password' => 'testB','name'=>'testB',
+            'firstname'=>'testBP']);
 
         $this->seeInDatabase('users', ['email' => 'testB@gmail.com']);
-        $this->seeInDatabase('banquiers', ['nom'=>'testB', 'prenom'=>'testBP']);
+        $this->seeInDatabase('bankers', ['name'=>'testB', 'firstname'=>'testBP']);
 
         $response->assertResponseStatus(201);
 
