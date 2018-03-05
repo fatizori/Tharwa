@@ -79,11 +79,11 @@ class FilesController extends Controller {
         return 1;
     }
 
-    
 
     /**
      * File Upload
      * @param file, original path , path after minimization
+     * @return string
      */
     public function uploadImage($file,$path, $path_min)
     {  
@@ -94,6 +94,28 @@ class FilesController extends Controller {
         $this->insertMiniImage($destinationPath.$imagename,$path_min,$imagename,100,100);
         return  $imagename ;
    
+    }
+
+    /**
+     * @param $id_user
+     * @param $extension
+     * @return string
+     */
+    public function generateNameImageUser($id_user, $extension){
+        return 'avatar_' .time(). '_' .(string)rand(90000,9000000).(string)rand(90000,9000000)
+            .sha1((string)$id_user.'_'.(string)rand(90000,9000000)).(string)rand(100000,9000000)
+            .md5((string)time()). '_' .sha1('%éà' .rand(100000,2000000)). '.' .$extension;
+    }
+
+
+    /**
+     * @param $id_user
+     * @param $old_name
+     * @return string
+     */
+    public function generateNameImageMinUser($id_user,$old_name){
+        return 'min_avatar_' .sha1('.,cm*é&' .$id_user). '_' .md5('µù' .$old_name)
+            .sha1($id_user. 'ç&é' .md5($old_name)). '.' . 'jpeg';
     }
     
 }
