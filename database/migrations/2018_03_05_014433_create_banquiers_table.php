@@ -16,13 +16,15 @@ class CreateBanquiersTable extends Migration
         Schema::create('banquiers', function (Blueprint $table) {
             $table->engine='InnoDB';
             $table->increments('id');
+
             // Schema declaration
             $table->string('nom');
             $table->string('prenom');
+            $table->string('adresse');
+            $table->string('photo');
+            $table->integer('id_createur');
             $table->timestamps();
             // Constraints declaration
-            $table->integer('id_createur');
-
         });
     }
 
@@ -33,6 +35,6 @@ class CreateBanquiersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('banquiers');
+         Schema::dropIfExists('banquiers');
     }
 }

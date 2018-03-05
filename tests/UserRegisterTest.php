@@ -22,8 +22,8 @@ class UserRegisterTest extends TestCase
         $path = base_path('public/test/test.png');
         $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK,true);
 
-        $data = ['email' => 'test@gmail.com', 'password' => 'test','nom'=>'test',
-            'adresse'=>'adrtest','telephone'=>'0558794512','fonction'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client'];
+        $data = ['email' => 'test@gmail.com', 'password' => 'test','nom'=>'test','phone_number'=>'+213557854578',
+            'adresse'=>'adrtest','fonction'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client'];
 
         $response = $this->call('POST', '/register_customer', [],[],['photo'=>$photo],[],$data);
 
@@ -32,6 +32,18 @@ class UserRegisterTest extends TestCase
             'adresse'=>'adrtest','telephone'=>'0558794512','fonction'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client']);*/
 
           //$response->assertResponseStatus(201);
+        $this->assertEquals(201,$response->status(),"unexpected status");
+
+    }
+
+    public function testUploadImage()
+    {
+        $path = base_path('public/test/test.png');
+        $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK,true);
+
+        $data = ['images/customer/','images/customer_min/'];
+        //$response = $this->call('POST', '/upload', [],[],['photo'=>$photo],[],$data);
+        //$response = $this->call('POST', '/upload', [],$data,[],['photo'=>$photo]);
         $this->assertEquals(201,$response->status(),"unexpected status");
 
     }

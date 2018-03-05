@@ -13,11 +13,12 @@ use Illuminate\Http\UploadedFile;
 
 
 class RegistersController extends Controller {
-    
+
+    const IMAGE_USER = 'images/customer';
+    const IMAGE_MIN = 'images/cutomer_min';
+
     public function __construct()
     {
-
-     
     }
 
     //****************************    Creat a customer account    ******************************//
@@ -48,13 +49,12 @@ class RegistersController extends Controller {
           $file = new FilesController;
     
         //Create a new user
-        $user_id = $user->store($request,0);
+      /*  $user_id = $user->store($request,0);
 
          //Validation of data for Customer
        $rulesCustomer = [
             'nom' => 'required',
             'adresse' => 'required',
-            'telephone'=>'required',
             'fonction'=>'required',
             'wilaya'=>'required',
             'commune'=>'required',
@@ -64,35 +64,35 @@ class RegistersController extends Controller {
         $data=$request->json()->all();
         $validator = Validator::make($data, $rulesCustomer);
         if (!$validator->passes()) {
-            return   response()->json(['message' => $validator->errors()->all()], 400);
+             return   response()->json(['message' => $validator->errors()->all()], 400);
 
-        }
+        }*/
 
+        //picture validation
        $photoRule =[
-           'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+           'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048',
        ];
         $this->validate($request,$photoRule);
         //Client Traitement
         $customer  = new Customer();
-        $customer->nom = strip_tags($data['nom']);
+       /* $customer->nom = strip_tags($data['nom']);
         $customer->adresse = strip_tags($data['adresse']);
-        $customer->telephone = strip_tags($data['telephone']);
         $customer->fonction = strip_tags($data['fonction']);
         $customer->wilaya = strip_tags($data['wilaya']);
         $customer->commune = strip_tags($data['commune']);
         $customer->type = $data['type'];
-        $customer->id = $user_id;
+        $customer->id = $user_id;*/
 
         //customer avatar
         /*$path = base_path('public/test/test.png');
         $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK, true);*/
-        $picture_url = $file->uploadFile($request->file('photo'),'images/customer/','images/customer_min/');
+        $picture_url = $file->uploadImage($request->file('photo'),self::IMAGE_USER,self::IMAGE_MIN);
         $customer->photo= $picture_url ;
         $customer->save();
     
         
         //Account Traitement
-        $this->createAccount($user_id,0); //the default account is the current account
+       // $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
         return response(json_encode(['message' =>"new user  has been registered"]),201);

@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use \Illuminate\Support\Facades\DB;
 
 class CreateComptesTable extends Migration
 {
@@ -28,6 +27,7 @@ class CreateComptesTable extends Migration
             // Constraints declaration
             $table->integer('id_client')->references('id')->on('users');
         });
+
     }
 
     /**

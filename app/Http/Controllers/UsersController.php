@@ -29,6 +29,7 @@ class UsersController extends Controller
         $user = User::create([
             'email' => $data['email'],
             'password'=> app('hash')->make($data['password']),
+            'phone_number'=>$data['phone_number'],
             'role'=>$role
         ]);
         

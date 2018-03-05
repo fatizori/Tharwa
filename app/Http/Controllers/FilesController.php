@@ -8,6 +8,8 @@ use Illuminate\Http\UploadedFile;
 
 class FilesController extends Controller {
 
+
+
     public function __construct()
     {
     }
@@ -34,6 +36,8 @@ class FilesController extends Controller {
                 break;
             case 'image/jpg' :
                 $src_img = imagecreatefromjpeg($old_image);
+            case 'image/bmp' :
+                $src_img = imagecreatefromwbmp($old_image);
 
                 break;
             default:
@@ -84,11 +88,11 @@ class FilesController extends Controller {
     public function uploadImage($file,$path, $path_min)
     {  
 
-        $imagename = time().'.'.$file->getClientOriginalExtension();
+        $imagename = time().'-'.str_random(10).'.'.$file->getClientOriginalExtension();
         $destinationPath = $path;
         $file->move($destinationPath, $imagename);
         $this->insertMiniImage($destinationPath.$imagename,$path_min,$imagename,100,100);
-        return  $destinationPath.$imagename ;
+        return  $imagename ;
    
     }
     

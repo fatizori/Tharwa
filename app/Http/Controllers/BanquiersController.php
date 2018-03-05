@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use  App\Http\Controllers\UsersController;
+
 use App\Models\Banquier;
 use Illuminate\Http\Request;
 
@@ -12,7 +14,16 @@ class BanquiersController extends Controller
     }
 
     public function index(){
-        $banquiers = Banquier::all();
+
+        //get the list of bankers
+        $banquiers  = Banquier::join('users', 'users.id', '=', 'banquiers.id')
+           ->select('users.id', 'nom','prenom','adresse','email','phone_number','photo')
+            ->get();
+
+        //if no banker exists in the database
+        if(!$banquiers){
+            return response()->json(['message' => "No banker was found"], 404);
+        }
         return response()->json($banquiers, 200);
     }
 

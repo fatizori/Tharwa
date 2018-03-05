@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use \Illuminate\Support\Facades\DB;
 
-class CreateGestionnairesTable extends Migration
+class CreateManagersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,13 +14,15 @@ class CreateGestionnairesTable extends Migration
      */
     public function up()
     {
-        Schema::create('gestionnaires', function (Blueprint $table) {
+        Schema::create('managers', function (Blueprint $table) {
             $table->engine='InnoDB';
             $table->increments('id');
 
             // Schema declaration
-            $table->string('nom');
-            $table->string('prenom');
+            $table->string('name');
+            $table->string('firstname');
+            $table->string('address');
+            $table->string('picture');
             $table->timestamps();
 
         });
@@ -33,6 +35,6 @@ class CreateGestionnairesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gestionnaires');
+        Schema::dropIfExists('managers');
     }
 }

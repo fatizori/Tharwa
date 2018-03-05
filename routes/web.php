@@ -21,11 +21,15 @@ $app->get('/', function () use ($app) {
 
 
 //get list of bankers
-$app->get('get_bankers_list',['uses' => 'BanquiersController@index', 'middleware' => 'auth']);
+$app->get('bankers',['uses' => 'BanquiersController@index' , 'middleware' => 'auth']);
+//get a manager by id
+$app->get('managers/{id}',['uses' => 'GestionnairesController@show','middleware' => ['auth','role:manager']]);
 //route to subscribe a customer
-$app->post('register_customer',['uses' => 'RegistersController@registerCustomer']);
+$app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker
-$app->post('register_banker/{id_manager}',['uses' => 'RegistersController@registerBanker']);
+$app->post('bankers/{id_manager}',['uses' => 'RegistersController@registerBanker']);
+
+$app->post('upload',['uses' => 'FilesController@uploadImage']);
 
 
 

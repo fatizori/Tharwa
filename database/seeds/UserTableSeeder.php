@@ -21,6 +21,20 @@ class UserTableSeeder extends Seeder
                 'email' => 'mahfoud10info@gmail.com'
             ]
         );
+        DB::table( 'users' )->where( 'id', 2 )->update(
+            [
+                'role' => 1 ,
+                'phone_number' => '213557332045',
+                'email' => 'fatima12@gmail.com'
+            ]
+        );
+         DB::table( 'users' )->where( 'id', 3 )->update(
+            [
+                'role' => 0 ,
+                'phone_number' => '213557332345',
+                'email' => 'hana@gmail.com'
+            ]
+        );
 
         DB::table( 'users' )->where( 'id', 2 )->update(
             [   'role' => 1 ,
