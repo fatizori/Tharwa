@@ -4,6 +4,9 @@
 
 //route to authenticate (1st step send credentials)
 $app->post('login', 'LoginsController@sendCodeLogin');
+//$app->post('login', function (\Illuminate\Http\Request $request){
+//    return response(json_encode($request->json()->all()),200);
+//});
 //route to authenticate (2nd step send code)
 $app->post('login/code', 'LoginsController@login');
 //route to logout

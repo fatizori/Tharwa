@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             // Schema declaration
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('phone_number',50)->unique();
+            $table->string('phone_number',50);
             $table->integer('role')->default(0);
             $table->string('nonce_auth',4);
             $table->dateTime('expire_date_nonce');

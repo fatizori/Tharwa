@@ -22,5 +22,12 @@ class UserTableSeeder extends Seeder
             ]
         );
 
+        DB::table( 'users' )->where( 'id', 2 )->update(
+            [   'role' => 1 ,
+                'phone_number' => '213697332045',
+                'email' => 'tharwabank002@netcourrier.com'
+            ]
+        );
+
     }
 }

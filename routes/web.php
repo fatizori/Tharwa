@@ -21,7 +21,7 @@ $app->get('/', function () use ($app) {
 
 
 //get list of bankers
-$app->get('get_bankers_list',['uses' => 'BanquiersController@index']);
+$app->get('get_bankers_list',['uses' => 'BanquiersController@index', 'middleware' => 'auth']);
 //route to subscribe a customer
 $app->post('register_customer',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker

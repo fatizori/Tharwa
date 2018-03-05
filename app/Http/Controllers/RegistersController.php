@@ -35,6 +35,7 @@ class RegistersController extends Controller {
     /**
      * Create the customer account
      * @param Request $request
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
     public function registerCustomer(Request $request){
 
@@ -104,9 +105,11 @@ class RegistersController extends Controller {
     
 }
 //****************************    Create the banker account   ******************************//
+
     /**
      * Create the banker account
      * @param Request $request , $id_manager
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
 
      public function registerBanker(Request $request,$id_manager){

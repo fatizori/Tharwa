@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Models\User;
@@ -168,10 +169,11 @@ class LoginsController extends Controller {
         if (!$user){
             return $this->sendFailedLoginResponse();
         }
-        $role=$user->getRole();
+
+        return $this->access('password', $user, $data['password']);
 
         //The user is authenticated
-        return $this->access('password', $data, $role);
+        $reponse = $this->access('password', $data, $role);
     }
 
     /**
@@ -200,11 +202,11 @@ class LoginsController extends Controller {
      * Send request to the laravel passport.
      *
      * @param  string $grantType
-     * @param  array $data
+     * @param $user
+     * @param $password
      * @return void
-     * @throws \InvalidArgumentException
      */
-    private function access($grantType, array $data = [], $role)
+    private function access($grantType,  $user , $password)
     {
         try {
 
@@ -212,14 +214,14 @@ class LoginsController extends Controller {
             $config = app()->make('config');
             $secrets = $config->get('oauth.secrets');
 
-            $credentials['username']=$data['email'];
-            $credentials['password']='password';
+            $credentials['username']=$user['email'];
+            $credentials['password']=$password;
 
             $credentials = array_merge([
                 'client_id' => $secrets['client_id'],
                 'client_secret' => $secrets['client_secret'],
                 'grant_type' => $grantType,
-                'scope' => $role
+                'scope' => $user->getRole()
             ], $credentials);
 
             $http = new Client();
@@ -235,21 +237,22 @@ class LoginsController extends Controller {
         $response = json_decode($guzzleResponse->getBody());
 
         if (property_exists($response, 'access_token')) {
-            $cookie = app()->make('cookie');
-
-            $cookie->queue('refresh_token',
-                $response->refresh_token,
-                3600, // expiration, should be moved to a config file
-                null,
-                null,
-                false,
-                true // HttpOnly
-            );
+//            $cookie = app()->make('cookie');
+//
+//            $cookie->queue('refresh_token',
+//                $response->refresh_token,
+//                3600, // expiration, should be moved to a config file
+//                null,
+//                null,
+//                false,
+//                true // HttpOnly
+//            );
 
             $response = [
-                'token_type'    => $response->token_type,
+                'user_id' => $user->id,
+                'user_type' => $user->role,
+                'access_token'   => $response->token_type.' '.$response->access_token,
                 'expires_in'    => $response->expires_in,
-                'access_token'   => $response->access_token,
             ];
         }
 
@@ -288,7 +291,7 @@ class LoginsController extends Controller {
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+       $request->user()->token()->revoke();
 
        // Auth::guard('api')->logout();
        // $request->session()->flush();
