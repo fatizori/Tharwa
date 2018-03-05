@@ -17,29 +17,32 @@ class CustomersController extends Controller
     }
 
     public function index(){
-        $clients = Client::all();
-        return response()->json($clients, 200);
+        $customers = Customer::all();
+        return response()->json($customers, 200);
     }
 
 
 
     public function show($id){
-        $client = Client::find($id);
-        if(!$client){
-            return response()->json(['message' => "The client with {$id} doesn't exist"], 404);
+        $customer = Customer::find($id);
+        if(!$customer){
+            return response()->json(['message' => "The customer with {$id} doesn't exist"], 404);
         }
-        return response()->json($client, 200);
+        return response()->json($customer, 200);
     }
 
 
 
     public function destroy($id){
-        $client = Client::find($id);
-        if(!$client){
-            return response()->json(['message' => "The client with {$id} doesn't exist"], 404);
+        $customer = Customer::find($id);
+        if(!$customer){
+            return response()->json(['message' => "The customer with {$id} doesn't exist"], 404);
         }
-        $client->delete();
-        return response()->json(['message' =>"The client with  id {$id} has been deleted"], 200);
+        try {
+            $customer->delete();
+        } catch (\Exception $e) {
+        }
+        return response()->json(['message' =>"The customer with  id {$id} has been deleted"], 200);
     }
 
 

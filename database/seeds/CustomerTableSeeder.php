@@ -13,13 +13,12 @@ class CustomerTableSeeder extends Seeder
     {
         DB::table('customers')->insert([
             'id' => 3,
-            'nom' => 'hana',
-            'adresse'=>'Alger',
-            'wilaya'=> "Alger",
-            "commune"=>"ben aknoun",
-            "fonction"=>"Developpeur",
-            "type"=> 0,
-            
+            'name' => 'hana',
+            'address'=>'Alger',
+            'wilaya'=> 'Alger',
+            'commune' => 'ben aknoun',
+            'function' => 'Developpeur',
+            'type' => 0
         ]);
 
     }

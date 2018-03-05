@@ -3,8 +3,8 @@
 use  App\Http\Controllers\FilesController;
 use  App\Http\Controllers\UsersController;
 use App\Models\User;
-use App\Models\Compte;
-use App\Models\Banquier;
+use App\Models\Account;
+use App\Models\Banker;
 use App\Models\Customer;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -27,8 +27,8 @@ class RegistersController extends Controller {
      * @param user_id , accoutn type
      */
     public function createAccount($id,$type){
-        $account=new Compte();
-        $account->id_client=$id;
+        $account=new Account();
+        $account->id_customer=$id;
         $account->type = $type;
         $account->save();
     }
@@ -53,9 +53,9 @@ class RegistersController extends Controller {
 
          //Validation of data for Customer
        $rulesCustomer = [
-            'nom' => 'required',
-            'adresse' => 'required',
-            'fonction'=>'required',
+            'name' => 'required',
+            'address' => 'required',
+            'function'=>'required',
             'wilaya'=>'required',
             'commune'=>'required',
             'type'=>'required',
@@ -75,9 +75,9 @@ class RegistersController extends Controller {
         $this->validate($request,$photoRule);
         //Client Traitement
         $customer  = new Customer();
-       /* $customer->nom = strip_tags($data['nom']);
-        $customer->adresse = strip_tags($data['adresse']);
-        $customer->fonction = strip_tags($data['fonction']);
+       /* $customer->name = strip_tags($data['name']);
+        $customer->address = strip_tags($data['address']);
+        $customer->function = strip_tags($data['function']);
         $customer->wilaya = strip_tags($data['wilaya']);
         $customer->commune = strip_tags($data['commune']);
         $customer->type = $data['type'];
@@ -124,8 +124,8 @@ class RegistersController extends Controller {
 
          //Valdiation Of data Banker
          $rulesBanker = [
-            'nom' => 'required',   
-            'prenom' => 'required',
+            'name' => 'required',
+            'firstname' => 'required',
             
         ];
 
@@ -135,11 +135,11 @@ class RegistersController extends Controller {
             return response()->json(['message' => $validator->errors()->all()], 400);
         }
         //Banker Traitement 
-        $banker=new Banquier();
-        $banker->nom=strip_tags($data['nom']);
-        $banker->prenom=strip_tags($data['prenom']);
+        $banker=new Banker();
+        $banker->name=strip_tags($data['nom']);
+        $banker->firstname=strip_tags($data['prenom']);
         $banker->id=$user_id;
-        $banker->id_createur = $id_manager;  // the id of the manager who create the banker account
+        $banker->id_creator = $id_manager;  // the id of the manager who create the banker account
         $banker->save();
 
          DB::commit();

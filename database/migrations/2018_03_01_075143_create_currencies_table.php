@@ -3,8 +3,9 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use \Illuminate\Support\Facades\DB;
 
-class CreateComptesTable extends Migration
+class CreateCurrenciesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,21 +14,17 @@ class CreateComptesTable extends Migration
      */
     public function up()
     {
-        Schema::create('comptes', function (Blueprint $table) {
+        Schema::create('currencies', function (Blueprint $table) {
             $table->engine='InnoDB';
             $table->increments('id');
 
             // Schema declaration
-            $table->string('code_banque')->default("THW");
-            $table->string('code_monnaie')->default("DZA");
-            $table->integer('type')->default(0);
-            $table->float('balance');
-            $table->integer('statut')->default(0);
+            $table->string('code',3)->unique();
+            $table->string('name')->unique();
             $table->timestamps();
-            // Constraints declaration
-            $table->integer('id_client')->references('id')->on('users');
-        });
 
+            // Constraints declaration
+        });
     }
 
     /**
@@ -37,6 +34,6 @@ class CreateComptesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('comptes');
+        Schema::dropIfExists('currencies');
     }
 }

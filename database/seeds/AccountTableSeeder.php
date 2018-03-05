@@ -1,8 +1,8 @@
 <?php
 use Illuminate\Database\Seeder;
-use App\Models\Compte;
+use App\Models\Account;
 
-class CompteTableSeeder extends Seeder
+class AccountTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,10 +11,9 @@ class CompteTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('comptes')->insert([
+        DB::table('accounts')->insert([
             'id' => 1,
-            'id_client' => 3
-            
+            'id_customer' => 3
         ]);
 
     }

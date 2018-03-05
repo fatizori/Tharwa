@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use Laravel\Passport\HasApiTokens;
 
-class Banque extends Model 
+class Bank extends Model
 {
  
 
@@ -25,9 +25,10 @@ class Banque extends Model
      */
 
     protected $fillable = [
+        'id',
         'email',
-        'adresse',
-        'reseau_social'
+        'address',
+        'social_reason'
     ];
 
     /**

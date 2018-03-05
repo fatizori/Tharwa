@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBanquiersTable extends Migration
+class CreateBankersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,18 @@ class CreateBanquiersTable extends Migration
      */
     public function up()
     {
-        Schema::create('banquiers', function (Blueprint $table) {
+        Schema::create('bankers', function (Blueprint $table) {
             $table->engine='InnoDB';
             $table->increments('id');
-
             // Schema declaration
-            $table->string('nom');
-            $table->string('prenom');
-            $table->string('adresse');
+            $table->string('name');
+            $table->string('firstname');
+            $table->string('address');
             $table->string('photo');
-            $table->integer('id_createur');
             $table->timestamps();
             // Constraints declaration
+            $table->integer('id_creator');
+
         });
     }
 
@@ -35,6 +35,6 @@ class CreateBanquiersTable extends Migration
      */
     public function down()
     {
-         Schema::dropIfExists('banquiers');
+        Schema::dropIfExists('bankers');
     }
 }

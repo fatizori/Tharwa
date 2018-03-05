@@ -1,8 +1,8 @@
 <?php
 use \App\Models\User;
-use \App\Models\Compte;
+use \App\Models\Account;
 use \App\Models\Customer;
-use \App\Models\Banquier;
+use \App\Models\Banker;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use \Illuminate\Http\UploadedFile;
 

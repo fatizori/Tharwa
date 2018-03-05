@@ -1,8 +1,8 @@
 <?php
-
 use Illuminate\Database\Seeder;
+use App\Models\Banker;
 
-class ManagerTableSeeder extends Seeder
+class BankerTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,11 +11,12 @@ class ManagerTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('managers')->insert([
-            'id'=> 1,
-            'name' => 'mahfoud',
-            'firstname' => 'mahfoud',
+        DB::table('bankers')->insert([
+            'id'=> 2,
+            'name' => 'nihad',
+            'firstname' => 'banat',
             'address'=> 'ex domaine morsli ahmed routes des dunes cheraga'
         ]);
+
     }
 }

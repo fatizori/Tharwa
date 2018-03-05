@@ -10,7 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
 
-class Banquier extends Model implements AuthenticatableContract, AuthorizableContract
+class Account extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable,
         Authorizable,
@@ -23,9 +23,11 @@ class Banquier extends Model implements AuthenticatableContract, AuthorizableCon
          */
 
     protected $fillable = [
-        'nom',
-        'prenom',
-        'date_creation'
+        'bank_code',
+        'currency_code',
+        'balance',
+        'type',
+        'status',
     ];
 
     /**
@@ -34,13 +36,15 @@ class Banquier extends Model implements AuthenticatableContract, AuthorizableCon
      * @var array
      */
     protected $hidden = [
-        
+       
     ];
 
-   
     
-    public function user()
+
+
+     public function user()
     {
         return $this->belongsTo('App\User');
     }
+
 }

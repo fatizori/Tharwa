@@ -1,13 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
-use  App\Http\Controllers\UsersController;
 
-use App\Models\Banquier;
-use Illuminate\Http\Request;
+use App\Models\Banker;
 
 
-class BanquiersController extends Controller
+class BankersController extends Controller
 {
     public function __construct()
     {     
@@ -16,22 +14,22 @@ class BanquiersController extends Controller
     public function index(){
 
         //get the list of bankers
-        $banquiers  = Banquier::join('users', 'users.id', '=', 'banquiers.id')
-           ->select('users.id', 'nom','prenom','adresse','email','phone_number','photo')
+        $bankers  = Banker::join('users', 'users.id', '=', 'bankers.id')
+           ->select('users.id', 'name','firstname','address','email','phone_number','photo')
             ->get();
 
         //if no banker exists in the database
-        if(!$banquiers){
-            return response()->json(['message' => "No banker was found"], 404);
+        if(!$bankers){
+            return response()->json(['message' => 'No banker was found'], 404);
         }
-        return response()->json($banquiers, 200);
+        return response()->json($bankers, 200);
     }
 
 
     
 
     public function show($id){
-        $banquier = Banquier::find($id);
+        $banquier = Banker::find($id);
         if(!$banquier){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }

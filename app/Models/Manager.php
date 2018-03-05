@@ -29,8 +29,9 @@ class Manager extends Model implements AuthenticatableContract, AuthorizableCont
      */
 
     protected $fillable = [
-        'nom',
-        'prenom'
+        'name',
+        'firstname',
+        'photo'
 
     ];
 
@@ -44,13 +45,8 @@ class Manager extends Model implements AuthenticatableContract, AuthorizableCont
     ];
 
     /**
-     * @param $role
-     * @return bool
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-
-
-
-
     public function user()
     {
         return $this->belongsTo('App\User');

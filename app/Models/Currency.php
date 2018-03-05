@@ -12,7 +12,7 @@ use Storage;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
 
-class Monnaie extends Model 
+class Currency extends Model
 {
     use Authenticatable,
         Authorizable,
@@ -25,7 +25,8 @@ class Monnaie extends Model
      */
 
     protected $fillable = [
-        'nom'
+        'name',
+        'code'
     ];
 
     /**

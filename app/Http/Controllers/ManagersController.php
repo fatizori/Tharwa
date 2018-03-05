@@ -20,12 +20,12 @@ class ManagersController extends Controller
 
         //get the list of managers
         $managers  = Manager::join('users', 'users.id', '=', 'managers.id')
-            ->select('users.id', 'nom','prenom','adresse','email','phone_number','photo')
+            ->select('users.id', 'name','firstname','address','email','phone_number','photo')
             ->get();
 
         //if no manager exists in the database
         if(!$managers){
-            return response()->json(['message' => "No manager was found"], 404);
+            return response()->json(['message' => 'No manager was found'], 404);
         }
         return response()->json($managers, 200);
     }
@@ -35,7 +35,7 @@ class ManagersController extends Controller
 
     public function show($id){
         $manager = Manager::find($id)
-                   ->select('id', 'nom','prenom','photo')
+                   ->select('id', 'name','firstname','photo')
                    ->get();
         if(!$manager){
             return response()->json(['message' => "The manager with {$id} doesn't exist"], 404);

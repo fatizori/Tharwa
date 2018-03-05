@@ -19,9 +19,9 @@ class CreateCustomersTable extends Migration
             $table->increments('id');
 
             // Schema declaration
-            $table->string('nom');
-            $table->string('adresse');
-            $table->string('fonction');
+            $table->string('name');
+            $table->string('address');
+            $table->string('function');
             $table->string('wilaya');
             $table->string('commune');
             $table->string('photo');
