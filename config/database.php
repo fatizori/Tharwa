@@ -1,5 +1,5 @@
 <?php
-return [
+[
     'mysql' => [
         'driver' => 'mysql',
         'host' => env('DB_HOST', 'db4free.net'),
