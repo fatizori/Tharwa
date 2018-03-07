@@ -66,6 +66,8 @@ $app->configure('services');
 $app->configure('mail');
 //this configuration for sms
 $app->configure('nexmo');
+//database conf
+$app->configure('database');
 
 /*
 |--------------------------------------------------------------------------
