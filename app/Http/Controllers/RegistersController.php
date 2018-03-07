@@ -95,7 +95,7 @@ class RegistersController extends Controller {
          $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
-        return response(json_encode(['message' =>"new user  has been registered"]),201);
+        return response(json_encode(['message' => 'new user  has been registered']),201);
   
     } catch(\Exception $e){
         DB::rollback();
