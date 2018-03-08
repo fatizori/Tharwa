@@ -22,7 +22,7 @@ class CreateManagersTable extends Migration
             $table->string('name');
             $table->string('firstname');
             $table->string('address');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->timestamps();
 
         });

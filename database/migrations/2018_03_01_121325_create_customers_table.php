@@ -24,7 +24,7 @@ class CreateCustomersTable extends Migration
             $table->string('function');
             $table->string('wilaya');
             $table->string('commune');
-            $table->string('photo');
+            $table->string('photo')->nullable();
             $table->integer('type');
             $table->timestamps();
 
