@@ -30,6 +30,12 @@ $app = new Laravel\Lumen\Application(
  $app->withEloquent();
 
 
+// Register the facade
+$app->withFacades(true, [
+    Swap\Laravel\Facades\Swap::class => 'Swap'
+]);
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +74,8 @@ $app->configure('mail');
 $app->configure('nexmo');
 //database conf
 $app->configure('database');
+// Load the configuration
+$app->configure('swap');
 
 /*
 |--------------------------------------------------------------------------
@@ -121,16 +129,6 @@ $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
 
 //register tinker to insert data in server
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
-
-
-
-// Register the facade
-$app->withFacades(true, [
-    Swap\Laravel\Facades\Swap::class => 'Swap'
-]);
-
-// Load the configuration
-$app->configure('swap');
 
 // Register the service provider
 $app->register(Swap\Laravel\SwapServiceProvider::class);

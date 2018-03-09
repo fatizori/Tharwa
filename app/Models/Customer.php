@@ -15,7 +15,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
 
-class Customer extends Model implements AuthenticatableContract, AuthorizableContract
+class Customer extends BaseModel implements AuthenticatableContract, AuthorizableContract
 {
 
     use Authenticatable,
