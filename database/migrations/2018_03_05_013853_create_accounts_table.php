@@ -22,7 +22,7 @@ class CreateAccountsTable extends Migration
             $table->string('bank_code')->default("THW");
             $table->string('currency_code')->default("DZA");
             $table->integer('type')->default(0);
-            $table->float('balance');
+            $table->double('balance')->default(0);;
             $table->integer('status')->default(0);
             $table->timestamps();
             // Constraints declaration

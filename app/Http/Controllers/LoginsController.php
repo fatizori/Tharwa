@@ -238,6 +238,7 @@ class LoginsController extends Controller {
         $response = json_decode($guzzleResponse->getBody());
 
         if (property_exists($response, 'access_token')) {
+            //TODO to erase if there is no refresh token
 //            $cookie = app()->make('cookie');
 //
 //            $cookie->queue('refresh_token',
@@ -258,6 +259,8 @@ class LoginsController extends Controller {
         }
 
         $response = response()->json($response);
+
+        //TODO to erase if there is no problems
         /*$response->setStatusCode($guzzleResponse->getStatusCode());
 
         $headers = $guzzleResponse->getHeaders();
@@ -266,7 +269,6 @@ class LoginsController extends Controller {
         }*/
 
         return $response;
-        //return response()->json('success',201);
     }
 
 

@@ -11,7 +11,7 @@ class AccountTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('accounts')->insert([
+        Account::create([
             'id' => 1,
             'id_customer' => 3
         ]);

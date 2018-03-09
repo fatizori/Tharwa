@@ -1,5 +1,6 @@
 <?php
 use Illuminate\Database\Seeder;
+use App\Models\Customer;
 
 
 class CustomerTableSeeder extends Seeder
@@ -11,14 +12,15 @@ class CustomerTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('customers')->insert([
-            'id' => 3,
-            'name' => 'hana',
-            'address'=>'Alger',
-            'wilaya'=> 'Alger',
-            'commune' => 'ben aknoun',
-            'function' => 'Developpeur',
-            'type' => 0
+        Customer::create([
+                'id' => 3,
+                'name' => 'hana',
+                'address'=>'Alger',
+                'wilaya'=> 'Alger',
+                'commune' => 'ben aknoun',
+                'function' => 'Developpeur',
+                'type' => 0,
+                'photo' => 'photo.jpg',
         ]);
 
     }

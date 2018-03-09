@@ -12,10 +12,10 @@
 use App\Mail\AuthConfirmationMail;
 use Illuminate\Support\Facades\Mail;
 
-$app->get('/', function () use ($app) {
+$app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
     //return $app->version();
-   // return response(config('nexmo.tharwa_phone'));
-    return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    //return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    return $request->secure() ? 'yes' : 'no';
 });
 
 
@@ -30,6 +30,8 @@ $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 $app->post('bankers/{id_manager}',['uses' => 'RegistersController@registerBanker']);
 
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
+
+
 
 
 

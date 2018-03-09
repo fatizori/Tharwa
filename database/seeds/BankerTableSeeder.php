@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Banker;
 
 class BankerTableSeeder extends Seeder
 {
@@ -11,11 +12,13 @@ class BankerTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('bankers')->insert([
+        Banker::create([
             'id'=> 2,
             'name' => 'nihad',
             'firstname' => 'banat',
-            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga'
+            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',
+            'photo' => 'photo.jpg',
+            'id_creator' => 1
         ]);
 
     }

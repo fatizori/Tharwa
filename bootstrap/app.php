@@ -117,6 +117,8 @@ $app->routeMiddleware([
   $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 // register the SMS provider
 $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
+
+
 //register tinker to insert data in server
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
 

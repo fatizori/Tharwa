@@ -12,7 +12,7 @@ return [
     |
     */
 
-'url' => env('APP_URL', 'serene-retreat-29274.herokuapp.com'),
+'url' => env('APP_URL', 'tharwa.localhost'),
 
 
 /*

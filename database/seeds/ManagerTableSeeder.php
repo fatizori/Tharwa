@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Models\Manager;
 
 class ManagerTableSeeder extends Seeder
 {
@@ -11,11 +12,12 @@ class ManagerTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('managers')->insert([
+        Manager::create([
             'id'=> 4,
             'name' => 'mahfoud',
             'firstname' => 'mahfoud',
-            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga'
+            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',
+            'photo' => 'photo.jpg',
         ]);
     }
 }
