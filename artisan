@@ -32,4 +32,6 @@ $kernel = $app->make(
     'Illuminate\Contracts\Console\Kernel'
 );
 
+$app->register('Vluzrmos\Tinker\TinkerServiceProvider');
+
 exit($kernel->handle(new ArgvInput, new ConsoleOutput));
