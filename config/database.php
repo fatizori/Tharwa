@@ -1,10 +1,10 @@
 <?php
-$url = parse_url(getenv("DATABASE_URL"));
-
-$host = $url["host"];
-$username = $url["user"];
-$password = $url["pass"];
-$database = substr($url["path"], 1);
+//$url = parse_url(getenv("DATABASE_URL"));
+//
+//$host = $url["host"];
+//$username = $url["user"];
+//$password = $url["pass"];
+//$database = substr($url["path"], 1);
     return [
         /*
         |--------------------------------------------------------------------------
@@ -16,33 +16,35 @@ $database = substr($url["path"], 1);
         | you may use many connections at once using the Database library.
         |
         */
-        'default' => env('DB_CONNECTION', 'pgsql'),
+        'default' => env('DB_CONNECTION', 'mysql'),
+
         'migrations' => 'migrations',
 
         'connections' => [
             'mysql' => [
                 'driver' => 'mysql',
-                'host' => env('DB_HOST', 'db4free.net'),
+                'host' => env('DB_HOST', 'sql2.freemysqlhosting.net'),
                 'port' => env('DB_PORT', '3306'),
-                'database' => env('DB_DATABASE', 'tharwa_db'),
-                'username' => env('DB_USERNAME', 'tharwa_admin'),
-                'password' => env('DB_PASSWORD', 'THARWAtharwa02@@'),
+                'database' => env('DB_DATABASE', 'sql2225571'),
+                'username' => env('DB_USERNAME', 'sql2225571'),
+                'password' => env('DB_PASSWORD', 'pD9*mD1!'),
                 'unix_socket' => env('DB_SOCKET', ''),
-                'charset' => 'utf8mb4',
-                'collation' => 'utf8mb4_unicode_ci',
+//                'charset' => 'utf8mb4',
+//                'collation' => 'utf8mb4_unicode_ci',
                 'prefix' => '',
                 'strict' => true,
                 'engine' => null,
             ],
-            'pgsql' => array(
-                'driver'   => 'pgsql',
-                'host'     => $host,
-                'database' => $database,
-                'username' => $username,
-                'password' => $password,
-                'charset'  => 'utf8',
-                'prefix'   => '',
-                'schema'   => 'public',
-            ),
+
+//            'pgsql' => array(
+//                'driver'   => 'pgsql',
+//                'host'     => $host,
+//                'database' => $database,
+//                'username' => $username,
+//                'password' => $password,
+//                'charset'  => 'utf8',
+//                'prefix'   => '',
+//                'schema'   => 'public',
+//            ),
         ]
 ];
