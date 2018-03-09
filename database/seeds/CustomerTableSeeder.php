@@ -13,7 +13,7 @@ class CustomerTableSeeder extends Seeder
     public function run()
     {
         Customer::create([
-                'id' => 3,
+                'id' => 5,
                 'name' => 'hana',
                 'address'=>'Alger',
                 'wilaya'=> 'Alger',
