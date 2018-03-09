@@ -88,6 +88,7 @@ $app->configure('database');
 $app->routeMiddleware([
      'auth' => App\Http\Middleware\Authenticate::class,
      'role' => App\Http\Middleware\RoleMiddleware::class,
+    'force_ssl' => App\Http\Middleware\ForceSSL::class,
  ]);
 
 /*
@@ -116,6 +117,10 @@ $app->routeMiddleware([
   $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 // register the SMS provider
 $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
+
+$app->register(Laravel\Tinker\TinkerServiceProvider::class);
+
+
 
 
 Dusterio\LumenPassport\LumenPassport::routes($app);
