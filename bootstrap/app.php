@@ -118,7 +118,7 @@ $app->routeMiddleware([
 // register the SMS provider
 $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
 
-$app->register(Laravel\Tinker\TinkerServiceProvider::class);
+$app->register(Vluzrmos\Tinker\TinkerServiceProvider::class);
 
 
 
