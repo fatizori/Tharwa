@@ -264,7 +264,8 @@ class LoginsController extends Controller {
             $response->header($headerType, $headerValue);
         }
 
-        return $response;
+        //return $response;
+        return response()->json('success',201);
     }
 
 
