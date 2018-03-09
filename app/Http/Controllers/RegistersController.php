@@ -126,6 +126,7 @@ class RegistersController extends Controller {
          $rulesBanker = [
             'name' => 'required',
             'firstname' => 'required',
+             'address'=>'required'
             
         ];
 
@@ -138,6 +139,7 @@ class RegistersController extends Controller {
         $banker=new Banker();
         $banker->name=strip_tags($data['name']);
         $banker->firstname=strip_tags($data['firstname']);
+        $banker->address=strip_tags($data['address']);
         $banker->id=$user_id;
         $banker->id_creator = $id_manager;  // the id of the manager who create the banker account
         $banker->save();
