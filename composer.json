@@ -40,7 +40,6 @@
             "php -r \"copy('.env.example', '.env');\""
         ]
     },
-    "minimum-stability": "dev",
     "prefer-stable": true,
     "post-install-cmd": [
         "php artisan clear-compiled",
