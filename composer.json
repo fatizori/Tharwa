@@ -4,9 +4,9 @@
     "keywords": ["framework", "laravel", "lumen"],
     "license": "MIT",
     "type": "project",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
-        "php": "5.6.25",
+        "php": "5.6.32",
         "laravel/lumen-framework": "5.4.*",
         "vlucas/phpdotenv": "~2.2",
         "dusterio/lumen-passport": "^0.2.6",
