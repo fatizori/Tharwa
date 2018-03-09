@@ -205,6 +205,7 @@ class LoginsController extends Controller {
      * @param $user
      * @param $password
      * @return void
+     * @throws \InvalidArgumentException
      */
     private function access($grantType,  $user , $password)
     {
@@ -257,15 +258,15 @@ class LoginsController extends Controller {
         }
 
         $response = response()->json($response);
-        $response->setStatusCode($guzzleResponse->getStatusCode());
+        /*$response->setStatusCode($guzzleResponse->getStatusCode());
 
         $headers = $guzzleResponse->getHeaders();
         foreach($headers as $headerType => $headerValue) {
             $response->header($headerType, $headerValue);
-        }
+        }*/
 
-        //return $response;
-        return response()->json('success',201);
+        return $response;
+        //return response()->json('success',201);
     }
 
 
