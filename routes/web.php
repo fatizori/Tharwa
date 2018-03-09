@@ -29,7 +29,7 @@ $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker
 $app->post('bankers/{id_manager}',['uses' => 'RegistersController@registerBanker']);
 
-$app->post('upload',['uses' => 'FilesController@uploadImage']);
+$app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
 
 
 

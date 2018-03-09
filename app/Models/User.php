@@ -62,21 +62,21 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
-    public function compte()
+    public function account()
     {
-        return $this->hasMany('App\Compte');
+        return $this->hasMany('App\Account');
     }
     public function customer()
     {
         return $this->hasOne('App\Customer');
     }
-    public function banquier()
+    public function banker()
     {
-        return $this->hasOne('App\Banquier');
+        return $this->hasOne('App\Banker');
     }
-    public function gestionnaire()
+    public function manager()
     {
-        return $this->hasOne('App\Gestionnaire');
+        return $this->hasOne('App\Manager');
     }
 
 }
