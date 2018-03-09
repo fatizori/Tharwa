@@ -224,9 +224,9 @@ class LoginsController extends Controller {
                 'scope' => $user->getRole()
             ], $credentials);
 
-            $http = new Client($config->get('app.url'));
+            $http = new Client();
 
-            $guzzleResponse = $http->post('/oauth/token', [
+            $guzzleResponse = $http->post($config->get('app.url').'/oauth/token', [
                 'form_params' => $credentials,
             ]);
 
