@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Mail;
 
 $app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
     //return $app->version();
-    //return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-    return $request->secure() ? 'yes' : 'no';
+    return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    //return $request->secure() ? 'yes' : 'no';
 });
 
 
