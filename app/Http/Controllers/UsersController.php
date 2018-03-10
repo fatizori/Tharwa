@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,7 +31,9 @@ class UsersController extends Controller
             'email' => $data['email'],
             'password'=> app('hash')->make($data['password']),
             'phone_number'=>$data['phone_number'],
-            'role'=>$role
+            'role'=>$role,
+            'nonce_auth' => sprintf('%04u', random_int(0,9999)),
+            'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()
         ]);
         
         return $user->id;
