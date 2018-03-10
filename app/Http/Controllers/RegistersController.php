@@ -127,7 +127,6 @@ class RegistersController extends Controller {
             'name' => 'required',
             'firstname' => 'required',
              'address'=>'required'
-            
         ];
 
         $data=$request->json()->all();
