@@ -18,7 +18,10 @@ $app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
     //return $request->secure() ? 'yes' : 'no';
 });
 
-
+//get list of bankers
+/*$app->get('/managers/{id}',function(\Illuminate\Http\Request $request) {
+    return response('222', 200);
+});*/
 
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
