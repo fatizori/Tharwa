@@ -13,7 +13,7 @@ class BankerTableSeeder extends Seeder
     public function run()
     {
         Banker::create([
-            'id'=> 2,
+            'id'=> 4,
             'name' => 'nihad',
             'firstname' => 'banat',
             'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',

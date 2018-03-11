@@ -15,7 +15,7 @@ class UserTableSeeder extends Seeder
 
         //Set the first created user as manager (role == 2) TODO We have juste one?
         DB::table( 'users' )->where( 'id', 1 )->update(
-            [   'role' => 1 ,
+            [   'role' => 2 ,
                 'phone_number' => '213697332045',
                 'email' => 'tharwabank002@netcourrier.com'
             ]
@@ -37,7 +37,7 @@ class UserTableSeeder extends Seeder
         );
 
         DB::table( 'users' )->where( 'id', 4 )->update(
-            [   'role' => 2 ,
+            [   'role' => 1 ,
                 'phone_number' => '213697332045',
                 'email' => 'en_senouci@esi.dz'
             ]

@@ -13,7 +13,7 @@ class ManagerTableSeeder extends Seeder
     public function run()
     {
         Manager::create([
-            'id'=> 4,
+            'id'=> 1,
             'name' => 'mahfoud',
             'firstname' => 'mahfoud',
             'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',
