@@ -30,7 +30,7 @@ $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => [
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker
-$app->post('bankers/{id_manager}',['uses' => 'RegistersController@registerBanker']);
+$app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
 
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate', 'middleware' => 'auth']);
 

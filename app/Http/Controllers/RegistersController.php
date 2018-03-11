@@ -112,28 +112,29 @@ class RegistersController extends Controller {
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
 
-     public function registerBanker(Request $request,$id_manager){
+     public function registerBanker(Request $request){
+         //Valdiation Of data Banker
+         $rulesBanker = [
+             'name' => 'required',
+             'firstname' => 'required',
+             'address'=>'required'
+         ];
+
+         $data=$request->json()->all();
+         $validator = Validator::make($data, $rulesBanker);
+         if (!$validator->passes()) {
+             return response()->json(['message' => $validator->errors()->all()], 400);
+         }
 
        try{
-
         DB::beginTransaction();
+        //Get the id of the creator (manager)
+        $id_manager = $request->user()->id;
 
         $user = new UsersController;
         //Create a new user
-        $user_id = $user->store($request,0);
+        $user_id = $user->store($request,1);
 
-         //Valdiation Of data Banker
-         $rulesBanker = [
-            'name' => 'required',
-            'firstname' => 'required',
-             'address'=>'required'
-        ];
-
-        $data=$request->json()->all();
-        $validator = Validator::make($data, $rulesBanker);
-        if (!$validator->passes()) {
-            return response()->json(['message' => $validator->errors()->all()], 400);
-        }
         //Banker Traitement 
         $banker=new Banker();
         $banker->name=strip_tags($data['name']);
@@ -144,7 +145,7 @@ class RegistersController extends Controller {
         $banker->save();
 
          DB::commit();
-         return response(json_encode(['message' =>"new user  has been registered"]),201);
+         return response(json_encode(['message' => 'new user  has been registered']),201);
 
       } catch(\Exception $e){
         DB::rollback();
