@@ -32,8 +32,10 @@ class CurrenciesController extends Controller
         $rateEmirat = Swap::latest('AED/DZD');           //Emarat dirham -> Algeria dinars
 
        // Exchange Rates table
-        $tabRates= [$rateEuro->getValue(),$rateUDollars->getValue(),$rateTurkey->getValue(),$rateCanada->getValue(),$rateSaoudi->getValue()
-        ,$rateChina->getValue(),$rateMaroc->getValue(),$rateTunisia->getValue(),$rateUK->getValue(),$rateEmirat->getValue()];
+       $tabRates= ['Euro'=> $rateEuro->getValue(),'USDollars'=>$rateUDollars->getValue(),'TurkeyLira'=>$rateTurkey->getValue()
+           ,'CanadaDollars'=>$rateCanada->getValue(),'SaouditRyal'=>$rateSaoudi->getValue()
+           ,'ChinaYuan'=>$rateChina->getValue(),'MarocDinars'=>$rateMaroc->getValue(),'TunisiaDinars'=>$rateTunisia->getValue()
+           ,'PoundSterling'=>$rateUK->getValue(),'EmaratDirham'=>$rateEmirat->getValue()];
 
         return response(json_encode($tabRates),200);
    }
