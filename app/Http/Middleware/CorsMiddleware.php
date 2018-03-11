@@ -21,12 +21,21 @@ class CorsMiddleware {
             }
         }
 
-        $response = $next($request);
-        $response->header('Access-Control-Allow-Methods', 'HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS');
-        $response->header('Access-Control-Allow-Headers', 'Accept , Authorization');
-        $response->header('Access-Control-Allow-Origin', '*');
-        $response->header('Access-Control-Allow-Credentials','true');
-        return $response;
+        header('Access-Control-Allow-Origin: *');
 
+        // ALLOW OPTIONS METHOD
+        $headers = [
+            'Access-Control-Allow-Methods'=> 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Headers'=> 'Content-Type, X-Auth-Token, Origin, Authorization'
+        ];
+        if($request->isMethod('OPTIONS')) {
+            return response('OK', 200, $headers);
+
+        }
+            $response = $next($request);
+            foreach($headers as $key => $value){
+                $response->header($key, $value);
+        }
+        return $response;
     }
 }
