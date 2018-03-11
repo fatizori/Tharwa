@@ -16,6 +16,7 @@ class RegistersController extends Controller {
 
     const IMAGE_USER = 'images/customer/';
     const IMAGE_MIN = 'images/customer_min/';
+    const DEFAULT_USER_IMG = 'default_user.png';
 
     public function __construct()
     {
@@ -141,6 +142,7 @@ class RegistersController extends Controller {
         $banker->firstname=strip_tags($data['firstname']);
         $banker->address=strip_tags($data['address']);
         $banker->id=$user_id;
+        $banker->photo=self::DEFAULT_USER_IMG;
         $banker->id_creator = $id_manager;  // the id of the manager who create the banker account
         $banker->save();
 

@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\BadResponseException;
 use App\Models\User;
@@ -52,18 +53,27 @@ class LoginsController extends Controller {
         //Generate the auth number
         $nonce=$this->generateNonce();
 
+        DB::beginTransaction();
+
         //Set the nonce and the creation time of the nonce
         $user->update(['nonce_auth' => $nonce,
                         'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()]);
 
         if (0 == $channel) {
             //Send the auth nonce via email
-            return $this->sendAuthentificationCodeMAil($data['email'],$nonce);
+            $response = $this -> sendAuthentificationCodeMAil($data['email'],$nonce);
 
-        }else if (1 == $channel) {
+        }else {        // $channel == 1
             //Send the auth nonce via SMS
-            return $this-> sendAuthentificationCodeSMS($user['phone_number'],$nonce);
+             $response = $this-> sendAuthentificationCodeSMS($user['phone_number'],$nonce);
         }
+
+        if ($response->status() == 500){
+            DB::rollback();
+        }else{
+            DB::commit();
+        }
+        return $response;
     }
 
     /**
