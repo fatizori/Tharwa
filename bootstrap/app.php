@@ -127,8 +127,6 @@ $app->routeMiddleware([
   $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
 
 
-//register tinker to insert data in server
-$app->register('Vluzrmos\Tinker\TinkerServiceProvider');
 
 // Register the service provider
 $app->register(Swap\Laravel\SwapServiceProvider::class);
