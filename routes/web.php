@@ -29,6 +29,8 @@ $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth
 $app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
 //get a manager by id
 $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
+//get the list of non valide accounts
+$app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => 'auth' ]);
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker
