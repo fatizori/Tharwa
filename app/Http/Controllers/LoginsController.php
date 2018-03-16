@@ -31,7 +31,7 @@ class LoginsController extends Controller {
     public function sendCodeLogin(Request $request)
     {
         $rules = [
-            'email' => 'required',
+            'email' => 'required | email',
             'password' => 'required',
             'channel' => 'required | integer | between:0,1',
         ];
@@ -163,7 +163,7 @@ class LoginsController extends Controller {
      */
     public function login(Request $request){
         $rules = [
-            'email' => 'required',
+            'email' => 'required | email',
             'password' => 'required',
             'nonce' => 'required |alpha_dash| max:4'
         ];
@@ -248,17 +248,6 @@ class LoginsController extends Controller {
         $response = json_decode($guzzleResponse->getBody());
 
         if (property_exists($response, 'access_token')) {
-            //TODO to erase if there is no refresh token
-//            $cookie = app()->make('cookie');
-//
-//            $cookie->queue('refresh_token',
-//                $response->refresh_token,
-//                3600, // expiration, should be moved to a config file
-//                null,
-//                null,
-//                false,
-//                true // HttpOnly
-//            );
 
             $response = [
                 'user_id' => $user->id,
@@ -307,9 +296,7 @@ class LoginsController extends Controller {
     {
        $request->user()->token()->revoke();
 
-       // Auth::guard('api')->logout();
-       // $request->session()->flush();
-       // $request->session()->regenerate();
+
 
         $json = [
             'message' => 'You are Logged out',

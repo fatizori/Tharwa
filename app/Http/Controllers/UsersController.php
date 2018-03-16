@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Business\LogManager;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class UsersController extends Controller
             'nonce_auth' => sprintf('%04u', random_int(0,9999)),
             'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()
         ]);
+
         
         return $user->id;
     }

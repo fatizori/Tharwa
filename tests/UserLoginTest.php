@@ -9,7 +9,7 @@ class UserLoginTest extends TestCase
      * @return void
      * @throws Exception
      */
-   /* public function testLogin()
+    public function testLogin()
     {
         //Create a new test user
         $user= factory(User::class,1)->create();
@@ -23,37 +23,36 @@ class UserLoginTest extends TestCase
         $credentials['channel'] = 1;
         $response2=$this->json('POST', '/login',$credentials);
 
-
         //delete the test user
         $user[0]->delete();
 
         //Test Successful request
         $response1->assertResponseStatus(200);
         $response2->assertResponseStatus(200);
-    }*/
+    }
 
-//    /**
-//     * Test if generating login with nonce is working .
-//     *
-//     * @return void
-//     * @throws Exception
-//     */
-//    public function testLoginNonce()
-//    {
-//        //Create a new test user
-//        $user= factory(User::class,1)->create();
-//        $nonce=$user[0]->nonce_auth;
-//
-//        //Login the test user
-//        $credentials=['email' => $user[0]->email, 'password' => 'password' , 'nonce' => $nonce];
-//
-//        $response=$this->json('POST', '/login/code',$credentials);
-//
-//        //delete the test user
-//        $user[0]->delete();
-//
-//        $response->assertResponseStatus(200);
-//    }
+    /**
+     * Test if generating login with nonce is working .
+     *
+     * @return void
+     * @throws Exception
+     */
+     public function testLoginNonce()
+    {
+        //Create a new test user
+        $user= factory(User::class,1)->create();
+        $nonce=$user[0]->nonce_auth;
+
+        //Login the test user
+        $credentials=['email' => $user[0]->email, 'password' => 'password' , 'nonce' => $nonce];
+
+          $response=$this->json('POST', '/login/code',$credentials);
+
+        //delete the test user
+         $user[0]->delete();
+
+        $response->assertResponseStatus(200);
+     }
 
     /**
      * Test if the used can correctly logout.
@@ -61,7 +60,7 @@ class UserLoginTest extends TestCase
      * @return void
      * @throws Exception
      */
-    public function testLogout()
+    /*public function testLogout()
     {
         //Create a new test user
         $user= factory(User::class,1)->create();
@@ -81,5 +80,5 @@ class UserLoginTest extends TestCase
 
         //Test Successful request
         $this->assertEquals(200,$response->status(),$token->toString());
-    }
+    }*/
 }

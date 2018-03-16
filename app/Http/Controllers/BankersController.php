@@ -26,14 +26,16 @@ class BankersController extends Controller
     }
 
 
-    
+
 
     public function show($id){
-        $banquier = Banker::find($id);
-        if(!$banquier){
+        $banker = Banker::find($id)
+            ->select('id', 'name','firstname','photo')
+            ->get();
+        if(!$banker){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }
-        return response()->json($banquier, 200);
+        return response()->json($banker, 200);
     }
 
 

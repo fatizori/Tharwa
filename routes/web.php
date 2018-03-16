@@ -25,6 +25,8 @@ $app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
 
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
+//get a banker by id
+$app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
 //get a manager by id
 $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
 //route to subscribe a customer
