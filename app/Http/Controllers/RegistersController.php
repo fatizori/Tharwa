@@ -7,6 +7,8 @@ use App\Models\Account;
 use App\Models\Banker;
 use App\Models\Customer;
 use \Illuminate\Http\Request;
+use Illuminate\Queue\Queue;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\UploadedFile;
@@ -56,11 +58,9 @@ class RegistersController extends Controller {
         }
 
      try{
-
         DB::beginTransaction();
 
         //Create a new user
-
        $user = new UsersController;
        $user_id = $user->store($request,0);
 
@@ -79,7 +79,9 @@ class RegistersController extends Controller {
          $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
-        return response(json_encode(['message' => 'new user  has been registered']),201);
+        return response(json_encode(['message' => 'new user  has been registered',
+                                     'user_id' => $user_id]),201);
+
   
     } catch(\Exception $e){
         DB::rollback();
@@ -131,7 +133,8 @@ class RegistersController extends Controller {
              $banker->save();
 
              DB::commit();
-             return response(json_encode(['message' => 'new user  has been registered']), 201);
+             return response(json_encode(['message' => 'new user  has been registered',
+                                            'user_id' => $user_id]), 201);
 
          } catch (\Exception $e) {
              DB::rollback();
@@ -140,31 +143,43 @@ class RegistersController extends Controller {
          }
      }
 
+
     /**
      * @param Request $request
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
      public function update_avatar(Request $request){
          // Handle the user upload of avatar
-         if($request->hasFile('photo')){
-             $photoRule =[
-                 'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048',
+            $data['id_user'] = $request->input('id_user');
+            $data['photo'] = $request->file('photo');
+            $Rules =[
+                 'id_user' => 'required',
+                 'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
              ];
-             $this->validate($request,$photoRule);
-         }else{
-             return response(json_encode(['message'=>'image non trouvée']),400);
-         }
+             $validator = Validator::make($data, $Rules);
+             if (!$validator->passes()) {
+                 return response()->json(['message' => $validator->errors()->all()], 400);
+             }
 
          $file = new FilesController;
-//
-//         //customer avatar
-//         /*$path = base_path('public/test/test.png');
-//         $photo = new UploadedFile($path, 'test.png', 'image/png', null, UPLOAD_ERR_OK, true);*/
-//         $picture_url = $file->uploadImage($request->file('photo'),self::IMAGE_USER,self::IMAGE_MIN,$user_id);
-//         $customer->photo= $picture_url ;
-//         $customer->save();
-//
 
+         //customer avatar
+         $id_user = $data['id_user'];
+         $picture_url = $file->uploadImage($data['photo'],self::IMAGE_USER,self::IMAGE_MIN,$id_user);
+         $user = User::find($id_user);
+         if (!is_null($user)){
+             switch ($user->getRole()){
+                 case  'customer': {
+                    Customer::find($id_user)->update(['photo' => $picture_url]);
+                 }break;
+                 case  'banker': {
+                    Banker::find($id_user)->update(['photo' => $picture_url]);
+                 }break;
+                 default: return  response()->json(['message' => 'invalid user'], 400);
+             }
+             return  response()->json(['message' => 'photo has been updated successfully'], 200);
+         }else{
+             return response()->json(['message' => 'user not found'], 404);
+         }
      }
-
 }

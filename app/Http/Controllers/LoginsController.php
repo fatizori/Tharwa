@@ -259,14 +259,6 @@ class LoginsController extends Controller {
 
         $response = response()->json($response);
 
-        //TODO to erase if there is no problems
-        /*$response->setStatusCode($guzzleResponse->getStatusCode());
-
-        $headers = $guzzleResponse->getHeaders();
-        foreach($headers as $headerType => $headerValue) {
-            $response->header($headerType, $headerValue);
-        }*/
-
         return $response;
     }
 

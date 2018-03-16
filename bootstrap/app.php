@@ -90,7 +90,7 @@ $app->configure('swap');
 
  $app->middleware([
     //App\Http\Middleware\ExampleMiddleware::class,
-    //  App\Http\Middleware\CorsMiddleware::class,
+    App\Http\Middleware\CorsMiddleware::class,
  ]);
 
 $app->routeMiddleware([

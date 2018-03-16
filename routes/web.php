@@ -33,6 +33,8 @@ $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => [
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 //route to subscribe a banker
 $app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
+// update user photo
+$app->put('update_photo',['uses' => 'RegistersController@update_avatar']);
 
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate', 'middleware' => 'auth']);
 

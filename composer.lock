@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ea4334c56cc9ecb1f25b250e8fb3e16",
+    "content-hash": "4bb23ccc82ffb398963f8343ee57c113",
     "packages": [
         {
             "name": "appzcoder/lumen-routes-list",
@@ -614,16 +614,16 @@
         },
         {
             "name": "florianv/exchanger",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/florianv/exchanger.git",
-                "reference": "14019c34906e7f5dbf55f802dc26b3aa0b9a1a69"
+                "reference": "77af7ee8bd8d5163952f4fb22ab54c6f491ff946"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/florianv/exchanger/zipball/14019c34906e7f5dbf55f802dc26b3aa0b9a1a69",
-                "reference": "14019c34906e7f5dbf55f802dc26b3aa0b9a1a69",
+                "url": "https://api.github.com/repos/florianv/exchanger/zipball/77af7ee8bd8d5163952f4fb22ab54c6f491ff946",
+                "reference": "77af7ee8bd8d5163952f4fb22ab54c6f491ff946",
                 "shasum": ""
             },
             "require": {
@@ -675,7 +675,7 @@
                 "exchange rates",
                 "money"
             ],
-            "time": "2018-02-11T09:52:43+00:00"
+            "time": "2018-03-15T09:01:49+00:00"
         },
         {
             "name": "florianv/laravel-swap",
@@ -801,6 +801,56 @@
                 "money"
             ],
             "time": "2018-02-19T11:33:52+00:00"
+        },
+        {
+            "name": "fzaninotto/faker",
+            "version": "v1.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "d3ed4cc37051c1ca52d22d76b437d14809fc7e0d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d3ed4cc37051c1ca52d22d76b437d14809fc7e0d",
+                "reference": "d3ed4cc37051c1ca52d22d76b437d14809fc7e0d",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "require-dev": {
+                "ext-intl": "*",
+                "phpunit/phpunit": "^4.0 || ^5.0",
+                "squizlabs/php_codesniffer": "^1.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.8-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2017-08-15T16:48:10+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2685,16 +2735,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "1.24.1",
+            "version": "1.24.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41"
+                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
-                "reference": "ef12cbd8ba5ce624f0a6a95e0850c4cc13e71e41",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/bba6c6e410c6b4317e37a9474aeaa753808c3875",
+                "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875",
                 "shasum": ""
             },
             "require": {
@@ -2734,20 +2784,20 @@
                 "datetime",
                 "time"
             ],
-            "time": "2018-03-09T15:49:34+00:00"
+            "time": "2018-03-10T10:10:14+00:00"
         },
         {
             "name": "nexmo/client",
-            "version": "1.2.1",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Nexmo/nexmo-php.git",
-                "reference": "7c000329a407efa02910f7e4294165a7ffddae0d"
+                "reference": "15db8f9a3304d9823c48eff179b994dac6973ca2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/7c000329a407efa02910f7e4294165a7ffddae0d",
-                "reference": "7c000329a407efa02910f7e4294165a7ffddae0d",
+                "url": "https://api.github.com/repos/Nexmo/nexmo-php/zipball/15db8f9a3304d9823c48eff179b994dac6973ca2",
+                "reference": "15db8f9a3304d9823c48eff179b994dac6973ca2",
                 "shasum": ""
             },
             "require": {
@@ -2782,7 +2832,7 @@
                 }
             ],
             "description": "PHP Client for using Nexmo's API.",
-            "time": "2018-01-07T21:44:50+00:00"
+            "time": "2018-03-15T11:59:40+00:00"
         },
         {
             "name": "nexmo/laravel",
@@ -4594,58 +4644,6 @@
             "time": "2016-09-01T10:05:43+00:00"
         },
         {
-            "name": "vluzrmos/tinker",
-            "version": "v1.3.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/vluzrmos/lumen-tinker.git",
-                "reference": "f8521bf51016869a4f63cee1a9b97ac21e8af16e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/vluzrmos/lumen-tinker/zipball/f8521bf51016869a4f63cee1a9b97ac21e8af16e",
-                "reference": "f8521bf51016869a4f63cee1a9b97ac21e8af16e",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/lumen-framework": "~5.3",
-                "psy/psysh": "~0.7.0|~0.8.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.0",
-                "fzaninotto/faker": "~1.4",
-                "phpunit/phpunit": "~5.0"
-            },
-            "type": "package",
-            "autoload": {
-                "psr-4": {
-                    "Vluzrmos\\Tinker\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Vagner do Carmo",
-                    "email": "vluzrmos@gmail.com"
-                },
-                {
-                    "name": "Szabolcs (Szasza) Palmer",
-                    "email": "szasza@szasza.info"
-                }
-            ],
-            "description": "An Interactive Shell to Lumen Framework.",
-            "keywords": [
-                "Tinker",
-                "laravel",
-                "lumen",
-                "shell"
-            ],
-            "time": "2017-09-19T18:27:06+00:00"
-        },
-        {
             "name": "zendframework/zend-diactoros",
             "version": "1.7.1",
             "source": {
@@ -4752,56 +4750,6 @@
                 "instantiate"
             ],
             "time": "2015-06-14T21:17:01+00:00"
-        },
-        {
-            "name": "fzaninotto/faker",
-            "version": "v1.7.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/fzaninotto/Faker.git",
-                "reference": "d3ed4cc37051c1ca52d22d76b437d14809fc7e0d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/d3ed4cc37051c1ca52d22d76b437d14809fc7e0d",
-                "reference": "d3ed4cc37051c1ca52d22d76b437d14809fc7e0d",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^5.3.3 || ^7.0"
-            },
-            "require-dev": {
-                "ext-intl": "*",
-                "phpunit/phpunit": "^4.0 || ^5.0",
-                "squizlabs/php_codesniffer": "^1.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.8-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Faker\\": "src/Faker/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "François Zaninotto"
-                }
-            ],
-            "description": "Faker is a PHP library that generates fake data for you.",
-            "keywords": [
-                "data",
-                "faker",
-                "fixtures"
-            ],
-            "time": "2017-08-15T16:48:10+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
