@@ -15,13 +15,7 @@ use Illuminate\Support\Facades\Mail;
 $app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
     //return $app->version();
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-    //return $request->secure() ? 'yes' : 'no';
 });
-
-//get list of bankers
-/*$app->get('/managers/{id}',function(\Illuminate\Http\Request $request) {
-    return response('222', 200);
-});*/
 
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
