@@ -26,7 +26,8 @@ class Banker extends BaseModel implements AuthenticatableContract, AuthorizableC
         'name',
         'firstname',
         'address',
-        'id_creator'
+        'id_creator',
+        'photo'
     ];
 
     /**

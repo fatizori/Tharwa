@@ -152,14 +152,11 @@ class RegistersController extends Controller {
          // Handle the user upload of avatar
             $data['id_user'] = $request->input('id_user');
             $data['photo'] = $request->file('photo');
-            $Rules =[
+            $rules =[
                  'id_user' => 'required',
                  'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
              ];
-             $validator = Validator::make($data, $Rules);
-             if (!$validator->passes()) {
-                 return response()->json(['message' => $validator->errors()->all()], 400);
-             }
+            $this->validate($request,$rules);
 
          $file = new FilesController;
 
@@ -177,7 +174,7 @@ class RegistersController extends Controller {
                  }break;
                  default: return  response()->json(['message' => 'invalid user'], 400);
              }
-             return  response()->json(['message' => 'photo has been updated successfully'], 200);
+             return  response()->json(['message' => 'photo has been updated successfully '.$data['id_user']], 200);
          }else{
              return response()->json(['message' => 'user not found'], 404);
          }
