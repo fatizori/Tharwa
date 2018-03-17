@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4bb23ccc82ffb398963f8343ee57c113",
+    "content-hash": "014e5884f644af6a29484aa255585537",
     "packages": [
         {
             "name": "appzcoder/lumen-routes-list",
@@ -6133,7 +6133,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.6.4"
+        "php": "^5.6.4",
+        "ext-gd": "*"
     },
     "platform-dev": []
 }
