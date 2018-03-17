@@ -21,7 +21,7 @@ $app->get('/', function () use ($app) {
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
 //get a banker by id
-$app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:manager']]);
+$app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
 //route to subscribe a banker
 $app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
 
