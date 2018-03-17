@@ -29,15 +29,18 @@ class BankersController extends Controller
 
 
     public function show($id){
-        $banker = Banker::find($id)
-            ->select('id', 'name','firstname','photo')
-            ->get();
+        $banker = Banker::find($id);
         if(!$banker){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }
-        return response()->json($banker, 200);
+        $keys = ['id', 'name','firstname','photo'];
+        $needed_banker = array();
+        foreach ($keys as $key) {
+            $needed_banker[$key] = $banker[$key];
+        }
+        $needed_banker['photo'] = FilesController::generateNameImageMinUser($banker['id'],$banker['photo']);
+        return response()->json($needed_banker, 200);
     }
-
 
     
 

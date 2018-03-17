@@ -174,7 +174,7 @@ class RegistersController extends Controller {
                  }break;
                  default: return  response()->json(['message' => 'invalid user'], 400);
              }
-             return  response()->json(['message' => 'photo has been updated successfully '.$data['id_user']], 200);
+             return  response()->json(['message' => 'photo has been updated successfully'], 200);
          }else{
              return response()->json(['message' => 'user not found'], 404);
          }

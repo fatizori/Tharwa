@@ -82,7 +82,7 @@ class LoginsController extends Controller {
      * @param $credentials
      * @return boolean
      */
-    protected function checkUser($credentials)
+    private function checkUser($credentials)
     {
         $user = User::whereEmail($credentials['email'])->first();
 
@@ -145,7 +145,7 @@ class LoginsController extends Controller {
      * Generate a nonce of 4 digits
      * @return string
      */
-    public function generateNonce(){
+    private function generateNonce(){
 
         $nonce=random_int(0,9999);
 
@@ -194,7 +194,7 @@ class LoginsController extends Controller {
      * @param $nonce
      * @return boolean
      */
-    protected function checkNonceUser($email,$password,$nonce)
+    private function checkNonceUser($email,$password,$nonce)
     {
         $user = User::whereEmail($email)->first();
         if (!is_null($user)
@@ -269,7 +269,7 @@ class LoginsController extends Controller {
      *
      * @return \Illuminate\Http\Response
      */
-    protected function sendFailedLoginResponse()
+    private function sendFailedLoginResponse()
     {
         return response()->json([
             'message' => $this->errorMessage,

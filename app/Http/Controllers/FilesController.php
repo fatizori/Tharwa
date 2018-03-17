@@ -116,7 +116,7 @@ class FilesController extends Controller {
      * @param $old_name
      * @return string
      */
-    public function generateNameImageMinUser($id_user,$old_name){
+    public static function generateNameImageMinUser($id_user,$old_name){
         return 'min_avatar_' .sha1('.,cm*é&' .$id_user). '_' .md5('µù' .$old_name)
             .sha1($id_user. 'ç&é' .md5($old_name)). '.' . 'jpeg';
     }

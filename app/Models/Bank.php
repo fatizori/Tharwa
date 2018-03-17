@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use Laravel\Passport\HasApiTokens;
 
-class Bank extends BaseModel
+class Bank extends Model
 {
  
 

@@ -12,7 +12,7 @@ use Storage;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
 
-class Currency extends BaseModel
+class Currency extends Model
 {
     use Authenticatable,
         Authorizable,
