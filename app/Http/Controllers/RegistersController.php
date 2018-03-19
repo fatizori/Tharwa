@@ -21,10 +21,8 @@ class RegistersController extends Controller {
     const IMAGE_MIN = 'images/customer_min/';
     const DEFAULT_USER_IMG = 'default_user.png';
 
-    private $email_sub;
     public function __construct()
     {
-        $this->email_sub = "";
     }
 
     //****************************    Creat a customer account    ******************************//
@@ -68,7 +66,7 @@ class RegistersController extends Controller {
         //Create a new user
        $user = new UsersController;
        $user_id = $user->store($request,0);
-
+       $this->email_sub = $requestemail;
         //Client Traitement
         $customer  = new Customer();
         $customer->name = strip_tags($data['name']);

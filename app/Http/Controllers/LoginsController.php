@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Services\CustomersServices;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -248,13 +249,19 @@ class LoginsController extends Controller {
         $response = json_decode($guzzleResponse->getBody());
 
         if (property_exists($response, 'access_token')) {
-
             $response = [
                 'user_id' => $user->id,
                 'user_type' => $user->role,
                 'access_token'   => $response->token_type.' '.$response->access_token,
                 'expires_in'    => $response->expires_in,
             ];
+            //Case of customers
+            if ($user->role == 0){
+                $customerService = new CustomersServices();
+                $customer_init_info = $customerService->getInitInfo($user->id);
+                $response = array_merge($customer_init_info, $response);
+            }
+
         }
 
         $response = response()->json($response);
