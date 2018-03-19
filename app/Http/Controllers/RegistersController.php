@@ -68,7 +68,7 @@ class RegistersController extends Controller {
         //Create a new user
        $user = new UsersController;
        $user_id = $user->store($request,0);
-       $this->email_sub = $requestemail;
+
         //Client Traitement
         $customer  = new Customer();
         $customer->name = strip_tags($data['name']);
@@ -86,11 +86,7 @@ class RegistersController extends Controller {
         DB::commit();
 
          //log information
-         $message = "a new customer was created";
-
-         $status = "success";
-         $type = 1;
-         dispatch(new LogJob($this->email_sub,'',$message,$type,$status));
+         dispatch(new LogJob($data['email'],'',"a new customer was created",1,"success"));
 
         return response(json_encode(['message' => 'new user  has been registered',
                                      'user_id' => $user_id]),201);
@@ -99,12 +95,10 @@ class RegistersController extends Controller {
     } catch(\Exception $e){
 
         DB::rollback();
-         $message = "Validation error";
-         $status = "failed";
-         $type = 1;
-         dispatch(new LogJob($this->email_sub,'',$message,$type,$status));
-
-        echo $e->getMessage();
+         // log information
+         dispatch(new LogJob($data['email'],'',$e->getMessage(),1,"failed"));
+         // show the exception message
+         echo $e->getMessage();
     }
     
 }
