@@ -12,11 +12,12 @@
 use App\Mail\AuthConfirmationMail;
 use Illuminate\Support\Facades\Mail;
 
-$app->get('/', function (\Illuminate\Http\Request $request) use ($app) {
+$app->get('/', function () use ($app) {
     //return $app->version();
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
+//Bankers
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
 //get a banker by id
