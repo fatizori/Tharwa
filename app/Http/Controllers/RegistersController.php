@@ -66,7 +66,6 @@ class RegistersController extends Controller {
         //Create a new user
        $user = new UsersController;
        $user_id = $user->store($request,0);
-       $this->email_sub = $requestemail;
         //Client Traitement
         $customer  = new Customer();
         $customer->name = strip_tags($data['name']);
