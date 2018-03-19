@@ -95,7 +95,7 @@ class RegistersController extends Controller {
          // log information
          dispatch(new LogJob($data['email'],'',$e->getMessage(),1,"failed"));
          // show the exception message
-         echo $e->getMessage();
+         return response()->json(['message' => $e->getMessage()], 500);
     }
     
 }
@@ -148,7 +148,7 @@ class RegistersController extends Controller {
          } catch (\Exception $e) {
              DB::rollback();
 
-             echo $e->getMessage();
+             return response()->json(['message' => $e->getMessage()], 500);
          }
      }
 
@@ -159,13 +159,18 @@ class RegistersController extends Controller {
      */
      public function update_avatar(Request $request){
          // Handle the user upload of avatar
-            $data['id_user'] = $request->input('id_user');
-            $data['photo'] = $request->file('photo');
-            $rules =[
+         $data['id_user'] = $request->input('id_user');
+         $data['photo'] = $request->file('photo');
+         $rules =[
                  'id_user' => 'required',
                  'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
-             ];
-            $this->validate($request,$rules);
+         ];
+
+         $validator = Validator::make($data, $rules);
+
+         if (!$validator->passes()) {
+             return response()->json(['message' => $validator->errors()->all()], 400);
+         }
 
          $file = new FilesController;
 
