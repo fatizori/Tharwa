@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
+use App\Models\User;
+use App\Models\Account;
 
 class Customer extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -50,6 +52,11 @@ class Customer extends Model implements AuthenticatableContract, AuthorizableCon
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
+    }
+
+    public function accounts()
+    {
+            return $this->hasMany(Account::class,'id_customer','id');
     }
 }

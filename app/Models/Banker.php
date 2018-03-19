@@ -9,6 +9,7 @@ use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
+use App\Models\User;
 
 class Banker extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -44,6 +45,6 @@ class Banker extends Model implements AuthenticatableContract, AuthorizableContr
     
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 }

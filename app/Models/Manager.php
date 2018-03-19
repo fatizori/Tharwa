@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
+use App\Models\User;
 
 class Manager extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -49,7 +50,7 @@ class Manager extends Model implements AuthenticatableContract, AuthorizableCont
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
 }

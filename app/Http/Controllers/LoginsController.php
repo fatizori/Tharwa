@@ -5,7 +5,6 @@ use App\Services\CustomersServices;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use GuzzleHttp\Exception\BadResponseException;
@@ -258,7 +257,7 @@ class LoginsController extends Controller {
             //Case of customers
             if ($user->role == 0){
                 $customerService = new CustomersServices();
-                $customer_init_info = $customerService->getInitInfo($user->id);
+                $customer_init_info = $customerService->getInitialInfos($user->id);
                 $response = array_merge($customer_init_info, $response);
             }
 

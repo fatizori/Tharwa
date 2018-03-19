@@ -9,6 +9,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
+use App\Models\Account;
+use App\Models\Customer;
+use App\Models\Banker;
+use App\Models\Manager;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -62,21 +66,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         }
     }
 
-    public function account()
-    {
-        return $this->hasMany('App\Account');
-    }
+
     public function customer()
     {
-        return $this->hasOne('App\Customer');
+        return $this->hasOne(Customer::class);
     }
     public function banker()
     {
-        return $this->hasOne('App\Banker');
+        return $this->hasOne(Banker::class);
     }
     public function manager()
     {
-        return $this->hasOne('App\Manager');
+        return $this->hasOne(Manager::class);
     }
 
 }

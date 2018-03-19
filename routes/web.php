@@ -9,12 +9,12 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-use App\Mail\AuthConfirmationMail;
-use Illuminate\Support\Facades\Mail;
 
 $app->get('/', function () use ($app) {
     //return $app->version();
-    return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    //return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+     $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(11,'avatar_1521241261_211020320022221dad37f07867f023154108238960396d717c809e6506444702dd6ead302d4c84317bc287f9cbf87_6c164f25e17f52198b845214c681c921adf4ae22.jpg');
+     echo $name;
 });
 
 //Bankers
