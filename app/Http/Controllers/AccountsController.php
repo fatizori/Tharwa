@@ -16,7 +16,7 @@ class AccountsController extends Controller
         $accounts  = Account::join('customers', 'customers.id', '=', 'accounts.id_customer')
             ->join('users','users.id','=','accounts.id_customer')
             ->where('accounts.status','=',0)
-            ->select('name','function','address','phone_number','email','accounts.type')
+            ->select('accounts.id','name','function','address','phone_number','email','accounts.type')
             ->get();
 
         //if no account exists in the database
@@ -27,7 +27,7 @@ class AccountsController extends Controller
     }
 
 
-   
+
 
     public function show($id){
         $accounts = Account::find($id);
@@ -38,7 +38,6 @@ class AccountsController extends Controller
     }
 
 
-    
 
     public function destroy($id){
         $account = Account::find($id);
@@ -52,7 +51,23 @@ class AccountsController extends Controller
         return response()->json(['message' =>"The acount with  id {$id} has been deleted"], 200);
     }
 
+  /*
+   *  Validate the customer account
+   */
 
-    
+    public function  validateAccount(Request $request,$id_account){
+        $data = $request->json()->all();
+        $type = $data['type'];
+        // find the account by id
+        $account = Account::find($id_account);
+        if(!is_null($account)){
+            // update the account status
+            $account->update(['status'=> $type]);
 
+            return  response()->json(['message' => 'status account has been updated successfully '], 200);
+        }else{
+            return response()->json(['message' => 'account not found'], 404);
+        }
+
+    }
 }

@@ -2,6 +2,7 @@
 
 use  App\Http\Controllers\FilesController;
 use  App\Http\Controllers\UsersController;
+use  App\Jobs\LogJob;
 use App\Models\User;
 use App\Models\Account;
 use App\Models\Banker;
@@ -20,8 +21,10 @@ class RegistersController extends Controller {
     const IMAGE_MIN = 'images/customer_min/';
     const DEFAULT_USER_IMG = 'default_user.png';
 
+    private $email_sub;
     public function __construct()
     {
+        $this->email_sub = "";
     }
 
     //****************************    Creat a customer account    ******************************//
@@ -54,8 +57,10 @@ class RegistersController extends Controller {
         $data=$request->json()->all();
         $validator = Validator::make($data, $rulesCustomer);
         if (!$validator->passes()) {
+
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
+
 
      try{
         DB::beginTransaction();
@@ -63,7 +68,7 @@ class RegistersController extends Controller {
         //Create a new user
        $user = new UsersController;
        $user_id = $user->store($request,0);
-
+       $this->email_sub = $requestemail;
         //Client Traitement
         $customer  = new Customer();
         $customer->name = strip_tags($data['name']);
@@ -74,17 +79,30 @@ class RegistersController extends Controller {
         $customer->type = $data['type'];
         $customer->photo=self::DEFAULT_USER_IMG;
         $customer->id = $user_id;
-        
+        $customer->save();
         //Account Traitement
          $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
+
+         //log information
+         $message = "a new customer was created";
+
+         $status = "success";
+         $type = 1;
+         dispatch(new LogJob($this->email_sub,'',$message,$type,$status));
+
         return response(json_encode(['message' => 'new user  has been registered',
                                      'user_id' => $user_id]),201);
 
   
     } catch(\Exception $e){
+
         DB::rollback();
+         $message = "Validation error";
+         $status = "failed";
+         $type = 1;
+         dispatch(new LogJob($this->email_sub,'',$message,$type,$status));
 
         echo $e->getMessage();
     }
@@ -179,4 +197,6 @@ class RegistersController extends Controller {
              return response()->json(['message' => 'user not found'], 404);
          }
      }
+
+
 }

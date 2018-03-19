@@ -34,12 +34,17 @@ class ManagersController extends Controller
 
 
     public function show($id){
-        $manager = Manager::find($id)
-                   ->select('id', 'name','firstname','photo')
-                   ->get();
+        $manager = Manager::find($id);
+
         if(!$manager){
             return response()->json(['message' => "The manager with {$id} doesn't exist"], 404);
         }
+        $keys = ['id', 'name','firstname','photo'];
+        $needed_manager = array();
+        foreach ($keys as $key) {
+            $needed_manager[$key] = $manager[$key];
+        }
+        $needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
         return response()->json($manager, 200);
     }
 
@@ -47,12 +52,12 @@ class ManagersController extends Controller
 
 
     public function destroy($id){
-        $banquier = Bnaquier::find($id);
-        if(!$banquier){
-            return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
+        $manager = Manager::find($id);
+        if(!$manager){
+            return response()->json(['message' => "The manager with {$id} doesn't exist"], 404);
         }
-        $banquier->delete();
-        return response()->json(['message' =>"The banker with  id {$id} has been deleted"], 200);
+        $manager->delete();
+        return response()->json(['message' =>"The manager with  id {$id} has been deleted"], 200);
     }
 
 
