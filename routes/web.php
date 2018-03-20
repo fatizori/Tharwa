@@ -13,7 +13,7 @@
 $app->get('/', function () use ($app) {
     //return $app->version();
     //return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-     $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(11,'avatar_1521241261_211020320022221dad37f07867f023154108238960396d717c809e6506444702dd6ead302d4c84317bc287f9cbf87_6c164f25e17f52198b845214c681c921adf4ae22.jpg');
+     $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(11,'min_avatar_c6bb6cae57f0a474d1f622f385546cf7cfd26c84_ba33a1812f10c5a2b9fa53f59e4c89bb47006076a7f7f94c3fd670e723e55c69b3badb02.jpeg');
      echo $name;
 });
 

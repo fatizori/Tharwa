@@ -38,9 +38,14 @@ class BankersController extends Controller
         foreach ($keys as $key) {
             $needed_banker[$key] = $banker[$key];
         }
-        $needed_banker['photo'] = FilesController::generateNameImageMinUser($banker['id'],$banker['photo']);
-        //$needed_banker['photo'] =  'min_avatar_c6bb6cae57f0a474d1f622f385546cf7cfd26c84_ba33a1812f10c5a2b9fa53f59e4c89bb47006076a7f7f94c3fd670e723e55c69b3badb02.jpeg';
+        //$needed_banker['photo'] = FilesController::generateNameImageMinUser($banker['id'],$banker['photo']);
+        //TODO delete this shit
+        if($id == 2){
+            $needed_banker['photo'] = 'min_banker_1.png';
+        }else{
+            $needed_banker['photo'] =  'min_avatar_c6bb6cae57f0a474d1f622f385546cf7cfd26c84_ba33a1812f10c5a2b9fa53f59e4c89bb47006076a7f7f94c3fd670e723e55c69b3badb02.jpeg';
 
+        }
         return response()->json($needed_banker, 200);
     }
 
