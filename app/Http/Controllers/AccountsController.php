@@ -11,7 +11,25 @@ class AccountsController extends Controller
     {      
     }
 
+    /**
+     * Get all accounts
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(){
+        //get the list of accounts
+        $accounts  = Account::get()->all();
+        //if no account exists in the database
+        if(!$accounts){
+            return response()->json(['message' => 'No account was found'], 404);
+        }
+        return response()->json($accounts, 200);
+    }
+
+    /**
+     * Get non validated accounts
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexNonValid(){
         //get the list of accounts non valide
         $accounts  = Account::join('customers', 'customers.id', '=', 'accounts.id_customer')
             ->join('users','users.id','=','accounts.id_customer')

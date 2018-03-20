@@ -18,24 +18,35 @@ $app->get('/', function () use ($app) {
 });
 
 //Bankers
+$app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
+//get the list of all accounts
+$app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => ['auth','role:banker']]);
+//get the list of non valide accounts
+$app->get('accounts_nv',['uses' => 'AccountsController@indexNonValid', 'middleware' => ['auth','role:banker']]);
+// validate the user account
+$app->put('accounts/{id}',['uses' => 'AccountsController@validateAccount','middleware' => ['auth','role:banker']]);
+
+
+//Managers
+//get a manager by id
+$app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
+//route to subscribe a banker
+$app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
 //get a banker by id
-$app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
-//get a manager by id
-$app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
-//get the list of non valide accounts
-$app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => 'auth' ]);
+
+
+//Customers
 //get the exchange rate
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate', 'middleware' => 'auth']);
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
-//route to subscribe a banker
-$app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
+
+//All users
 // update user photo
 $app->put('update_photo',['uses' => 'RegistersController@update_avatar']);
-// validate the user account
-$app->put('accounts/{id}',['uses' => 'AccountsController@validateAccount','middleware' => ['auth','role:banker']]);
+
 
 
 

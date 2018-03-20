@@ -44,8 +44,8 @@ class ManagersController extends Controller
         foreach ($keys as $key) {
             $needed_manager[$key] = $manager[$key];
         }
-        //$needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
-        $needed_banker['photo'] =  'mini_tom.jpg.jpeg';
+        $needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
+        //$needed_banker['photo'] =  'mini_tom.jpg.jpeg';
         return response()->json($manager, 200);
     }
 
