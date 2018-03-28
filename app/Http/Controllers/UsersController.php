@@ -1,9 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-
-use App\Business\LogManager;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Services\UsersServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,11 +11,29 @@ class UsersController extends Controller
            // $this->middleware('auth', ['except' => ['index' , 'show']]);
     }
 
+    /**
+     * Find all users
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(){
-        $users = User::all();
+        $userService = new UsersServices();
+        $users = $userService->findAll();
         return response()->json($users, 200);
     }
 
+    /**
+     * Find a user by id
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($id){
+        $userService = new UsersServices();
+        $user = $userService->findById($id);
+        if(!$user){
+            return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
+        }
+        return response()->json($user, 200);
+    }
 
     /**
      * Create a new User
@@ -28,58 +43,64 @@ class UsersController extends Controller
     public function store(Request $request,$role){
         $this->validateRequest($request);
         $data =  $request->json()->all();
-        $user = User::create([
-            'email' => $data['email'],
-            'password'=> app('hash')->make($data['password']),
-            'phone_number'=>$data['phone_number'],
-            'role'=>$role,
-            'nonce_auth' => sprintf('%04u', random_int(0,9999)),
-            'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()
-        ]);
-
-        
+        $userService = new UsersServices();
+        $user = $userService->create($data,$role);
         return $user->id;
     }
 
-    public function show($id){
-        $user = User::find($id);
-        if(!$user){
-            return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
-        }
-        return response()->json($user, 200);
-    }
 
-
+    /**
+     * Update the user data
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request, $id){
 
-        $user = User::find($id);
+        $userService = new UsersServices();
+        //find the user by id
+        $user = $userService->findById($id);
+        //if the user not exist
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
+        //if the user exist validate the data
         $this->validateRequest($request);
-        $user->email = $request->get('email');
-        $user->password = app('hash')->make($request->get('password'));
-        $user->save();
+        $data = $request->json()->all();
+        //update the user data
+         $userService->update($user,$data);
+
         return response()->json(['message' => "The user with  id {$user->id} has been updated"], 200);
     }
 
+    /**
+     * Delete a user
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
     public function destroy($id){
-        $user = User::find($id);
+        $userService = new UsersServices();
+        //find the user by id
+        $user = $userService->findById($id);
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
-        $user->delete();
+        //delete the user
+       $userService->delete($user,$id);
         return response()->json(['message' =>"The user with  id {$id} has been deleted"], 200);
     }
 
     /**
-     * Ipnut validation for user
+     * Input validation for user
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function validateRequest(Request $request){
         $rules = [
             'email' => 'required| email',
             'password' => 'required',
-           
+            'phone_number'=> 'required'
         ];
         $data=$request->json()->all();
         $validator = Validator::make($data, $rules);
