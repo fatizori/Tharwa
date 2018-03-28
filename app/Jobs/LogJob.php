@@ -15,6 +15,11 @@ class LogJob extends Job
     /**
      * email subject
      */
+    const FAILED_STATUS  = "failed";
+    const SUCCESS_STATUS  = "success";
+    /**
+     * email subject
+     */
     private $email_sub;
 
     /**
@@ -36,6 +41,7 @@ class LogJob extends Job
      *  event status
      */
     private $status;
+
     /**
      * Create a new job instance.
      *
@@ -66,6 +72,10 @@ class LogJob extends Job
                 break;
             case '2' :
                 $this->type = 'get data';
+            case '3' :
+                $this->type = 'update avatar';
+            case '4' :
+                $this->type = 'update account';
             default : return  response()->json(['message' => 'invalid type'], 400);
         }
 

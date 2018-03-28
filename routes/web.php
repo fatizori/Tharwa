@@ -22,7 +22,7 @@ $app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['a
 //get the list of all accounts
 $app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => ['auth','role:banker']]);
 //get the list of non valide accounts
-$app->get('accounts_nv',['uses' => 'AccountsController@indexNonValid', 'middleware' => ['auth','role:banker']]);
+$app->get('accounts_nv',['uses' => 'AccountsController@invalidAccounts','middleware' => ['auth','role:banker']]);
 // validate the user account
 $app->put('accounts/{id}',['uses' => 'AccountsController@validateAccount','middleware' => ['auth','role:banker']]);
 

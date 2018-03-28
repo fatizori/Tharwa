@@ -1,5 +1,9 @@
 <?php namespace App\Http\Controllers;
 
+use App\Services\AccountsServices;
+use App\Services\CustomersServices;
+use App\Services\BankersServices;
+use App\Services\UsersServices;
 use  App\Http\Controllers\FilesController;
 use  App\Http\Controllers\UsersController;
 use  App\Jobs\LogJob;
@@ -23,6 +27,7 @@ class RegistersController extends Controller {
 
     public function __construct()
     {
+
     }
 
     //****************************    Creat a customer account    ******************************//
@@ -31,10 +36,8 @@ class RegistersController extends Controller {
      * @param user_id , accoutn type
      */
     public function createAccount($id,$type){
-        $account=new Account();
-        $account->id_customer=$id;
-        $account->type = $type;
-        $account->save();
+        $accountServices = new AccountsServices();
+        $accountServices->create($id,$type);
     }
 
     /**
@@ -55,7 +58,8 @@ class RegistersController extends Controller {
         $data=$request->json()->all();
         $validator = Validator::make($data, $rulesCustomer);
         if (!$validator->passes()) {
-
+            // log information
+            dispatch(new LogJob($data['email'],'',"Input validation error",1,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
 
@@ -67,23 +71,15 @@ class RegistersController extends Controller {
        $user = new UsersController;
        $user_id = $user->store($request,0);
         //Client Traitement
-        $customer  = new Customer();
-        $customer->name = strip_tags($data['name']);
-        $customer->address = strip_tags($data['address']);
-        $customer->function = strip_tags($data['function']);
-        $customer->wilaya = strip_tags($data['wilaya']);
-        $customer->commune = strip_tags($data['commune']);
-        $customer->type = $data['type'];
-        $customer->photo=self::DEFAULT_USER_IMG;
-        $customer->id = $user_id;
-        $customer->save();
+        $customerService = new CustomersServices();
+        $customerService->create($data,$user_id,self::DEFAULT_USER_IMG);
         //Account Traitement
          $this->createAccount($user_id,0); //the default account is the current account
 
         DB::commit();
 
          //log information
-         dispatch(new LogJob($data['email'],'',"a new customer was created",1,"success"));
+         dispatch(new LogJob($data['email'],'',"a new customer was created",1,LogJob::SUCCESS_STATUS));
 
         return response(json_encode(['message' => 'new user  has been registered',
                                      'user_id' => $user_id]),201);
@@ -93,7 +89,7 @@ class RegistersController extends Controller {
 
         DB::rollback();
          // log information
-         dispatch(new LogJob($data['email'],'',$e->getMessage(),1,"failed"));
+         dispatch(new LogJob($data['email'],'',$e->getMessage(),1,LogJob::FAILED_STATUS));
          // show the exception message
          return response()->json(['message' => $e->getMessage()], 500);
     }
@@ -119,6 +115,8 @@ class RegistersController extends Controller {
          $data = $request->json()->all();
          $validator = Validator::make($data, $rulesBanker);
          if (!$validator->passes()) {
+             // log information
+             dispatch(new LogJob($data['email'],'',"Input validation error",1,LogJob::FAILED_STATUS));
              return response()->json(['message' => $validator->errors()->all()], 400);
          }
 
@@ -126,38 +124,44 @@ class RegistersController extends Controller {
              DB::beginTransaction();
              //Get the id of the creator (manager)
              $id_manager = $request->user()->id;
+             //Get the email of the creator
+             $email_manager = $request->user()->email;
 
              $user = new UsersController;
              //Create a new user
              $user_id = $user->store($request, 1);
 
              //Banker Traitement
-             $banker = new Banker();
-             $banker->name = strip_tags($data['name']);
-             $banker->firstname = strip_tags($data['firstname']);
-             $banker->address = strip_tags($data['address']);
-             $banker->id = $user_id;
-             $banker->photo = self::DEFAULT_USER_IMG;
-             $banker->id_creator = $id_manager;  // the id of the manager who create the banker account
-             $banker->save();
+             $bankerService = new BankersServices();
+             $bankerService->create($data,$user_id,$id_manager,self::DEFAULT_USER_IMG);
 
              DB::commit();
+
+             //log information
+             dispatch(new LogJob($data['email'],$email_manager,"a new banker was created",1,LogJob::SUCCESS_STATUS));
              return response(json_encode(['message' => 'new user  has been registered',
                                             'user_id' => $user_id]), 201);
 
          } catch (\Exception $e) {
              DB::rollback();
-
+             //log information
+             dispatch(new LogJob($data['email'],$email_manager,$e->getMessage(),1,LogJob::FAILED_STATUS));
              return response()->json(['message' => $e->getMessage()], 500);
          }
      }
 
 
     /**
+     * Update the user avatar
      * @param Request $request
      * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
      */
      public function update_avatar(Request $request){
+
+         $customerService = new CustomersServices();
+         $bankerService = new BankersServices();
+         $userService = new UsersServices();
+
          // Handle the user upload of avatar
          $data['id_user'] = $request->input('id_user');
          $data['photo'] = $request->file('photo');
@@ -169,6 +173,8 @@ class RegistersController extends Controller {
          $validator = Validator::make($data, $rules);
 
          if (!$validator->passes()) {
+             // log information
+             dispatch(new LogJob('','',"Input validation error",3,LogJob::FAILED_STATUS));
              return response()->json(['message' => $validator->errors()->all()], 400);
          }
 
@@ -177,19 +183,32 @@ class RegistersController extends Controller {
          //customer avatar
          $id_user = $data['id_user'];
          $picture_url = $file->uploadImage($data['photo'],self::IMAGE_USER,self::IMAGE_MIN,$id_user);
-         $user = User::find($id_user);
+
+         //find the user by id
+         $user = $userService->findById($id_user);
          if (!is_null($user)){
              switch ($user->getRole()){
                  case  'customer': {
-                    Customer::find($id_user)->update(['photo' => $picture_url]);
-                 }break;
+                    $customerService->updatePhoto( $id_user,$picture_url);
+                     break;
+                 }
                  case  'banker': {
-                    Banker::find($id_user)->update(['photo' => $picture_url]);
-                 }break;
-                 default: return  response()->json(['message' => 'invalid user'], 400);
+                    $bankerService->updatePhoto($id_user,$picture_url);
+                     break;
+                 }
+                 default:
+                     {
+                         // log information
+                         dispatch(new LogJob($user->email,'',"invalid user",3,LogJob::FAILED_STATUS));
+                         return response()->json(['message' => 'invalid user'], 400);
+                     }
              }
+             //log information
+             dispatch(new LogJob($user->email,'',"a user avatar has been updated",3,LogJob::SUCCESS_STATUS));
              return  response()->json(['message' => 'photo has been updated successfully'], 200);
          }else{
+             // log information
+             dispatch(new LogJob('','',"user not found",3,LogJob::FAILED_STATUS));
              return response()->json(['message' => 'user not found'], 404);
          }
      }

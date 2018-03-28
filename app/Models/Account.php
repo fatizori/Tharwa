@@ -43,7 +43,7 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
     
 
 
-     public function user()
+     public function customer()
     {
         return $this->belongsTo(Customer::class);
     }
