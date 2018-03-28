@@ -18,6 +18,7 @@ $app->get('/', function () use ($app) {
 });
 
 //Bankers
+//get a banker by id
 $app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
 //get the list of all accounts
 $app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => ['auth','role:banker']]);
@@ -34,7 +35,8 @@ $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => [
 $app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
 //get list of bankers
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
-//get a banker by id
+//get the list of banks
+$app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
 
 
 //Customers
