@@ -12,19 +12,19 @@
 
 $app->get('/', function () use ($app) {
     //return $app->version();
-    //return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-     $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(11,'min_avatar_c6bb6cae57f0a474d1f622f385546cf7cfd26c84_ba33a1812f10c5a2b9fa53f59e4c89bb47006076a7f7f94c3fd670e723e55c69b3badb02.jpeg');
-     echo $name;
+    return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
-//Bankers
+// Bankers
 $app->get('bankers/{id}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
-//get the list of all accounts
+// get the list of all accounts
 $app->get('accounts',['uses' => 'AccountsController@index', 'middleware' => ['auth','role:banker']]);
-//get the list of non valide accounts
+// get the list of non valide accounts
 $app->get('accounts_nv',['uses' => 'AccountsController@invalidAccounts','middleware' => ['auth','role:banker']]);
 // validate the user account
 $app->put('accounts/{id}',['uses' => 'AccountsController@validateAccount','middleware' => ['auth','role:banker']]);
+// Get Notif number
+$app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middleware' => ['auth']]);
 
 
 //Managers

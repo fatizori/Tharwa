@@ -32,7 +32,8 @@ $app = new Laravel\Lumen\Application(
 
 // Register the facade
 $app->withFacades(true, [
-    Swap\Laravel\Facades\Swap::class => 'Swap'
+    Swap\Laravel\Facades\Swap::class => 'Swap',
+    Illuminate\Support\Facades\Notification::class => 'Notification',
 ]);
 
 
@@ -125,6 +126,8 @@ $app->routeMiddleware([
   $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 // register the SMS provider
   $app->register(Nexmo\Laravel\NexmoServiceProvider::class);
+//Notifications
+$app->register(\Illuminate\Notifications\NotificationServiceProvider::class);
 
 
 

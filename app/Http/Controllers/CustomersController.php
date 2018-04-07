@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mezerreg
- * Date: 01-03-2018
- * Time: 12:47
- */
 
 namespace App\Http\Controllers;
 use App\Models\Customer;
@@ -18,10 +12,6 @@ class CustomersController extends Controller
 
     public function index(){
         $customers = Customer::all();
-        //TODO delete this shit!!
-        foreach ($customers as $customer){
-            $customer->photo = 'customer1.jpg';
-        }
         return response()->json($customers, 200);
     }
 
@@ -32,8 +22,6 @@ class CustomersController extends Controller
         if(!$customer){
             return response()->json(['message' => "The customer with {$id} doesn't exist"], 404);
         }
-        //TODO delete this shit!!
-        $customer->photo = 'customer1.jpg';
         return response()->json($customer, 200);
     }
 

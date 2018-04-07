@@ -6,7 +6,7 @@
 //$app->post('login', ['uses' => 'LoginsController@sendCodeLogin',
 //    'middleware' => ['force_ssl']]);
 
-$app->post('login', ['uses' => 'LoginsController@sendCodeLogin']);
+$app->post('login', ['uses' => 'LoginsController@askCodeLogin']);
 
 //route to authenticate (2nd step send code)
 $app->post('login/code', ['uses' => 'LoginsController@Login']);

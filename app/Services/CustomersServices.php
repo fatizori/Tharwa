@@ -24,11 +24,9 @@ class CustomersServices
                 $current_account['balance'] = $account->balance;
             }
         }
-            //TODO Delete this shit!!
         $data = [
             'name' => $customer->name,
-            'photo' => 'customer1.jpg',
-            //'photo' => $customer->photo,
+            'photo' => $customer->photo,
             'type' => $customer->type,
             'account_types' => $accounts_types,
             'current_account' => $current_account
