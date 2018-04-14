@@ -71,15 +71,15 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function customer()
     {
-        return $this->hasOne(Customer::class);
+        return $this->hasOne(Customer::class,'id');
     }
     public function banker()
     {
-        return $this->hasOne(Banker::class);
+        return $this->hasOne(Banker::class, 'id');
     }
     public function manager()
     {
-        return $this->hasOne(Manager::class);
+        return $this->hasOne(Manager::class, 'id');
     }
 
 }

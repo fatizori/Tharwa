@@ -125,7 +125,7 @@ class UsersController extends Controller
             return response()->json(['message' => 'invalid input data'], 400);
         }
 
-        //update the user data
+        //update the user password
         if (! $this->userService->updatePassword($request)){
             return response()->json(['message' => 'Old password incorrect'], 400);
         }

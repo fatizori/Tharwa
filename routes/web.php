@@ -37,7 +37,8 @@ $app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware
 $app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
-
+//route to update banker personal info
+$app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 
 //Customers
 //get the exchange rate

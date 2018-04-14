@@ -3,12 +3,17 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Banker;
+use App\Services\BankersServices;
+use Illuminate\Http\Request;
 
 
 class BankersController extends Controller
 {
+    private $bankerService;
+
     public function __construct()
-    {     
+    {
+        $this->bankerService = new BankersServices();
     }
 
     public function index(){
@@ -43,8 +48,11 @@ class BankersController extends Controller
         return response()->json($needed_banker, 200);
     }
 
-    
 
+    /**
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy($id){
         $banquier = Bnaquier::find($id);
         if(!$banquier){
@@ -54,6 +62,26 @@ class BankersController extends Controller
         return response()->json(['message' =>"The banker with  id {$id} has been deleted"], 200);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeInfo(Request $request){
+        //Validate input
+        $rules = [
+            'name' => 'alpha',
+            'firstname'=> 'alpha',
+            'address' => '',
+            'email' => 'email | filled',
+            'phone_number' => 'numeric | filled | min:12',
+        ];
+        $data = $request->json()->all();
 
-    
+        if(! $this->validateData($data,$rules)){
+            return response()->json(['message' => 'invalid input data'], 400);
+        }
+
+        //call for update infos
+        return $this->bankerService->updateInfo($request);
+    }
 }

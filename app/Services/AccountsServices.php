@@ -73,7 +73,6 @@ class AccountsServices
     /**
      * Delete an account
      * @param $account
-     * @param $id
      */
     public function delete($account){
         $account->delete();

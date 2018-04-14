@@ -64,18 +64,24 @@ class LogJob extends Job
     public function handle()
     {
         switch($this->type){
-            case '0' :
+            case 0 :
                 $this->type = 'login';
                 break;
-            case '1':
+            case 1:
                 $this->type = 'create';
                 break;
-            case '2' :
+            case 2 :
                 $this->type = 'get data';
-            case '3' :
+                break;
+            case 3 :
                 $this->type = 'update avatar';
-            case '4' :
+                break;
+            case 4 :
                 $this->type = 'update account';
+                break;
+            case 5 :
+                $this->type = 'update banker profile';
+                break;
             default : return  response()->json(['message' => 'invalid type'], 400);
         }
 
