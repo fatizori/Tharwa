@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
+    private $userService;
     public function __construct()
     {       //TODO the middleware is applied before in the route but we can do this
            // $this->middleware('auth', ['except' => ['index' , 'show']]);
+        $this->userService = new UsersServices();
     }
 
     /**
@@ -16,8 +18,7 @@ class UsersController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(){
-        $userService = new UsersServices();
-        $users = $userService->findAll();
+        $users = $this->userService->findAll();
         return response()->json($users, 200);
     }
 
@@ -27,8 +28,7 @@ class UsersController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id){
-        $userService = new UsersServices();
-        $user = $userService->findById($id);
+        $user = $this->userService->findById($id);
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
@@ -43,8 +43,7 @@ class UsersController extends Controller
     public function store(Request $request,$role){
         $this->validateRequest($request);
         $data =  $request->json()->all();
-        $userService = new UsersServices();
-        $user = $userService->create($data,$role);
+        $user = $this->userService->create($data,$role);
         return $user->id;
     }
 
@@ -57,9 +56,8 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id){
 
-        $userService = new UsersServices();
         //find the user by id
-        $user = $userService->findById($id);
+        $user = $this->userService->findById($id);
         //if the user not exist
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
@@ -80,9 +78,8 @@ class UsersController extends Controller
      * @throws \Exception
      */
     public function destroy($id){
-        $userService = new UsersServices();
         //find the user by id
-        $user = $userService->findById($id);
+        $user = $this->userService->findById($id);
         if(!$user){
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
@@ -108,6 +105,32 @@ class UsersController extends Controller
             return  response()->json(['message' => $validator->errors()->all()], 400);
 
         }
+    }
+
+    /**
+     * Update the user password
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(Request $request){
+        //Validate input
+        $rules = [
+            'old_password' => 'required',
+            'new_password'=> 'required'
+        ];
+        $data = $request->json()->all();
+
+        // validate  data
+        if(! $this->validateData($data,$rules)){
+            return response()->json(['message' => 'invalid input data'], 400);
+        }
+
+        //update the user data
+        if (! $this->userService->updatePassword($request)){
+            return response()->json(['message' => 'Old password incorrect'], 400);
+        }
+
+        return response()->json(['message' => 'Password changed!'], 200);
     }
 
 }

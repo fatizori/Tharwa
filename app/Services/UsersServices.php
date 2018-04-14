@@ -9,6 +9,8 @@
 namespace App\Services;
 use App\Models\User;
 use Carbon\Carbon;
+use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UsersServices
 {
@@ -20,6 +22,14 @@ class UsersServices
         $users = User::all();
         return $users;
     }
+
+//    /**
+//     * @param Request $request
+//     * @return user or null
+//     */
+//        public function findAuthUser(Request $request){
+//            return $request->user();
+//        }
 
     /**
      * Find a user by id
@@ -56,6 +66,25 @@ class UsersServices
      */
     public function update($user,$data){
         $user->update(['email'=> $data['email'], 'password'=> $data['password']]);
+    }
+
+    /**
+     * Update the user data
+     * @param Request $request
+     * @return bool
+     */
+    public function updatePassword(Request $request){
+        $data =  $request->json()->all();
+        $enteredOldPassword = $data['old_password'];
+        //dd($enteredOldPassword);
+        $user = $request->user();
+        $oldPassword = $user->password;
+
+        if (! Hash::check($enteredOldPassword, $oldPassword)) {
+            return false;
+        }
+
+        return $user->update(['password'=> app('hash')->make($data['new_password'])]);
     }
 
 

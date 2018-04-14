@@ -45,9 +45,12 @@ $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate', 'middlewar
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 
+
+
 //All users
 // update user photo
 $app->put('update_photo',['uses' => 'RegistersController@update_avatar']);
+$app->put('change_password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
 
 

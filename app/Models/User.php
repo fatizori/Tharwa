@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Notifications\Notifiable;
 use Storage;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
@@ -19,6 +20,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     use Authenticatable,
         Authorizable,
         HasApiTokens;
+
 
         /**
          * The attributes that are mass assignable.
