@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Banker;
 use Closure;
 
 /**
@@ -27,7 +28,12 @@ class RoleMiddleware
      */
     public function handle($request, Closure $next,$role = null)
     {
-        if(!$request->user()->hasRole($role)){
+        $user = $request->user();
+        if(! $user->hasRole($role)){
+            return response('Unauthorized.'.$role, 403);
+        }
+        //Verify whether the banker is blocked
+        if($user->getRole() == 'banker' && !Banker::find($user->id)->is_active){
             return response('Unauthorized.'.$role, 403);
         }
         return $next($request);

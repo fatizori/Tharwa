@@ -84,4 +84,14 @@ class BankersController extends Controller
         //call for update infos
         return $this->bankerService->updateInfo($request);
     }
+
+    /**
+     * @param Request $request
+     * @param $id_banker
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function blockBanker(Request $request,$id_banker){
+        //call to block banker
+        return $this->bankerService->setBankerInvalide($request->user()->email , $id_banker);
+    }
 }

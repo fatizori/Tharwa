@@ -76,7 +76,6 @@ class UsersServices
     public function updatePassword(Request $request){
         $data =  $request->json()->all();
         $enteredOldPassword = $data['old_password'];
-        //dd($enteredOldPassword);
         $user = $request->user();
         $oldPassword = $user->password;
 

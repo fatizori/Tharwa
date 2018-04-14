@@ -15,12 +15,14 @@ class CreateBankersTable extends Migration
     {
         Schema::create('bankers', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->increments('id');
+            $table->integer('id',0,1);
+            $table->foreign('id')->references('id')->on('users');
             // Schema declaration
             $table->string('name');
             $table->string('firstname');
             $table->string('address');
             $table->string('photo')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
             // Constraints declaration
             $table->integer('id_creator');

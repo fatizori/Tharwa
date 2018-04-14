@@ -16,7 +16,8 @@ class CreateManagersTable extends Migration
     {
         Schema::create('managers', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->increments('id');
+            $table->integer('id',0,1);
+            $table->foreign('id')->references('id')->on('users');
 
             // Schema declaration
             $table->string('name');

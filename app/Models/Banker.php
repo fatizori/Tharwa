@@ -28,9 +28,11 @@ class Banker extends Model implements AuthenticatableContract, AuthorizableContr
         'name',
         'firstname',
         'address',
+        'is_active',
         'id_creator',
         'photo'
     ];
+
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -38,13 +40,12 @@ class Banker extends Model implements AuthenticatableContract, AuthorizableContr
      * @var array
      */
     protected $hidden = [
-        
+        'created_at' , 'updated_at'
     ];
-
    
     
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'id');
     }
 }

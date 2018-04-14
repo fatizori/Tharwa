@@ -30,7 +30,7 @@ class UserTableSeeder extends Seeder
         );
 
         DB::table( 'users' )->where( 'id', 3 )->update(
-            [   'role' => 0 ,
+            [   'role' => 1 ,
                 'phone_number' => '213697332045',
                 'email' => 'mahfoud10info@gmail.com'
             ]

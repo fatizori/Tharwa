@@ -9,6 +9,8 @@
 namespace App\Services;
 use App\Jobs\LogJob;
 use App\Models\Banker;
+use App\Models\User;
+use function GuzzleHttp\Promise\exception_for;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -79,8 +81,8 @@ class BankersServices
                 $banker->update($data);
             }
             // log information
-            dispatch(new LogJob($user->email,'','Banquier a changé ses 
-            informations personnelles',5,LogJob::SUCCESS_STATUS));
+            dispatch(new LogJob($user->email,'','Banker had changed his personal
+            data',5,LogJob::SUCCESS_STATUS));
             // show the exception message
             DB::commit();
             return response()->json(['message' => 'info changées avec succes'], 200);
@@ -90,6 +92,36 @@ class BankersServices
             dispatch(new LogJob($user->email,'',$e->getMessage(),5,LogJob::FAILED_STATUS));
             // show the exception message
             return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * @param $manager_email
+     * @param $id_banker
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function setBankerInvalide($manager_email,$id_banker){
+        $banker = Banker::find($id_banker);
+        $banker_email = User::find($id_banker)->email;
+        if (! $banker){
+            return response(json_encode(['message' => 'banquier intouvable']),404);
+        }
+        try{
+            if($banker->is_active){
+                // block banker
+                $banker->update(['is_active' => false]);
+                // log information
+                dispatch(new LogJob($manager_email,$banker_email,'Banker blocked',6,
+                    LogJob::SUCCESS_STATUS));
+            }
+
+            return response(json_encode(['message' => 'Banquier a été bloqué']),200);
+
+        }catch (Exception $exception){
+            // log information
+            dispatch(new LogJob($manager_email,$banker_email,$exception->getMessage(),6,
+                LogJob::FAILED_STATUS));
+            return response(json_encode(['message' => $exception->getMessage()]),500);
         }
     }
 

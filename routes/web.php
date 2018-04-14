@@ -26,19 +26,26 @@ $app->get('accounts_nv',['uses' => 'AccountsController@invalidAccounts','middlew
 $app->put('accounts/{id}',['uses' => 'AccountsController@validateAccount','middleware' => ['auth','role:banker']]);
 // Get Notif number
 $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middleware' => ['auth']]);
-
+//route to update banker personal info
+$app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 
 //Managers
 //get a manager by id
 $app->get('managers/{id}',['uses' => 'ManagersController@show','middleware' => ['auth','role:manager']]);
-//route to subscribe a banker
-$app->post('bankers',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
-//get list of bankers
-$app->get('bankers',['uses' => 'BankersController@index' , 'middleware' => 'auth']);
+$app->group( ['prefix' => 'bankers',
+              'middleware' => ['auth','role:manager']],function () use ($app) {
+    //get list of bankers
+    $app->get('', ['uses' => 'BankersController@index']);
+    //route to subscribe a banker
+    $app->post('',['uses' => 'RegistersController@registerBanker']);
+    //route to block a banker
+    $app->put('/block/{id_banker:[0-9]+}',['uses' => 'BankersController@blockBanker']);
+});
+
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
-//route to update banker personal info
-$app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
+//block banker
+
 
 //Customers
 //get the exchange rate

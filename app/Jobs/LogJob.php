@@ -82,6 +82,9 @@ class LogJob extends Job
             case 5 :
                 $this->type = 'update banker profile';
                 break;
+            case 6 :
+                $this->type = 'block banker';
+                break;
             default : return  response()->json(['message' => 'invalid type'], 400);
         }
 
