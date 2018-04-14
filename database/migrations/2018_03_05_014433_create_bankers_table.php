@@ -15,7 +15,7 @@ class CreateBankersTable extends Migration
     {
         Schema::create('bankers', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->integer('id',0,1);
+            $table->integer('id',0,1)->unique();
             $table->foreign('id')->references('id')->on('users');
             // Schema declaration
             $table->string('name');

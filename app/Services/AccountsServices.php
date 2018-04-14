@@ -52,11 +52,11 @@ class AccountsServices
      * Get invalid accounts
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
-    public function getInvalidAccount(){
+    public function getInvalidAccounts(){
         $accounts  = Account::join('customers', 'customers.id', '=', 'accounts.id_customer')
             ->join('users','users.id','=','accounts.id_customer')
             ->where('accounts.status','=',0)
-            ->select('accounts.id','name','function','address','phone_number','email','accounts.type')
+            ->select('accounts.id','name','function','address','phone_number','email','accounts.type','accounts.status')
             ->get();
         return $accounts;
     }

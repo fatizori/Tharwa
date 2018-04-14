@@ -34,7 +34,7 @@ class AccountsController extends Controller
     public function invalidAccounts(){
         $accountService = new AccountsServices();
         //get the list of accounts non valide
-        $accounts = $accountService->getInvalidAccount();
+        $accounts = $accountService->getInvalidAccounts();
 
         //if no account exists in the database
         if(!$accounts){
