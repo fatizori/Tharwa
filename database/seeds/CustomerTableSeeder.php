@@ -20,7 +20,7 @@ class CustomerTableSeeder extends Seeder
                 'commune' => 'ben aknoun',
                 'function' => 'Developpeur',
                 'type' => 0,
-                'photo' => 'photo.jpg',
+                'photo' => 'customer1.jpg',
         ]);
 
     }
