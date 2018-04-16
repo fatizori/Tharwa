@@ -44,12 +44,16 @@ $app->group( ['prefix' => 'bankers',
 
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
+//get the list of commissions
+$app->get('commissions',['uses' => 'CommissionsController@index']);
+//route to update banker personal info
+$app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //block banker
 
 
 //Customers
 //get the exchange rate
-$app->get('currency',['uses'=>'CurrenciesController@getExchangeRate', 'middleware' => 'auth']);
+$app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
 //route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 
@@ -60,7 +64,8 @@ $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 $app->put('update_photo',['uses' => 'RegistersController@update_avatar']);
 $app->put('change_password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
-
+//Virements
+$app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount']);
 
 
 

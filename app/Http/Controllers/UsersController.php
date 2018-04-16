@@ -66,7 +66,7 @@ class UsersController extends Controller
         $this->validateRequest($request);
         $data = $request->json()->all();
         //update the user data
-         $userService->update($user,$data);
+         $this->userService->update($user,$data);
 
         return response()->json(['message' => "The user with  id {$user->id} has been updated"], 200);
     }
@@ -84,7 +84,7 @@ class UsersController extends Controller
             return response()->json(['message' => "The user with {$id} doesn't exist"], 404);
         }
         //delete the user
-       $userService->delete($user,$id);
+       $this->userService->delete($user,$id);
         return response()->json(['message' =>"The user with  id {$id} has been deleted"], 200);
     }
 

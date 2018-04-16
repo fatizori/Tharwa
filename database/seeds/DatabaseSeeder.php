@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call('CustomerTableSeeder');
         $this->call('AccountTableSeeder');
         $this->call('ManagerTableSeeder');
+        $this->call('CommissionTableSeeder');
         
     }
 }

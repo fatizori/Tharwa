@@ -20,13 +20,12 @@ class UserRegisterTest extends TestCase
     public function testRegisterCustomer()
     {
 
-        $path = base_path('public/test/test.png');
-        $photo = new UploadedFile($path, 'test.png', 'image/png', null, null,true);
+       /* $path = base_path('public/test/test.png');
+        $photo = new UploadedFile($path, 'test.png', 'image/png', null, null,true);*/
 
         $data = ['email' => 'test@gmail.com', 'password' => 'test','name'=>'test','phone_number'=>'+213557854578',
             'address'=>'adrtest','function'=>'doctor','wilaya'=>'alger','commune'=>'kouba','type'=>'client'];
-
-        $response = $this->call('POST', '/customers', $data,[],['photo'=>$photo]);
+        $response = $this->call('POST', '/customers', $data,[],[]);
 
         //$this->seeInDatabase('users', ['email' => 'test@gmail.com']);
        // $this->seeInDatabase('customers', ['name'=>'test',
