@@ -44,8 +44,20 @@ $app->group( ['prefix' => 'bankers',
 
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
+//route to add a bank
+$app->post('banks',['uses' => 'BanksController@store','middleware' => ['auth','role:manager']]);
+//route to update a bank's data
+$app->put('banks/{id}',['uses' => 'BanksController@update','middleware' => ['auth','role:manager']]);
+//route to delete a bank
+$app->delete('banks/{id}',['uses' => 'BanksController@destroy','middleware' => ['auth','role:manager']]);
 //get the list of commissions
 $app->get('commissions',['uses' => 'CommissionsController@index']);
+//route to add a commission
+$app->post('commissions',['uses' => 'CommissionsController@store','middleware' => ['auth','role:manager']]);
+//route to update a commission's data
+$app->put('commissions/{id}',['uses' => 'CommissionsController@update','middleware' => ['auth','role:manager']]);
+//route to delete a commission
+$app->delete('commissions/{id}',['uses' => 'CommissionsController@destroy','middleware' => ['auth','role:manager']]);
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //block banker
@@ -66,6 +78,7 @@ $app->put('change_password',['uses' => 'UsersController@changePassword', 'middle
 
 //Virements
 $app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount']);
+
 
 
 
