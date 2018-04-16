@@ -39,4 +39,24 @@ class CurrenciesController extends Controller
 
         return response(json_encode($tabRates),200);
    }
+
+   public function exchangeRateEuroDinars(){
+       $rateEuro = Swap::latest('EUR/DZD');
+       return $rateEuro;
+   }
+
+    public function exchangeRateDollarsDinars(){
+        $rateUDollars = Swap::latest('USD/DZD');
+        return $rateUDollars ;
+    }
+
+    public function exchangeRateDinarsEuro(){
+        $rateEuro = Swap::latest('DZD/EUR');
+        return $rateEuro;
+    }
+
+    public function exchangeRateDinarsDollars(){
+        $rateUDollars = Swap::latest('DZD/USD');
+        return $rateUDollars ;
+    }
 }
