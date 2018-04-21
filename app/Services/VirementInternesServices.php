@@ -24,7 +24,7 @@ class VirementInternesServices
         $virementInterne->montant_virement = $montant;
         $virementInterne->status = 0;
         $virementInterne->type = $data['type'];
-        //find commission by type
+        //find commission by code
         $commissionC = new CommissionsServices();
         $commission = $commissionC->findCommissionByCode($codeCommission);
         $virementInterne->id_commission = $commission->id;
