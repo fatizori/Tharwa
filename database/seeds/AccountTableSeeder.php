@@ -26,7 +26,7 @@ class AccountTableSeeder extends Seeder
             'id' => 3,
             'id_customer' => 6,
             'status' => 1,
-            'type' => 1
+            'type' => 2
         ]);
 
     }

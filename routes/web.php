@@ -12,9 +12,6 @@
 
 $app->get('/', function () use ($app) {
     //return $app->version();
-    $exist = \App\Models\Account::where('id',3)
-        ->where('bank_code','THW')->exists();
-    return json_encode(['response'=>$exist]);
    // return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
