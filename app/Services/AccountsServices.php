@@ -71,6 +71,15 @@ class AccountsServices
     }
 
     /**
+     * Update the account balance
+     * @param $account
+     * @param $type
+     */
+    public function updateAccountBalance($account,$amount){
+        $account->update(['balance'=> $amount]);
+    }
+
+    /**
      * Delete an account
      * @param $account
      */

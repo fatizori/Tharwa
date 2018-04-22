@@ -36,7 +36,13 @@ class UserRegisterTest extends TestCase
 
     }
 
+    public function testRegister()
+    {
 
+       
+        $this->assertTrue(true);
+
+    }
 
     /**
      * Test if the user/banker were been created .
