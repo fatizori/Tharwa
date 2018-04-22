@@ -19,7 +19,7 @@ class CreateAccountsTable extends Migration
             $table->increments('id');
             // Schema declaration
             $table->string('currency_code')->default('DZD');
-            $table->integer('type')->default(0);
+            $table->integer('type')->default(1);
             $table->double('balance')->default(0);
             $table->integer('status')->default(0);
             $table->timestamps();

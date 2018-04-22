@@ -16,14 +16,14 @@ class CustomersServices
         $current_account=array();
         $accounts_types=array();
         foreach ($accounts as $account){
-            if(0 == $account->type){
-                $current_account['account_code'] = $account->bank_code
-                                                .sprintf('%06u',$account->id)
-                                                .$account->currency_code;
+            if(1 == $account->type) {
+                $current_account['account_code'] = 'THW'
+                    . sprintf('%06u', $account->id)
+                    . $account->currency_code;
                 $current_account['balance'] = $account->balance;
-            }else{
-                array_push($accounts_types, [$account->type => $account->id]);
             }
+            array_push($accounts_types, [$account->type => $account->id]);
+
         }
         $data = [
             'name' => $customer->name,

@@ -101,7 +101,7 @@ class LogJob extends Job
                 $this->type = 'virement interne Tharwa';
                 break;
             case 12 :
-                $this->type = 'ajouter un compte';
+                $this->type = 'add another account';
                 break;
             default : return  response()->json(['message' => 'invalid type'], 400);
         }

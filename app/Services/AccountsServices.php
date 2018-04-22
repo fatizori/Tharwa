@@ -156,9 +156,9 @@ class AccountsServices
            return false;
         }
         // Accounts constraints
-        if(!( ($account_type == 1 && $currency_code == 'DZD') ||
-              ($account_type == 2 && $currency_code == 'EUR') ||
-              ($account_type == 3 && $currency_code == 'USD'))){
+        if(!( ($account_type == 2 && $currency_code == 'DZD') ||
+              ($account_type == 3 && $currency_code == 'EUR') ||
+              ($account_type == 4 && $currency_code == 'USD'))){
             return false;
         }
         $newAccount = new Account([

@@ -140,7 +140,7 @@ class AccountsController extends Controller
      */
     public function addNewLocalAccount(Request $request){
         $rules = [
-            'account_type' => 'required | integer | between:0,3',
+            'account_type' => 'required | integer | between:2,4',
             'currency_code' => 'alpha | size:3 | in:DZD,USD,EUR'
         ];
 

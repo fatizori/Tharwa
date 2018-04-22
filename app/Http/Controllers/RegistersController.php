@@ -70,7 +70,7 @@ class RegistersController extends Controller {
         $customerService = new CustomersServices();
         $customerService->create($data,$user_id,self::DEFAULT_USER_IMG);
         //Account Traitement
-         $this->createAccount($user_id,0); //the default account is the current account
+         $this->createAccount($user_id,1); //the default account is the current account
 
         DB::commit();
 
