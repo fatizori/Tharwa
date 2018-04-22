@@ -18,7 +18,7 @@ class CreateLogsTable extends Migration
             $table->increments('id');
             // Schema declaration
             $table->string('email_sub');
-            $table->string('email_obj');
+            $table->string('email_obj')->nullable();
             $table->text('message');
             $table->string('status');
             $table->string('type');

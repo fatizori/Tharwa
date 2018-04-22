@@ -16,13 +16,13 @@ class CreateBanksTable extends Migration
     {
         Schema::create('banks', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->increments('id');
-
+            $table->string('id',3);
+            $table->primary('id');
             // Schema declaration
             $table->string('email')->unique();
             $table->string('address');
             $table->string('social_reason');
-
+            $table->boolean('status')->default(1);
             $table->timestamps();
             // Constraints declaration
         });

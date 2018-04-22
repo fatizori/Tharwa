@@ -13,7 +13,20 @@ class AccountTableSeeder extends Seeder
     {
         Account::create([
             'id' => 1,
-            'id_customer' => 5
+            'id_customer' => 5,
+            'status' => 1,
+            'balance' => 20000
+        ]);
+        Account::create([
+            'id' => 2,
+            'id_customer' => 6,
+            'status' => 1
+        ]);
+        Account::create([
+            'id' => 3,
+            'id_customer' => 6,
+            'status' => 1,
+            'type' => 1
         ]);
 
     }

@@ -31,8 +31,6 @@ class ManagersController extends Controller
     }
 
 
-
-
     public function show($id){
         $manager = Manager::find($id);
 
@@ -60,6 +58,7 @@ class ManagersController extends Controller
         $manager->delete();
         return response()->json(['message' =>"The manager with  id {$id} has been deleted"], 200);
     }
+
 
 
 

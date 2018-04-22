@@ -77,13 +77,31 @@ class LogJob extends Job
                 $this->type = 'update avatar';
                 break;
             case 4 :
-                $this->type = 'update account';
+                $this->type = 'validate account';
                 break;
             case 5 :
-                $this->type = 'update banker profile';
+                $this->type = 'block account';
                 break;
             case 6 :
+                $this->type = 'unblock account';
+                break;
+            case 7 :
+                $this->type = 'delete new account';
+                break;
+            case 8 :
+                $this->type = 'update banker profile';
+                break;
+            case 9 :
                 $this->type = 'block banker';
+                break;
+            case 10 :
+                $this->type = 'user changed password';
+                break;
+            case 11 :
+                $this->type = 'virement interne Tharwa';
+                break;
+            case 12 :
+                $this->type = 'ajouter un compte';
                 break;
             default : return  response()->json(['message' => 'invalid type'], 400);
         }

@@ -16,10 +16,9 @@ class CreateCurrenciesTable extends Migration
     {
         Schema::create('currencies', function (Blueprint $table) {
             $table->engine='InnoDB';
-            $table->increments('id');
-
+            $table->string('id',3);
+            $table->primary('id');
             // Schema declaration
-            $table->string('code',3)->unique();
             $table->string('name')->unique();
             $table->timestamps();
 

@@ -7,6 +7,7 @@
  */
 
 namespace App\Services;
+use App\Jobs\LogJob;
 use App\Models\User;
 use Carbon\Carbon;
 use \Illuminate\Http\Request;
@@ -80,10 +81,17 @@ class UsersServices
         $oldPassword = $user->password;
 
         if (! Hash::check($enteredOldPassword, $oldPassword)) {
+            //log info
+            dispatch(new LogJob($user->email,null,'incorrect entered password',10,LogJob::FAILED_STATUS));
+
+            return  response()->json(['message' => 'unaccepted operation'], 400);
             return false;
         }
 
-        return $user->update(['password'=> app('hash')->make($data['new_password'])]);
+         $user->update(['password'=> app('hash')->make($data['new_password'])]);
+        //log info
+        dispatch(new LogJob($user->email,null,'password changed',10,LogJob::SUCCESS_STATUS));
+        return true;
     }
 
 

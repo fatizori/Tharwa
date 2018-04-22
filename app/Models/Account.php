@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Laravel\Passport\HasApiTokens;
 use App\Models\Customer;
+use App\Models\Banker;
 
 class Account extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -24,11 +25,12 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
          */
 
     protected $fillable = [
-        'bank_code',
+        'id',
         'currency_code',
         'balance',
         'type',
         'status',
+        'id_customer'
     ];
 
     /**
@@ -40,12 +42,18 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
        
     ];
 
-    
-
 
      public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+
+
+    public function bankers(){
+        return $this->belongsToMany(Banker::class, 'accounts_management')
+            ->withPivot('operation')
+            ->withTimestamps('created_at',null);
     }
 
 }

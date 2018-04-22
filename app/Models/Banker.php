@@ -48,4 +48,9 @@ class Banker extends Model implements AuthenticatableContract, AuthorizableContr
     {
         return $this->belongsTo(User::class,'id');
     }
+
+    public function accounts(){
+        return $this->belongsToMany(Account::class,'accounts_management')
+        ->withPivot('operation');
+    }
 }

@@ -16,7 +16,8 @@ use Laravel\Passport\HasApiTokens;
 
 class Bank extends Model
 {
- 
+
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -28,7 +29,8 @@ class Bank extends Model
         'id',
         'email',
         'address',
-        'social_reason'
+        'social_reason',
+        'status'
     ];
 
     /**
@@ -40,6 +42,9 @@ class Bank extends Model
 
     ];
 
+    public static function getValideBanksCodes(){
+        return array_column((new self)->where('status',true)->get()->toArray(),'id');
+}
 
 
 }

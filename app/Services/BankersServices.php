@@ -82,14 +82,14 @@ class BankersServices
             }
             // log information
             dispatch(new LogJob($user->email,'','Banker had changed his personal
-            data',5,LogJob::SUCCESS_STATUS));
+            data',8,LogJob::SUCCESS_STATUS));
             // show the exception message
             DB::commit();
             return response()->json(['message' => 'info changées avec succes'], 200);
         }catch (\Exception $e){
             DB::rollback();
             // log information
-            dispatch(new LogJob($user->email,'',$e->getMessage(),5,LogJob::FAILED_STATUS));
+            dispatch(new LogJob($user->email,'',$e->getMessage(),8,LogJob::FAILED_STATUS));
             // show the exception message
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -111,7 +111,7 @@ class BankersServices
                 // block banker
                 $banker->update(['is_active' => false]);
                 // log information
-                dispatch(new LogJob($manager_email,$banker_email,'Banker blocked',6,
+                dispatch(new LogJob($manager_email,$banker_email,'Banker blocked',9,
                     LogJob::SUCCESS_STATUS));
             }
 
@@ -119,7 +119,7 @@ class BankersServices
 
         }catch (Exception $exception){
             // log information
-            dispatch(new LogJob($manager_email,$banker_email,$exception->getMessage(),6,
+            dispatch(new LogJob($manager_email,$banker_email,$exception->getMessage(),9,
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message' => $exception->getMessage()]),500);
         }

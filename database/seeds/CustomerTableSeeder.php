@@ -14,13 +14,24 @@ class CustomerTableSeeder extends Seeder
     {
         Customer::create([
                 'id' => 5,
-                'name' => 'hana',
-                'address'=>'Alger',
+                'name' => 'Karim',
+                'address'=>'Alger qq part',
                 'wilaya'=> 'Alger',
                 'commune' => 'ben aknoun',
                 'function' => 'Developpeur',
                 'type' => 0,
                 'photo' => 'customer1.jpg',
+        ]);
+
+        Customer::create([
+            'id' => 6,
+            'name' => 'Khadidja',
+            'address'=>'Oran qq part',
+            'wilaya'=> 'Oran',
+            'commune' => 'ben Khadda',
+            'function' => 'Tester',
+            'type' => 0,
+            'photo' => 'customer1.jpg',
         ]);
 
     }

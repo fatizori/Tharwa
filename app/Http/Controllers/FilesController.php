@@ -94,8 +94,8 @@ class FilesController extends Controller {
         $file->move($destinationPath, $imagename);
         //the name of the new picture (after minimisation)
         $imageMinName = $this->generateNameImageMinUser($id_user,$imagename);
-        //$this->insertMiniImage($destinationPath.$imagename,$path_min,$imageMinName,100,100);
-        return  $imagename ;
+        $this->insertMiniImage($destinationPath.$imagename,$path_min,$imageMinName,100,100);
+        return  $imageMinName ;
    
     }
 

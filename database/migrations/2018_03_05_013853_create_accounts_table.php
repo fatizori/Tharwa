@@ -17,16 +17,14 @@ class CreateAccountsTable extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->engine='InnoDB';
             $table->increments('id');
-
             // Schema declaration
-            $table->string('bank_code')->default("THW");
-            $table->string('currency_code')->default("DZA");
+            $table->string('currency_code')->default('DZD');
             $table->integer('type')->default(0);
             $table->double('balance')->default(0);
             $table->integer('status')->default(0);
             $table->timestamps();
             // Constraints declaration
-            $table->integer('id_customer')->references('id')->on('customers');
+            $table->integer('id_customer')->references('id')->on('customers')->nullable();
         });
     }
 

@@ -39,6 +39,4 @@ class CustomersController extends Controller
         return response()->json(['message' =>"The customer with  id {$id} has been deleted"], 200);
     }
 
-
-
 }

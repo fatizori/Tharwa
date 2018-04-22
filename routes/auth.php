@@ -8,6 +8,10 @@
 
 $app->post('login', ['uses' => 'LoginsController@askCodeLogin']);
 
+//$app->post('login', function (){
+//    return response(json_encode([]),200);
+//});
+
 //route to authenticate (2nd step send code)
 $app->post('login/code', ['uses' => 'LoginsController@Login']);
 

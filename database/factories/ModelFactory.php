@@ -20,7 +20,7 @@ $factory->define(User::class, function (Faker\Generator $faker) {
         'email' => $faker->unique()->safeEmail,
         'phone_number' => $faker->unique()->phoneNumber,
         'role' => rand(0,1),
-        'password' => $password ?: $password = app('hash')->make('password'),
+        'password' => $password ?: $password = app('hash')->make('Password@95'),
         'nonce_auth' => sprintf('%04u', $faker->numberBetween(0,9999)),
         'expire_date_nonce' => Carbon::now()->addHours(1)->toDateTimeString()
     ];

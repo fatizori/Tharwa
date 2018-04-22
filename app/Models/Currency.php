@@ -14,9 +14,8 @@ use Laravel\Passport\HasApiTokens;
 
 class Currency extends Model
 {
-    use Authenticatable,
-        Authorizable,
-        HasApiTokens;
+
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +25,7 @@ class Currency extends Model
 
     protected $fillable = [
         'name',
-        'code'
+        'id'
     ];
 
     /**
@@ -38,7 +37,8 @@ class Currency extends Model
 
     ];
 
-
-
+    public static function getCurrenciesCodes(){
+        return array_column(self::all()->toArray(),'id');
+    }
 
 }

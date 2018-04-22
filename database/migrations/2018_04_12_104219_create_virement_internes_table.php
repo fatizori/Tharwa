@@ -24,7 +24,6 @@ class CreateVirementInternesTable extends Migration
             $table->integer('num_acc_receiver');
             $table->string('code_bnk_receiver');
             $table->string('code_curr_receiver');
-            $table->dateTime('date_virement');
             $table->decimal('montant_virement');
             $table->integer('status');
             $table->integer('type');

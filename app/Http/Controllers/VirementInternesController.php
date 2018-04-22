@@ -26,12 +26,12 @@ class VirementInternesController extends Controller
         $this->virementInterneService = new VirementInternesServices();
         $this->bankService = new BanksServices();
     }
-    
+
     public function transferToAccount(Request $request){
 
         //Validation of data
         $rules = [
-            'num_acc_sender' => 'required',
+            'num_acc_sender' => 'required | integer',
             'type_acc_sender' => 'required',
             'code_curr_sender' => 'required',
             'num_acc_receiver'=>'required',
@@ -72,11 +72,30 @@ class VirementInternesController extends Controller
             $codeCommission = 'DVC';
         }
 
-        //Get the code bank
-         //$bankCode = $this->bankService->findById('1');
-
         $this->virementInterneService->create($data,'THW','THW',$codeCommission,0,$montant);
         return response(json_encode(['message' => 'transfer success']),201);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function transferToOtherUser(Request $request){
+        //Validation of data
+        $rules = [
+            'num_acc_receiver'=>'required | integer',
+            'montant_virement'=>'required | numeric',
+            'type'=>'required | integer | between:0,1',
+        ];
+        $data=$request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            return   response()->json(['message' => $validator->errors()->all()], 400);
+        }
+        $montant = $data['montant_virement'];
+        //commission code
+        $user = $request->user();
+        return $this->virementInterneService->createBetweenCustomersExchange($user, $data['num_acc_receiver'],$montant,$data['type']);
     }
 
 }
