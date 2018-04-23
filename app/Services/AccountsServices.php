@@ -107,7 +107,7 @@ class AccountsServices
      *  Delete an account logically
      */
     public function refuseNewAccount($account){
-        if(3 == $account->status ){
+        if(0 == $account->status ){
             $account->update(['status'=> 4]);
             return true;
         }

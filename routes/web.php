@@ -12,7 +12,7 @@
 
 $app->get('/', function () use ($app) {
     //return $app->version();
-   // return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+    return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
 // Bankers

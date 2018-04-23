@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Controllers;
+use App\Models\User;
 use App\Services\UsersServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +36,8 @@ class UsersController extends Controller
         return response()->json($user, 200);
     }
 
+
+
     /**
      * Create a new User
      * @param Request $request, user role
@@ -43,6 +46,10 @@ class UsersController extends Controller
     public function store(Request $request,$role){
         $this->validateRequest($request);
         $data =  $request->json()->all();
+        $user = User::where('email',$data['email'])->get()->first();
+        if ($user){
+            return false;
+        }
         $user = $this->userService->create($data,$role);
         return $user->id;
     }
