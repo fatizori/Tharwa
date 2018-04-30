@@ -30,7 +30,7 @@ class CommissionsServices
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
      public function findById($id){
-        $commission = Commission::where('id',$id)->first();
+        $commission = Commission::where('code',$id)->first();
         return $commission;
     }
 

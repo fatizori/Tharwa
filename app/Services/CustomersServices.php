@@ -22,14 +22,14 @@ class CustomersServices
                     . $account->currency_code;
                 $current_account['balance'] = $account->balance;
             }
-            array_push($accounts_types, [$account->type => $account->id]);
+            array_push($accounts_types, $account->type );
 
         }
         $data = [
             'name' => $customer->name,
             'photo' => $customer->photo,
             'type' => $customer->type,
-            'accounts' => $accounts_types,
+            'accounts_types' => $accounts_types,
             'current_account' => $current_account
         ];
         return $data;

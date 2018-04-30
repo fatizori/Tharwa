@@ -48,13 +48,15 @@ class AccountsController extends Controller
 
     /**
      * get an account by id
-     * @param $id
+     * @param Request $request
+     * @param $type
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id){
-        $account = $this->accountsService->findById($id);
+    public function show(Request $request, $type){
+        $user_id = $request->user()->id;
+        $account = $this->accountsService->findAccountByType($type, $user_id);
         if(!$account){
-            return response()->json(['message' => "The account with {$id} doesn't exist"], 404);
+            return response()->json(['message' => "The account with {$type} doesn't exist"], 404);
         }
         return response()->json($account, 200);
     }

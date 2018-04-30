@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mezerreg
- * Date: 12-04-2018
- * Time: 11:42
- */
 
 namespace App\Services;
 use App\Jobs\LogJob;
@@ -18,18 +12,19 @@ use  App\Http\Controllers\FilesController;
 
 class VirementInternesServices
 {
+    const PATH_JUSTIF = 'images/justifications/';
     const IMAGE_JUSTiF = 'images/justificatif_vrm/';
     const IMAGE_MIN = 'images/justificatif_vrm_min/';
+
     /**
      * @param $data
-     * @param $codeBankSender
-     * @param $codeBankReceiver
      * @param $codeCommission
      * @param $typeCommission
      * @param $montant
+     * @param $sender_id
+     * @param $receiver_id
      */
     public function create($data,$codeCommission,$typeCommission,$montant,$sender_id,$receiver_id){
-
 
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = strip_tags($data['num_acc_sender']);
@@ -57,46 +52,47 @@ class VirementInternesServices
     }
 
     /**
-     * @param $sender_customer
-     * @param $codeAccount
+     * @param $sender_account
+     * @param $receiver_account
      * @param $montant
      * @param $type
-     * @return bool
+     * @return VirementInterne
      */
-    public function createBetweenCustomersExchange($sender_customer, $codeAccount, $montant, $type){
-        $sender_id = $sender_customer->id;
-        DB::beginTransaction();
-        $reciever_account = Account::where('id',$codeAccount)
-                                            ->where('type',0)
-                                            ->first();
-        if(is_null($reciever_account)){
-            //log
-            dispatch(new LogJob($sender_id,$codeAccount,'distinataire introuvable',11,
-                LogJob::FAILED_STATUS));
-            return response(json_encode(['message'=>'receiver not found']),404);
-        }
-        if($montant > 200000){
-            //log
-            dispatch(new LogJob($sender_id,$reciever_account->id_customer,'Virement de plus de 200000',11,
-                LogJob::FAILED_STATUS));
-            return response(json_encode(['message'=>'too big amount']),403);
-        }
-        $sender_account = Account::where('id_customer','=',$sender_id)->first();
-           if($sender_account->balance < $montant ){
-                //log
-            dispatch(new LogJob($sender_id,$reciever_account->id_customer,'Virement avec montant insuffisant',11,
-                LogJob::FAILED_STATUS));
-            return response(json_encode(['message'=>'balance insuffisant']),400);
-        }
+    public function createBetweenCustomersExchange($sender_account, $receiver_account, $montant, $type){
+            return $this->createVirementBetweenCustomers($sender_account,$receiver_account,$montant,$type,1);
+    }
+
+//    public function createBetweenCustomersExchangeJustif($sender_customer, $codeAccount, $montant, $type, $justif){
+//        $sender_id = $sender_customer->id;
+//        DB::beginTransaction();
+//        $failureResponse =$this->checkVirementBeforeCreate($codeAccount,$sender_id,$montant);
+//        if (!$failureResponse){
+//            $this->createVirementBetweenCustomers($sender_account,$codeAccount,$montant,$type,0);
+//            // log
+//            dispatch(new LogJob($sender_id,$reciever_account->id_customer,'Virement effectué',11,
+//                LogJob::SUCCESS_STATUS));
+//
+//            // Upload justif
+//            $justif->move($destinationPathJustifs, $imagename);
+//
+//
+//            DB::commit();
+//            return response(json_encode(['message'=>'virement effectué']),201);
+//        }
+//        DB::rollback();
+//        return $failureResponse;
+//    }
+
+    private function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status){
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = strip_tags($sender_account->id);
         $virementInterne->code_bnk_sender = 'THW';
         $virementInterne->code_curr_sender = 'DZD';
-        $virementInterne->num_acc_receiver = $codeAccount;
+        $virementInterne->num_acc_receiver = $reciever_account->id;
         $virementInterne->code_bnk_receiver ='THW';
         $virementInterne->code_curr_receiver = 'DZD';
         $virementInterne->montant_virement = $montant;
-        $virementInterne->status = 0;
+        $virementInterne->status = $status;
         $virementInterne->type = $type;
         //find commission by type
         $commissionC = new CommissionsServices();
@@ -105,12 +101,11 @@ class VirementInternesServices
         //Extract commission value
         $virementInterne->montant_commission = $commission->valeur/100 * $montant;
         $virementInterne->save();
-        //log
-         dispatch(new LogJob($sender_id,$reciever_account->id_customer,'Virement effectué',11,
-             LogJob::SUCCESS_STATUS));
-        DB::commit();
-            return response(json_encode(['message'=>'virement effectue']),201);
+        return $virementInterne;
     }
+
+
+
 
     public function addJustif($justification,$id_sender){
         $file = new FilesController;

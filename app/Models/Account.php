@@ -18,6 +18,7 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
         Authorizable,
         HasApiTokens;
 
+
         /**
          * The attributes that are mass assignable.
          *
@@ -39,7 +40,7 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $hidden = [
-       
+       'updated_at' , 'id_customer'
     ];
 
 
@@ -54,6 +55,12 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
         return $this->belongsToMany(Banker::class, 'accounts_management')
             ->withPivot('operation')
             ->withTimestamps('created_at',null);
+    }
+
+    public function getCode(){
+         return 'THW'
+             . sprintf('%06u', $this->id)
+             .  $this->currency_code;
     }
 
 }

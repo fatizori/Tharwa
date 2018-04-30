@@ -28,7 +28,7 @@ $app->group( ['prefix' => 'accounts',
     // block account
 });
 // get the list of non valide accounts
-$app->get('accounts_nv',['uses' => 'AccountsController@invalidAccounts','middleware' => ['auth','role:banker']]);
+$app->get('accounts/invalid',['uses' => 'AccountsController@invalidAccounts','middleware' => ['auth','role:banker']]);
 // Get Notif number
 $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middleware' => ['auth']]);
 //route to update banker personal info
@@ -75,13 +75,14 @@ $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 
 //Virements (same customer)
-$app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount']);
+$app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount','middleware' =>['auth','role:customer']]);
 //Virements interne Tharwa (two customers)
 $app->post('virements_internes_thw',['uses' => 'VirementInternesController@transferToOtherUser', 'middleware' =>['auth','role:customer']]);
 
 //Add other accounts
 $app->post('accounts',['uses' => 'AccountsController@addNewLocalAccount', 'middleware' =>['auth','role:customer']]);
-
+// get info of an account
+$app->get('accounts/type/{type:[1-4]}', ['uses' => 'AccountsController@show', 'middleware' =>['auth','role:customer']]);
 
 //All users
 // update user photo

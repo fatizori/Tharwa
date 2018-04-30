@@ -21,7 +21,11 @@ class AccountsServices
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function findAll(){
-        $accounts = Account::all();
+        $accounts = Account::where('status','!=',0)
+        ->where('status','!=',4)->get();
+        foreach ($accounts as $account){
+            $account->setAttribute('code',$account->getCode());
+        }
         return $accounts;
     }
 
@@ -35,6 +39,7 @@ class AccountsServices
 
         return $account;
     }
+
 
     /**
      *  Find an account by type and id customer
@@ -57,6 +62,16 @@ class AccountsServices
      */
     public function findAccountsByUserId($user_id){
         $accounts = Customer::find($user_id)->accounts()->get();
+        return $accounts;
+    }
+
+    /**
+     * Find  an account by id
+     * @param $user_id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function findCurrentAccountByUserId($user_id){
+        $accounts = Customer::find($user_id)->accounts()->where('type',1)->first();
         return $accounts;
     }
 
@@ -145,7 +160,7 @@ class AccountsServices
     /**
      * Update the account balance
      * @param $account
-     * @param $type
+     * @param $amount
      */
     public function updateAccountBalance($account,$amount){
         $account->update(['balance'=> $amount]);

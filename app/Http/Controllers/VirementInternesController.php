@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mezerreg
- * Date: 12-04-2018
- * Time: 10:28
- */
 
 namespace App\Http\Controllers;
+use App\Services\CommissionsServices;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
-use App\Http\Controllers\CurrenciesController;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +15,7 @@ class VirementInternesController extends Controller
 
     private $virementInterneService;
     private $accountService;
+    private $commissionService;
     /**
      * VirementInternesController constructor.
      */
@@ -103,8 +98,8 @@ class VirementInternesController extends Controller
         }
 
 
-        //type
-         if($data['type_acc_sender']== 3 || $data['type_acc_receiver']== 3 ){
+        // type currency dollar or euro
+         if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
              $amount = $currency->exchangeRate($amount,$account_sender->code_curr_sender,$account_receiver->code_curr_receiver);
          }
 
@@ -112,7 +107,7 @@ class VirementInternesController extends Controller
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
 
 
-        $this->virementInterneService->create($data,$codeCommission,0,$amount,$account_sender->id_customer,$account_receiver->id_customer);
+        $this->virementInterneService->create($data,    $codeCommission,0,$amount,$account_sender->id_customer,$account_receiver->id_customer);
 
         //update the  sender's account balance
         $senderBalance = $account_sender->balance - $data['montant_virement'];
@@ -127,9 +122,80 @@ class VirementInternesController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             //log information
-            dispatch(new LogJob($account_sender->id_customer,$account_receiver->id_customer,$e->getMessage(),11,LogJob::FAILED_STATUS));
+            dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function transferToOtherUser(Request $request){
+        //Validation of data
+        $rules = [
+            'num_acc_receiver'=>'required | integer',
+            'montant_virement'=>'required | numeric',
+            'type'=>'required | integer | between:0,1',
+            'justif' => 'image|mimes:jpeg,png,jpg,bmp|max:2048'
+
+        ];
+        $data=$request->json()->all();
+        $data['justif'] = $request->file('justif');
+        $montant = $data['montant_virement'];
+
+        $validator = Validator::make($data, $rules);
+        if ($montant < 0 && !$validator->passes()) {
+            return   response()->json(['message' => $validator->errors()->all()], 400);
+        }
+        if ($montant > 200000 && is_null($data['justif'])) {
+            return   response()->json(['message' => 'Justification required'], 403);
+        }
+        //Run exchange
+        $user = $request->user();
+
+        //Check the receiver
+        $account_receiver = $this->accountService->findById($data['num_acc_receiver']);
+        if (is_null($account_receiver) || $account_receiver->type != 1){
+            dispatch(new LogJob($user->id,$data['num_acc_receiver'],'distnataire introuvable',11,
+                LogJob::FAILED_STATUS));
+            return response(json_encode(['message'=>'receiver account not found']),404);
+        }
+
+        DB::beginTransaction();
+        // Get sender account
+        $senderAccount = $this->accountService->findCurrentAccountByUserId($user->id);
+
+        if ($montant < 200000) {
+            try {
+                $virement = $this->virementInterneService->createBetweenCustomersExchange($senderAccount, $account_receiver, $montant, $data['type']);
+
+                //update the  sender's account balance
+                $new_sender_balance = $senderAccount->balance - $data['montant_virement'];
+                $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
+
+                //update the  receiver's account balance
+                $new_receiver_balance = $account_receiver->balance + $virement->montant_virement - $virement->montant_commission;
+                $this->accountService->updateAccountBalance($account_receiver, $new_receiver_balance);
+            } catch (\Exception $exception) {
+                //log
+                DB::rollback();
+                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 11,
+                    LogJob::FAILED_STATUS));
+                return response(json_encode(['message' => $exception->getMessage()]), 500);
+
+            }
+        }
+        if ($montant > 200000){
+        // TODO
+            $this->virementInterneService->createBetweenCustomersExchangeJustif($user, $data['num_acc_receiver'],$montant,$data['type']);
+
+        }
+        //log
+        dispatch(new LogJob($user->id,$account_receiver->id_customer,'Virement effectué',11,
+            LogJob::SUCCESS_STATUS));
+        DB::commit();
+        return response(json_encode(['message'=>'virement effectué']),201);
     }
 
 }

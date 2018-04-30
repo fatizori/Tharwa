@@ -164,7 +164,7 @@ class RegistersController extends Controller {
          $userService = new UsersServices();
 
          // Handle the user upload of avatar
-        $data['id_user'] = $request->input('id_user');
+         $data['id_user'] = $request->input('id_user');
          $data['photo'] = $request->file('photo');
          $rules =[
                  'id_user' => 'required',
