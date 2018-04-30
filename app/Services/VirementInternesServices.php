@@ -71,7 +71,7 @@ class VirementInternesServices
                                             ->first();
         if(is_null($reciever_account)){
             //log
-            dispatch(new LogJob($sender_id,$codeAccount,'distnataire introuvable',11,
+            dispatch(new LogJob($sender_id,$codeAccount,'distinataire introuvable',11,
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver not found']),404);
         }
@@ -120,4 +120,6 @@ class VirementInternesServices
         $justificatif_vrm ->status = 0;
         $justificatif_vrm ->save();
     }
+
+
 }

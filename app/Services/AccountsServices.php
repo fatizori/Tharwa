@@ -37,6 +37,20 @@ class AccountsServices
     }
 
     /**
+     *  Find an account by type and id customer
+     * @param $type
+     * @param $id_customer
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function findAccountByType($type,$id_customer){
+        $account = Account::where('id_customer',$id_customer)
+            ->where('type',$type)
+            ->first();
+
+        return $account;
+    }
+
+    /**
      * Find  an account by id
      * @param $user_id
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
@@ -72,7 +86,8 @@ class AccountsServices
     }
 
     /**
-     *
+     * @param $account
+     * @return bool
      */
     public function validateNewAccount($account){
         if(0 == $account->status){
@@ -83,7 +98,8 @@ class AccountsServices
     }
 
     /**
-     *
+     * @param $account
+     * @return bool
      */
     public function unblockAccount($account){
         if(3 == $account->status){
@@ -92,8 +108,10 @@ class AccountsServices
         }
         return false;
     }
+
     /**
-     *
+     * @param $account
+     * @return bool
      */
     public function blockAccount($account){
         if(1 == $account->status || 2 == $account->status ){
