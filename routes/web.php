@@ -75,7 +75,7 @@ $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
 
 //Virements (same customer)
-$app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount', 'middleware' =>['auth','role:customer']]);
+$app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount']);
 //Virements interne Tharwa (two customers)
 $app->post('virements_internes_thw',['uses' => 'VirementInternesController@transferToOtherUser', 'middleware' =>['auth','role:customer']]);
 

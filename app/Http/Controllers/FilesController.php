@@ -87,7 +87,7 @@ class FilesController extends Controller {
      */
     public function uploadImage($file,$path, $path_min,$id_user)
     {  
-        //the nameof the original picture
+        //the name of the original picture
         $imagename = $this->generateNameImageUser($id_user,$file->getClientOriginalExtension());
         //the destination of the original picture
         $destinationPath = $path;

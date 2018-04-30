@@ -2,19 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: mezerreg
- * Date: 12-04-2018
- * Time: 10:59
+ * Date: 23-04-2018
+ * Time: 16:39
  */
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
-class Commission extends Model
+class JustificatifVirmInt extends Model
 {
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+
     protected $fillable = [
-        'description',
-        'type',
-        'valeur'
+        'url_justif',
+        'status',
+        'date_action_banker',
+        'id_vrm',
+        'id_banker'
     ];
 
     /**

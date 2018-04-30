@@ -103,6 +103,7 @@ class LogJob extends Job
             case 12 :
                 $this->type = 'add another account';
                 break;
+          
             default : return  response()->json(['message' => 'invalid type'], 400);
         }
 

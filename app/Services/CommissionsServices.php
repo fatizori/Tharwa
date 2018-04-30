@@ -22,16 +22,7 @@ class CommissionsServices
         return $commissions;
     }
 
-    /**
-     * Find the commission by type
-     * @param $type
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
-     */
-    public function findCommissionByCode($code){
-        $commission = Commission::where('code',$code)->first();
-        return $commission;
-
-    }
+   
 
     /**
      * Find a commission by id
@@ -39,7 +30,7 @@ class CommissionsServices
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
      public function findById($id){
-        $commission = Commission::find($id);
+        $commission = Commission::where('id',$id)->first();
         return $commission;
     }
 
