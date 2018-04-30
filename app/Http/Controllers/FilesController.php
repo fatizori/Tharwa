@@ -36,9 +36,9 @@ class FilesController extends Controller {
                 break;
             case 'image/jpg' :
                 $src_img = imagecreatefromjpeg($old_image);
+                break;
             case 'image/bmp' :
                 $src_img = imagecreatefromwbmp($old_image);
-
                 break;
             default:
                 return false;
@@ -82,7 +82,10 @@ class FilesController extends Controller {
 
     /**
      * File Upload
-     * @param file, original path , path after minimization
+     * @param $file
+     * @param $path
+     * @param $path_min
+     * @param $id_user
      * @return string
      */
     public function uploadImage($file,$path, $path_min,$id_user)

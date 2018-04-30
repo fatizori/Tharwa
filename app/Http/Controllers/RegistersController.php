@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Services\AccountsServices;
 use App\Services\CustomersServices;
 use App\Services\BankersServices;
@@ -58,17 +59,23 @@ class RegistersController extends Controller {
             dispatch(new LogJob($data['email'],'',"Input validation error",1,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-
-
+        
      try{
         DB::beginTransaction();
 
         //Create a new user
-       $user = new UsersController;
-       $user_id = $user->store($request,0);
+        $user = new UsersController;
+        $user_id = $user->store($request,0);
+        if (! $user_id){
+            //log information
+            dispatch(new LogJob($data['email'],'', 'email exists',1,LogJob::FAILED_STATUS));
+            return response(json_encode(['message' => 'user exists']),422);
+        }
+
         //Client Traitement
         $customerService = new CustomersServices();
         $customerService->create($data,$user_id,self::DEFAULT_USER_IMG);
+
         //Account Traitement
          $this->createAccount($user_id,1); //the default account is the current account
 
@@ -76,7 +83,6 @@ class RegistersController extends Controller {
 
          //log information
          dispatch(new LogJob($data['email'],'',"a new customer was created",1,LogJob::SUCCESS_STATUS));
-
         return response(json_encode(['message' => 'new user  has been registered',
                                      'user_id' => $user_id]),201);
 
