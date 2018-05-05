@@ -27,6 +27,7 @@ class CommissionTableSeeder extends Seeder
         Commission::create([
             'id' => 'CVD',
             'description' => 'Courant vers devise',
+            'type' => 0,
             'valeur' => 2.00
         ]);
         Commission::create([
