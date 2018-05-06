@@ -8,6 +8,8 @@
 
 namespace App\Jobs;
 use App\Models\Log;
+use Carbon\Carbon;
+
 
 
 class LogJob extends Job
@@ -104,20 +106,19 @@ class LogJob extends Job
                 $this->type = 'add another account';
                 break;
           
-            default : return  response()->json(['message' => 'invalid type'], 400);
+           default : return  response()->json(['message' => 'invalid type'], 400);
         }
 
-       /* $log = new Log();
-        $log->email_sub = $this->email_sub;
-        $log->email_obj = $this->email_obj;
-        $log->message = $this->message;
-        $log->status = $this->status;
-        $log->type = $this->type;
-        $log->save();*/
 
         $logfile = 'log.txt';
+        $currentDate = Carbon::now();
+
         $handle = fopen($logfile, 'a') or die('Cannot open file:  '.$logfile);
-        $data = $this->email_sub.' '.$this->email_obj.' '.$this->message.' '.$this->status.' '.$this->type.PHP_EOL;
+        if(filesize("log.txt") == 0){
+            $header = 'Date and Time'.' | '.'Sender'.' | '.'Receiver'.' | '.'Log Message'.' | '.'Status'.' | '.'Type'.PHP_EOL;
+            fwrite($handle, $header);
+        }
+        $data = $currentDate->toDateTimeString().' | '.$this->email_sub.' | '.$this->email_obj.' | '.$this->message.' | '.$this->status.' | '.$this->type.PHP_EOL;
         fwrite($handle, $data);
          
     }

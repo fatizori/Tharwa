@@ -94,7 +94,18 @@ class UsersServices
         return true;
     }
 
-
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getUsernameByIdAccount($id){
+        $username  = Customer::join('accounts', 'customers.id', '=', 'accounts.id_customer')
+            ->where('accounts.id','=',$id)
+            ->where('accounts.type','=',1)
+            ->select('name')
+            ->first();
+        return $username;
+    }
     /**
      * Delete a user
      * @param $user
