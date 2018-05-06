@@ -66,7 +66,7 @@ $app->delete('commissions/{id}',['uses' => 'CommissionsController@destroy','midd
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //Validate exchange justif
-$app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfert','middleware' => ['auth','role:banker']]);
+$app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
 
 

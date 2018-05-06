@@ -30,7 +30,7 @@ class CommissionsServices
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
      public function findById($id){
-        $commission = Commission::where('code',$id)->first();
+        $commission = Commission::where('id',$id)->first();
         return $commission;
     }
 
@@ -42,7 +42,7 @@ class CommissionsServices
     public function create($data){
         $commission = new Commission();
         $commission->description = strip_tags($data['description']);
-        $commission->code = strip_tags($data['code']);
+        $commission->id = strip_tags($data['code']);
         $commission->type = strip_tags($data['type']);
         $commission->valeur = strip_tags($data['valeur']);
         $commission->save();
@@ -55,7 +55,7 @@ class CommissionsServices
      * @param $data
      */
     public function update($commission,$data){
-        $commission->update(['description'=> $data['description'], 'code'=> $data['code']
+        $commission->update(['description'=> $data['description'], 'id'=> $data['code']
             , 'type'=> $data['type'], 'valeur'=> $data['valeur']]);
     }
 

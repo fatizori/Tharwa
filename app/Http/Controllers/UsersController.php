@@ -37,10 +37,10 @@ class UsersController extends Controller
     }
 
 
-
     /**
      * Create a new User
-     * @param Request $request, user role
+     * @param Request $request , user role
+     * @param $role
      * @return integer id
      */
     public function store(Request $request,$role){

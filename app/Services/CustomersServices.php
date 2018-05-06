@@ -55,7 +55,7 @@ class CustomersServices
         $customer  = new Customer();
         $customer->name = strip_tags($data['name']);
         $customer->address = strip_tags($data['address']);
-        $customer->function = strip_tags($data['function']);
+        $customer->fonction = strip_tags($data['fonction']);
         $customer->wilaya = strip_tags($data['wilaya']);
         $customer->commune = strip_tags($data['commune']);
         $customer->type = $data['type'];

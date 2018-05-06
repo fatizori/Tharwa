@@ -20,7 +20,8 @@ class VirementInternesServices
      * @param $sender_id
      * @param $receiver_id
      */
-    public function create($data,$codeCommission,$typeCommission,$montant,$sender_id,$receiver_id){
+    public function create($data, $codeCommission, $typeCommission, $montant, $sender_id, $receiver_id)
+    {
 
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = strip_tags($data['num_acc_sender']);
@@ -36,23 +37,23 @@ class VirementInternesServices
         $commissionC = new CommissionsServices();
         $commission = $commissionC->findByid($codeCommission);
         $virementInterne->id_commission = $codeCommission;
-        if($typeCommission == 0){
+        if ($typeCommission == 0) {
             $virementInterne->montant_commission = $commission->valeur * $data['montant_virement'];
-        }else{
+        } else {
             $virementInterne->montant_commission = $commission->valeur;
         }
         $virementInterne->save();
 
         //update the  sender's account balance
         $senderBalance = $account_sender->balance - $data['montant_virement'];
-        $this->accountService->updateAccountBalance($account_sender,$senderBalance);
+        $this->accountService->updateAccountBalance($account_sender, $senderBalance);
 
         //update the receiver's account balance
         $receiverBalance = $amount - $virementInterne->montant_commission + $account_receiver->balance;
-        $this->accountService->updateAccountBalance($account_receiver,$receiverBalance);
+        $this->accountService->updateAccountBalance($account_receiver, $receiverBalance);
 
         //log
-        dispatch(new LogJob($sender_id,$receiver_id,'Virement effectue',11, LogJob::SUCCESS_STATUS));
+        dispatch(new LogJob($sender_id, $receiver_id, 'Virement effectue', 11, LogJob::SUCCESS_STATUS));
 
     }
 
@@ -63,8 +64,9 @@ class VirementInternesServices
      * @param $type
      * @return VirementInterne
      */
-    public function createBetweenCustomersExchange($sender_account, $receiver_account, $montant, $type){
-            return $this->createVirementBetweenCustomers($sender_account,$receiver_account,$montant,$type,1);
+    public function createBetweenCustomersExchange($sender_account, $receiver_account, $montant, $type)
+    {
+        return $this->createVirementBetweenCustomers($sender_account, $receiver_account, $montant, $type, 1);
     }
 
 
@@ -75,28 +77,30 @@ class VirementInternesServices
      * @param $type
      * @return VirementInterne
      */
-    public function createBetweenCustomersExchangeJustif($sender_account, $receiver_account, $montant, $type){
-        return $this->createVirementBetweenCustomers($sender_account,$receiver_account,$montant,$type,0);
+    public function createBetweenCustomersExchangeJustif($sender_account, $receiver_account, $montant, $type)
+    {
+        return $this->createVirementBetweenCustomers($sender_account, $receiver_account, $montant, $type, 0);
     }
 
     /**
      * @param $id
      * @return \Illuminate\Database\Eloquent\Model|mixed|null|static
      */
-    public function getTransfertById($id){
-        $virement = VirementInterne::where('id',$id)->first();
+    public function getTransferById($id)
+    {
+        $virement = VirementInterne::where('id', $id)->first();
         return $virement;
     }
 
 
-
-    private function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status){
+    private function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status)
+    {
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = strip_tags($sender_account->id);
         $virementInterne->code_bnk_sender = 'THW';
         $virementInterne->code_curr_sender = 'DZD';
         $virementInterne->num_acc_receiver = $reciever_account->id;
-        $virementInterne->code_bnk_receiver ='THW';
+        $virementInterne->code_bnk_receiver = 'THW';
         $virementInterne->code_curr_receiver = 'DZD';
         $virementInterne->montant_virement = $montant;
         $virementInterne->status = $status;
@@ -106,41 +110,41 @@ class VirementInternesServices
         $commission = $commissionC->findById('VCT');
         $virementInterne->id_commission = 5;
         //Extract commission value
-        $virementInterne->montant_commission = $commission->valeur/100 * $montant;
+        $virementInterne->montant_commission = $commission->valeur / 100 * $montant;
         $virementInterne->save();
         return $virementInterne;
     }
 
 
-
-
-    public function addJustif($justification,$id_sender){
+    public function addJustif($justification, $id_sender)
+    {
         $file = new FilesController;
-        $picture_url = $file->uploadImage($justification,self::IMAGE_JUSTiF,self::IMAGE_MIN,$id_sender);
+        $picture_url = $file->uploadImage($justification, self::IMAGE_JUSTiF, self::IMAGE_MIN, $id_sender);
         $justificatif_vrm = new JustificatifVirmInt();
-        $justificatif_vrm ->url_justif = $picture_url ;
-        $justificatif_vrm ->status = 0;
-        $justificatif_vrm ->save();
+        $justificatif_vrm->url_justif = $picture_url;
+        $justificatif_vrm->status = 0;
+        $justificatif_vrm->save();
     }
 
-   public function getInvalidVirementInternes(){
+    public function getInvalidVirementInternes()
+    {
         $virement = VirementInterne::join('justificatif_virm_int', 'justificatif_virm_int.id_vrm', '=', 'virement_internes.id')
-                    ->where('virement_internes.status' ,0 )
-                    ->where('justificatif_virm_int.status' ,0 )
-                    ->select('justificatif_virm_int.id','virement_internes.id','num_acc_sender','num_acc_receiver','virement_internes.code_bnk_receiver','virement_internes.created_at','url_justif')
-                    ->get();
+            ->where('virement_internes.status', 0)
+            ->where('justificatif_virm_int.status', 0)
+            ->select('justificatif_virm_int.id AS id_justif', 'virement_internes.id AS id_virement', 'num_acc_sender', 'num_acc_receiver', 'virement_internes.code_bnk_receiver', 'virement_internes.created_at', 'url_justif')
+            ->get();
         return $virement;
-   }
+    }
 
     /**
      * @param $id_justif
      * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
      */
-     public function getJustifById($id_justif)
-     {
-        $justif =  JustificatifVirmInt::where('id',$id_justif)->first();
+    public function getJustifById($id_justif)
+    {
+        $justif = JustificatifVirmInt::where('id', $id_justif)->first();
         return $justif;
-     }
+    }
 
 
     /**
@@ -148,9 +152,9 @@ class VirementInternesServices
      * @param $banker_id
      * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
      */
-    public function acceptJustif($justif_id,$banker_id)
+    public function acceptJustif($justif_id, $banker_id)
     {
-        $justif =  JustificatifVirmInt::where('id',$justif_id)->first();
+        $justif = JustificatifVirmInt::where('id', $justif_id)->first();
         $justif->status = 1;
         $justif->id_banker = $banker_id;
         $justif->save();
@@ -158,35 +162,36 @@ class VirementInternesServices
 
 
     /**
-     * @param $transfert
+     * @param $transfer
      * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
      */
-    public function acceptTranfert($transfert)
+    public function acceptTranfer($transfer)
     {
-        $transfert->status = 1;
-        $transfert->save();
+        $transfer->status = 1;
+        $transfer->save();
     }
 
     /**
- * @param $justif_id
- * @param $banker_id
- * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
- */
-    public function refuseJustif($justif_id,$banker_id)
+     * @param $justif_id
+     * @param $banker_id
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function refuseJustif($justif_id, $banker_id)
     {
-        $justif =  JustificatifVirmInt::where('id',$justif_id)->first();
+        $justif = JustificatifVirmInt::where('id', $justif_id)->first();
         $justif->status = 2;
         $justif->id_banker = $banker_id;
         $justif->save();
     }
 
     /**
-     * @param $transfert
+     * @param $transfer
      * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
      */
-    public function refuseTranfert($transfert)
+    public function refuseTranfer($transfer)
     {
-        $transfert->status = 2;
-        $transfert->save();
+        $transfer->status = 2;
+        $transfer->save();
     }
+
 }

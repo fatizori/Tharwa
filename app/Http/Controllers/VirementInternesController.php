@@ -172,13 +172,16 @@ class VirementInternesController extends Controller
             try {
                 $virement = $this->virementInterneService->createBetweenCustomersExchange($senderAccount, $account_receiver, $montant, $data['type']);
 
-                //update the  sender's account balance
                 $new_sender_balance = $senderAccount->balance - $data['montant_virement'];
-                $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
+                if($new_sender_balance < 0){
+                    //log
+                    dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (montant insuffisant)', 11,
+                        LogJob::FAILED_STATUS));
+                    return response(json_encode(['message' => 'montant insuffisant']), 400);
+                }
 
-                //update the  receiver's account balance
-                $new_receiver_balance = $account_receiver->balance + $virement->montant_virement - $virement->montant_commission;
-                $this->accountService->updateAccountBalance($account_receiver, $new_receiver_balance);
+                $this->excuteInternalTransfer($senderAccount,$account_receiver,$virement->montant_virement,$virement->montant_commission);
+
             } catch (\Exception $exception) {
                 //log
                 DB::rollback();
@@ -209,7 +212,7 @@ class VirementInternesController extends Controller
 
 
 
-    public function validateTransfert(Request $request,$id_justif){
+    public function validateTransfer(Request $request,$id_justif){
         //Validation of data
         $rules = [
             'operation'=>'required | integer | between:1,2'
@@ -225,7 +228,7 @@ class VirementInternesController extends Controller
             return   response()->json(['message' => 'justif non trouvé'], 404);
         }
         $id_transfert = $justif->id_vrm;
-        $transfert = $this->virementInterneService->getTransfertById($id_transfert);
+        $transfert = $this->virementInterneService->getTransferById($id_transfert);
         if (is_null($transfert)){
             return   response()->json(['message' => 'virement non trouvé'], 404);
         }
@@ -235,24 +238,37 @@ class VirementInternesController extends Controller
             // Refuse justif
             if($operation == 2 && $justif->status == 0 && $transfert->status == 0){
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
-                    $this->virementInterneService->refuseTranfert($transfert);
+                    $this->virementInterneService->refuseTranfer($transfert);
                     DB::commit();
                 return   response()->json(['message' => 'justificatif refusé'], 200);
             }else if ($operation == 1 && $justif->status == 0 && $transfert->status == 0){
                 // Accept justif
                     $this->virementInterneService->acceptJustif($justif->id,$banker_id);
-                    $this->virementInterneService->acceptTranfert($transfert);
+                    $this->virementInterneService->acceptTranfer($transfert);
+                    // Excute transfert
+                    $senderAccount = $this->accountService->findSenderCurrentAccountByTransfer($transfert);
+                    $receiverAccount = $this->accountService->findReceiverCurrentAccountByTransfer($transfert);
+                    $new_sender_balance = $senderAccount->balance - $transfert->montant_virement;
+                    if($new_sender_balance < 0){
+                        //log
+                        DB::rollback();
+                        dispatch(new LogJob($senderAccount->id_customer, $receiverAccount->id_customer, 'Virement non effectué (montant insuffisant)', 11,
+                            LogJob::FAILED_STATUS));
+                        return response(json_encode(['message' => 'montant insuffisant']), 206);
+                    }
+                    $this->excuteInternalTransfer($senderAccount,$receiverAccount,$transfert->montant_virement,$transfert->montant_commission);
                     DB::commit();
-                return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
+
+                    return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
             }else if ( 0 != $transfert->status){
-                // Virement is already valide
-                //Refuse justif
+                    // Virement is already valide
+                    // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
                     DB::commit();
                 return   response()->json(['message' => 'Virement est déja valide'], 422);
             }else if ( 0 != $justif->status){
-                // Justif is already valide
-                //Refuse justif
+                    // Justif is already valide
+                    // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
                     DB::commit();
                 return response()->json(['message' => 'Justif est déja valide'], 422);
@@ -264,6 +280,20 @@ class VirementInternesController extends Controller
 
     }
 
+    /**
+     * @param $senderAccount
+     * @param $receiver_account
+     * @param $amount
+     * @param $commission
+     */
+    public function excuteInternalTransfer($senderAccount, $receiver_account, $amount, $commission){
+        //update the  sender's account balance
+        $new_sender_balance = $senderAccount->balance - $amount - $commission;
+        $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
 
+        //update the  receiver's account balance
+        $new_receiver_balance = $receiver_account->balance + $amount;
+        $this->accountService->updateAccountBalance($receiver_account, $new_receiver_balance);
+    }
 
 }
