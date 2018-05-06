@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\VirementInterne;
-use App\Services\CommissionsServices;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
 use App\Services\AccountsServices;
@@ -16,7 +14,6 @@ class VirementInternesController extends Controller
 
     private $virementInterneService;
     private $accountService;
-    private $commissionService;
     /**
      * VirementInternesController constructor.
      */
@@ -161,7 +158,7 @@ class VirementInternesController extends Controller
 
         //Check the receiver
         $account_receiver = $this->accountService->findById($data['num_acc_receiver']);
-        if (is_null($account_receiver) || $account_receiver->type != 1){
+        if (is_null($account_receiver) || 1 != $account_receiver->type){
             dispatch(new LogJob($user->id,$data['num_acc_receiver'],'distnataire introuvable',11,
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver account not found']),404);
