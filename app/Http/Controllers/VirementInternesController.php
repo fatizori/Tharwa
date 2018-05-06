@@ -234,33 +234,32 @@ class VirementInternesController extends Controller
             DB::beginTransaction();
             // Refuse justif
             if($operation == 2 && $justif->status == 0 && $transfert->status == 0){
-                $justif->status = 2;
-                $justif->id_banker = $banker_id;
-                DB::commit();
+                    $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    $this->virementInterneService->refuseTranfert($transfert);
+                    DB::commit();
                 return   response()->json(['message' => 'justificatif refusé'], 200);
             }else if ($operation == 1 && $justif->status == 0 && $transfert->status == 0){
                 // Accept justif
-                $justif->status = 1;
-                $justif->id_banker = $banker_id;
-                $transfert->status = 1;
-                DB::commit();
+                    $this->virementInterneService->acceptJustif($justif->id,$banker_id);
+                    $this->virementInterneService->acceptTranfert($transfert);
+                    DB::commit();
                 return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
             }else if ( 0 != $transfert->status){
                 // Virement is already valide
                 //Refuse justif
-                $justif->status = 2;
-                $justif->id_banker = $banker_id;
+                    $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    DB::commit();
                 return   response()->json(['message' => 'Virement est déja valide'], 422);
             }else if ( 0 != $justif->status){
                 // Justif is already valide
                 //Refuse justif
-                $justif->status = 2;
-                $justif->id_banker = $banker_id;
-                return   response()->json(['message' => 'Justif est déja valide'], 422);
+                    $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    DB::commit();
+                return response()->json(['message' => 'Justif est déja valide'], 422);
             }
         }catch (\Exception $exception) {
-            DB::rollback();
-            return response()->json(['message' => $exception->getMessage()], 500);
+                    DB::rollback();
+                    return response()->json(['message' => $exception->getMessage()], 500);
         }
 
     }

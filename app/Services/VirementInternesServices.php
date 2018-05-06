@@ -84,7 +84,7 @@ class VirementInternesServices
      * @return \Illuminate\Database\Eloquent\Model|mixed|null|static
      */
     public function getTransfertById($id){
-        $virement = VirementInterne::where('id',$id);
+        $virement = VirementInterne::where('id',$id)->first();
         return $virement;
     }
 
@@ -142,4 +142,51 @@ class VirementInternesServices
         return $justif;
      }
 
+
+    /**
+     * @param $justif_id
+     * @param $banker_id
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function acceptJustif($justif_id,$banker_id)
+    {
+        $justif =  JustificatifVirmInt::where('id',$justif_id)->first();
+        $justif->status = 1;
+        $justif->id_banker = $banker_id;
+        $justif->save();
+    }
+
+
+    /**
+     * @param $transfert
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function acceptTranfert($transfert)
+    {
+        $transfert->status = 1;
+        $transfert->save();
+    }
+
+    /**
+ * @param $justif_id
+ * @param $banker_id
+ * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+ */
+    public function refuseJustif($justif_id,$banker_id)
+    {
+        $justif =  JustificatifVirmInt::where('id',$justif_id)->first();
+        $justif->status = 2;
+        $justif->id_banker = $banker_id;
+        $justif->save();
+    }
+
+    /**
+     * @param $transfert
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function refuseTranfert($transfert)
+    {
+        $transfert->status = 2;
+        $transfert->save();
+    }
 }
