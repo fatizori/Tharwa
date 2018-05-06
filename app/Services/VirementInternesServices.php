@@ -16,11 +16,11 @@ class VirementInternesServices
      * @param $data
      * @param $codeCommission
      * @param $typeCommission
-     * @param $montant
+     * @param $amount
      * @param $sender_id
      * @param $receiver_id
      */
-    public function create($data, $codeCommission, $typeCommission, $montant, $sender_id, $receiver_id)
+    public function create($data, $codeCommission, $typeCommission, $amount, $sender_id, $receiver_id)
     {
 
         $virementInterne = new VirementInterne();
