@@ -26,6 +26,15 @@ class VirementInternesController extends Controller
     }
 
     /**
+     * Get Invalid Virements Internes
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInvalidVirementInternes(){
+        $virementInvalid = $this->virementInterneService->getInvalidVirementInternes();
+        return response()->json($virementInvalid, 200);
+    }
+
+    /**
      * Get the codeCommission
      * @param $senderAcountType
      * @param $receiverAccountType
@@ -107,22 +116,16 @@ class VirementInternesController extends Controller
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
 
 
-        $this->virementInterneService->create($data,    $codeCommission,0,$amount,$account_sender->id_customer,$account_receiver->id_customer);
+        $this->virementInterneService->create($data,    $codeCommission,0,$amount,$account_sender->id_customer,$account_receiver->id_customer,$account_sender,$account_receiver);
 
-        //update the  sender's account balance
-        $senderBalance = $account_sender->balance - $data['montant_virement'];
-        $this->accountService->updateAccountBalance($account_sender,$senderBalance);
 
-        //update the receiver's account balance
-        $receiverBalance = $amount + $account_receiver->balance;
-        $this->accountService->updateAccountBalance($account_receiver,$receiverBalance);
 
             DB::commit();
         return response(json_encode(['message' => 'transfer success']),201);
         } catch (\Exception $e) {
             DB::rollback();
             //log information
-            dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
+            //dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
