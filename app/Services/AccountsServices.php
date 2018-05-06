@@ -8,10 +8,7 @@
 
 namespace App\Services;
 use App\Models\Account;
-use App\Models\Bank;
-use App\Models\Currency;
 use App\Models\Customer;
-use Carbon\Carbon;
 
 
 class AccountsServices

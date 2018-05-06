@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\VirementInterne;
 use App\Services\CommissionsServices;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
@@ -24,6 +25,7 @@ class VirementInternesController extends Controller
         $this->virementInterneService = new VirementInternesServices();
         $this->accountService = new AccountsServices();
     }
+
 
     /**
      * Get the codeCommission
@@ -166,7 +168,7 @@ class VirementInternesController extends Controller
         // Get sender account
         $senderAccount = $this->accountService->findCurrentAccountByUserId($user->id);
 
-        if ($montant < 200000) {
+        if ($montant <= 200000) {
             try {
                 $virement = $this->virementInterneService->createBetweenCustomersExchange($senderAccount, $account_receiver, $montant, $data['type']);
 
@@ -185,11 +187,18 @@ class VirementInternesController extends Controller
                 return response(json_encode(['message' => $exception->getMessage()]), 500);
 
             }
-        }
-        if ($montant > 200000){
-        // TODO
-            $this->virementInterneService->createBetweenCustomersExchangeJustif($user, $data['num_acc_receiver'],$montant,$data['type']);
-
+        } elseif ($montant > 200000) {
+            try {
+                //add exchange
+                 $this->virementInterneService->createBetweenCustomersExchangeJustif($user, $data['num_acc_receiver'], $montant, $data['type']);
+                //add justif
+                $this->virementInterneService->addJustif($data['justif'],$user->id);
+            } catch (\Exception $exception) {
+                DB::rollback();
+                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 11,
+                    LogJob::FAILED_STATUS));
+                return response(json_encode(['message' => $exception->getMessage()]), 500);
+            }
         }
         //log
         dispatch(new LogJob($user->id,$account_receiver->id_customer,'Virement effectué',11,
@@ -197,5 +206,65 @@ class VirementInternesController extends Controller
         DB::commit();
         return response(json_encode(['message'=>'virement effectué']),201);
     }
+
+
+
+    public function validateTransfert(Request $request,$id_justif){
+        //Validation of data
+        $rules = [
+            'operation'=>'required | integer | between:1,2'
+        ];
+        $data= $request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            return   response()->json(['message' => $validator->errors()->all()], 400);
+        }
+        $operation = $data['operation'];
+        $justif = $this->virementInterneService->getJustifById($id_justif);
+        if (is_null($justif)){
+            return   response()->json(['message' => 'justif non trouvé'], 404);
+        }
+        $id_transfert = $justif->id_vrm;
+        $transfert = $this->virementInterneService->getTransfertById($id_transfert);
+        if (is_null($transfert)){
+            return   response()->json(['message' => 'virement non trouvé'], 404);
+        }
+        $banker_id = $request->user()->id;
+        try {
+            DB::beginTransaction();
+            // Refuse justif
+            if($operation == 2 && $justif->status == 0 && $transfert->status == 0){
+                $justif->status = 2;
+                $justif->id_banker = $banker_id;
+                DB::commit();
+                return   response()->json(['message' => 'justificatif refusé'], 200);
+            }else if ($operation == 1 && $justif->status == 0 && $transfert->status == 0){
+                // Accept justif
+                $justif->status = 1;
+                $justif->id_banker = $banker_id;
+                $transfert->status = 1;
+                DB::commit();
+                return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
+            }else if ( 0 != $transfert->status){
+                // Virement is already valide
+                //Refuse justif
+                $justif->status = 2;
+                $justif->id_banker = $banker_id;
+                return   response()->json(['message' => 'Virement est déja valide'], 422);
+            }else if ( 0 != $justif->status){
+                // Justif is already valide
+                //Refuse justif
+                $justif->status = 2;
+                $justif->id_banker = $banker_id;
+                return   response()->json(['message' => 'Justif est déja valide'], 422);
+            }
+        }catch (\Exception $exception) {
+            DB::rollback();
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
+    }
+
+
 
 }

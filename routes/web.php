@@ -23,9 +23,9 @@ $app->group( ['prefix' => 'accounts',
     'middleware' => ['auth','role:banker']],function () use ($app) {
     // get the list of all accounts
     $app->get('', ['uses' => 'AccountsController@index']);
-    // validate the user account
+    // manage the user account
     $app->put('/{id:[0-9]+}',['uses' => 'AccountsController@validateAccount']);
-    // block account
+
 });
 // get the list of non valide accounts
 $app->get('accounts/invalid',['uses' => 'AccountsController@invalidAccounts','middleware' => ['auth','role:banker']]);
@@ -65,7 +65,9 @@ $app->put('commissions/{id}',['uses' => 'CommissionsController@update','middlewa
 $app->delete('commissions/{id}',['uses' => 'CommissionsController@destroy','middleware' => ['auth','role:manager']]);
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
-//block banker
+//Validate exchange justif
+$app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfert','middleware' => ['auth','role:banker']]);
+
 
 
 //Customers

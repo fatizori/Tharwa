@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class JustificatifVirmInt extends Model
 {
+    protected $table = 'justificatif_virm_int';
 
     /**
      * The attributes that are mass assignable.

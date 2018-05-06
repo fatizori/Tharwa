@@ -20,7 +20,7 @@ class CreateJustificatifVirmIntTable extends Migration
             // Schema declaration
             $table->string('url_justif');
             $table->integer('status');
-            $table->date('date_action_banker');
+            $table->date('date_action_banker')->nullable();
             $table->integer('id_vrm');
             $table->integer('id_banker');
             $table->timestamps();

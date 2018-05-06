@@ -34,7 +34,7 @@ class Customer extends Model implements AuthenticatableContract, AuthorizableCon
         'id',
         'name',
         'address',
-        'function',
+        'fonction',
         'wilaya',
         'commune',
         'photo',

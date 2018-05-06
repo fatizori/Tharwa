@@ -18,7 +18,7 @@ class CustomerTableSeeder extends Seeder
                 'address'=>'Alger qq part',
                 'wilaya'=> 'Alger',
                 'commune' => 'ben aknoun',
-                'function' => 'Developpeur',
+                'fonction' => 'Developpeur',
                 'type' => 0,
                 'photo' => 'customer1.jpg',
         ]);
@@ -29,7 +29,7 @@ class CustomerTableSeeder extends Seeder
             'address'=>'Oran qq part',
             'wilaya'=> 'Oran',
             'commune' => 'ben Khadda',
-            'function' => 'Tester',
+            'fonction' => 'Tester',
             'type' => 0,
             'photo' => 'customer1.jpg',
         ]);

@@ -2,17 +2,13 @@
 
 namespace App\Services;
 use App\Jobs\LogJob;
-use App\Models\Account;
+use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmInt;
 use App\Models\VirementInterne;
-use App\Services\CommissionsServices;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\UploadedFile;
 use  App\Http\Controllers\FilesController;
 
 class VirementInternesServices
 {
-    const PATH_JUSTIF = 'images/justifications/';
     const IMAGE_JUSTiF = 'images/justificatif_vrm/';
     const IMAGE_MIN = 'images/justificatif_vrm_min/';
 
@@ -62,26 +58,28 @@ class VirementInternesServices
             return $this->createVirementBetweenCustomers($sender_account,$receiver_account,$montant,$type,1);
     }
 
-//    public function createBetweenCustomersExchangeJustif($sender_customer, $codeAccount, $montant, $type, $justif){
-//        $sender_id = $sender_customer->id;
-//        DB::beginTransaction();
-//        $failureResponse =$this->checkVirementBeforeCreate($codeAccount,$sender_id,$montant);
-//        if (!$failureResponse){
-//            $this->createVirementBetweenCustomers($sender_account,$codeAccount,$montant,$type,0);
-//            // log
-//            dispatch(new LogJob($sender_id,$reciever_account->id_customer,'Virement effectué',11,
-//                LogJob::SUCCESS_STATUS));
-//
-//            // Upload justif
-//            $justif->move($destinationPathJustifs, $imagename);
-//
-//
-//            DB::commit();
-//            return response(json_encode(['message'=>'virement effectué']),201);
-//        }
-//        DB::rollback();
-//        return $failureResponse;
-//    }
+
+    /**
+     * @param $sender_account
+     * @param $receiver_account
+     * @param $montant
+     * @param $type
+     * @return VirementInterne
+     */
+    public function createBetweenCustomersExchangeJustif($sender_account, $receiver_account, $montant, $type){
+        return $this->createVirementBetweenCustomers($sender_account,$receiver_account,$montant,$type,0);
+    }
+
+    /**
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Model|mixed|null|static
+     */
+    public function getTransfertById($id){
+        $virement = VirementInterne::where('id',$id);
+        return $virement;
+    }
+
+
 
     private function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status){
         $virementInterne = new VirementInterne();
@@ -116,5 +114,15 @@ class VirementInternesServices
         $justificatif_vrm ->save();
     }
 
+
+    /**
+     * @param $id_justif
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+     public function getJustifById($id_justif)
+     {
+        $justif =  JustificatifVirmInt::where('id',$id_justif)->first();
+        return $justif;
+     }
 
 }

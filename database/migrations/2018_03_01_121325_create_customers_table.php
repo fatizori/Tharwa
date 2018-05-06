@@ -22,7 +22,7 @@ class CreateCustomersTable extends Migration
             // Schema declaration
             $table->string('name');
             $table->string('address');
-            $table->string('function');
+            $table->string('fonction');
             $table->string('wilaya');
             $table->string('commune');
             $table->string('photo')->nullable();

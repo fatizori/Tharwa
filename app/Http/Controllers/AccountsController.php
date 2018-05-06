@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
+use App\Services\JustificationServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 
 class AccountsController extends Controller
@@ -87,10 +89,22 @@ class AccountsController extends Controller
      */
 
     public function  validateAccount(Request $request,$id_account){
-        $data = $request->json()->all();
+        //Validation of data
+        $rules = [
+            'type' => 'numeric',
+            'justif_object' => 'max:190',
+            'justif' => 'max:255'
+        ];
+        $data=$request->json()->all();
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            dispatch(new LogJob('','',"Input validation error",11,LogJob::FAILED_STATUS));
+            return   response()->json(['message' => $validator->errors()->all()], 400);
+        }
 
+        $banker = $request->user();
         //Get the email of the banker
-        $email_banker = $request->user()->email;
+        $email_banker = $banker->email;
         $type = $data['type'];
         //find the account
         $account = $this->accountsService->findById($id_account);
@@ -107,11 +121,21 @@ class AccountsController extends Controller
                     // unblock an account
                     $action = $this->accountsService->unblockAccount($account);
                 }break;
-                case 3:{
-                    $message = 'account was blocked';
-                    // unblock an account
-                    $action = $this->accountsService->blockAccount($account);
-                }break;
+                case 3:
+                    {
+                        $message = 'account was blocked';
+                        // block an account
+                        $justif = $data['justif'];
+                        $justif_object = $data['justif_object'];
+                        if (is_null($justif) || !isset($justif)) {
+                            dispatch(new LogJob('', '', "Justif manque", 11, LogJob::FAILED_STATUS));
+                            return response()->json(['message' => $validator->errors()->all()], 400);
+                        }
+                        $action = $this->accountsService->blockAccount($account);
+                        //Create justif
+                        $justifServices = new JustificationServices();
+                        $justifServices->createAccountJustif($banker->id, $account->id, $justif, $justif_object);
+                    }break;
                 case 4:{
                     $message = 'new account was refused';
                     // delete new account
