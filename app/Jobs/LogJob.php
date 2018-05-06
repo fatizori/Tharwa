@@ -107,12 +107,18 @@ class LogJob extends Job
             default : return  response()->json(['message' => 'invalid type'], 400);
         }
 
-        $log = new Log();
+       /* $log = new Log();
         $log->email_sub = $this->email_sub;
         $log->email_obj = $this->email_obj;
         $log->message = $this->message;
         $log->status = $this->status;
         $log->type = $this->type;
-        $log->save();
+        $log->save();*/
+
+        $logfile = 'log.txt';
+        $handle = fopen($logfile, 'a') or die('Cannot open file:  '.$logfile);
+        $data = $this->email_sub.' '.$this->email_obj.' '.$this->message.' '.$this->status.' '.$this->type.PHP_EOL;
+        fwrite($handle, $data);
+         
     }
 }

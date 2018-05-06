@@ -29,7 +29,7 @@ class VirementInternesServices
         $virementInterne->num_acc_receiver = strip_tags($data['num_acc_receiver']);
         $virementInterne->code_bnk_receiver = 'THW';
         $virementInterne->code_curr_receiver = strip_tags($data['code_curr_receiver']);
-        $virementInterne->montant_virement = $montant;
+        $virementInterne->montant_virement = $amount;
         $virementInterne->status = 1;
         $virementInterne->type = $data['type'];
         //find commission by code
@@ -42,6 +42,15 @@ class VirementInternesServices
             $virementInterne->montant_commission = $commission->valeur;
         }
         $virementInterne->save();
+
+        //update the  sender's account balance
+        $senderBalance = $account_sender->balance - $data['montant_virement'];
+        $this->accountService->updateAccountBalance($account_sender,$senderBalance);
+
+        //update the receiver's account balance
+        $receiverBalance = $amount - $virementInterne->montant_commission + $account_receiver->balance;
+        $this->accountService->updateAccountBalance($account_receiver,$receiverBalance);
+
         //log
         dispatch(new LogJob($sender_id,$receiver_id,'Virement effectue',11, LogJob::SUCCESS_STATUS));
 
@@ -114,6 +123,14 @@ class VirementInternesServices
         $justificatif_vrm ->save();
     }
 
+   public function getInvalidVirementInternes(){
+        $virement = VirementInterne::join('justificatif_virm_int', 'justificatif_virm_int.id_vrm', '=', 'virement_internes.id')
+                    ->where('virement_internes.status' ,0 )
+                    ->where('justificatif_virm_int.status' ,0 )
+                    ->select('justificatif_virm_int.id','virement_internes.id','num_acc_sender','num_acc_receiver','virement_internes.code_bnk_receiver','virement_internes.created_at','url_justif')
+                    ->get();
+        return $virement;
+   }
 
     /**
      * @param $id_justif
