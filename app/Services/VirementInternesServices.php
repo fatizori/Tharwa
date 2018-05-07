@@ -12,48 +12,53 @@ class VirementInternesServices
     const IMAGE_JUSTiF = 'images/justificatif_vrm/';
     const IMAGE_MIN = 'images/justificatif_vrm_min/';
 
+    private $accountService;
+    public function __construct()
+    {
+        $this->accountService = new AccountsServices();
+    }
+
     /**
-     * @param $data
      * @param $codeCommission
      * @param $typeCommission
      * @param $amount
-     * @param $sender_id
-     * @param $receiver_id
+     * @param $sender
+     * @param $receiver
+     * @param $type
      */
-    public function create($data, $codeCommission, $typeCommission, $amount, $sender_id, $receiver_id)
+    public function create( $codeCommission, $typeCommission, $amount, $sender, $receiver, $type)
     {
-
         $virementInterne = new VirementInterne();
-        $virementInterne->num_acc_sender = strip_tags($data['num_acc_sender']);
+        $virementInterne->num_acc_sender = $sender->id;
         $virementInterne->code_bnk_sender = 'THW';
-        $virementInterne->code_curr_sender = strip_tags($data['code_curr_sender']);
-        $virementInterne->num_acc_receiver = strip_tags($data['num_acc_receiver']);
+        $virementInterne->code_curr_sender = $sender->currency_code;
+        $virementInterne->num_acc_receiver = $receiver->id;
         $virementInterne->code_bnk_receiver = 'THW';
-        $virementInterne->code_curr_receiver = strip_tags($data['code_curr_receiver']);
+        $virementInterne->code_curr_receiver = $receiver->currency_code;
         $virementInterne->montant_virement = $amount;
         $virementInterne->status = 1;
-        $virementInterne->type = $data['type'];
+        $virementInterne->type =$type;
         //find commission by code
         $commissionC = new CommissionsServices();
-        $commission = $commissionC->findByid($codeCommission);
+        $commission = $commissionC->findById($codeCommission);
         $virementInterne->id_commission = $codeCommission;
         if ($typeCommission == 0) {
-            $virementInterne->montant_commission = $commission->valeur * $data['montant_virement'];
+            $virementInterne->montant_commission = $commission->valeur * $amount;
         } else {
             $virementInterne->montant_commission = $commission->valeur;
         }
         $virementInterne->save();
 
         //update the  sender's account balance
-        $senderBalance = $account_sender->balance - $data['montant_virement'];
-        $this->accountService->updateAccountBalance($account_sender, $senderBalance);
+        $senderBalance = $sender->balance - $amount - $virementInterne->montant_commission ;
+        $this->accountService->updateAccountBalance($sender, $senderBalance);
 
         //update the receiver's account balance
-        $receiverBalance = $amount - $virementInterne->montant_commission + $account_receiver->balance;
-        $this->accountService->updateAccountBalance($account_receiver, $receiverBalance);
+        $receiverBalance = $amount + $receiver->balance;
+        $this->accountService->updateAccountBalance($receiver, $receiverBalance);
 
         //log
-        dispatch(new LogJob($sender_id, $receiver_id, 'Virement effectue', 11, LogJob::SUCCESS_STATUS));
+        dispatch(new LogJob($sender->id, $receiver->id, 'Virement effectue', 11, LogJob::SUCCESS_STATUS));
 
     }
 

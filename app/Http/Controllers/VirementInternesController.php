@@ -64,11 +64,10 @@ class VirementInternesController extends Controller
 
         //Validation of data
         $rules = [
-
-            'type_acc_sender' => 'required',
-            'type_acc_receiver'=>'required',
-            'montant_virement'=>'required',
-            'type'=>'required | integer | between:0,1',
+                    'type_acc_sender' => 'required',
+                    'type_acc_receiver'=>'required',
+                    'montant_virement'=>'required',
+                    'type'=>'required | integer | between:0,1'
         ];
         $data=$request->json()->all();
         $validator = Validator::make($data, $rules);
@@ -115,7 +114,7 @@ class VirementInternesController extends Controller
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
 
 
-        $this->virementInterneService->create($data,    $codeCommission,0,$amount,$account_sender->id_customer,$account_receiver->id_customer,$account_sender,$account_receiver);
+        $this->virementInterneService->create($codeCommission,0,$amount,$account_sender,$account_receiver,$data['type']);
 
 
 
