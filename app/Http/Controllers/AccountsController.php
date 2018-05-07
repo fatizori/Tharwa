@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Models\Account;
+use App\Models\Customer;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
 use App\Services\JustificationServices;
@@ -63,6 +63,22 @@ class AccountsController extends Controller
         return response()->json($account, 200);
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getNameAccount(Request $request, $id){
+        $account = $this->accountsService->findById($id);
+        if(is_null($account)){
+            return response()->json(['message' => 'not found account'], 404);
+        }
+        $customer = Customer::find($account->id_customer);
+        $data['name'] = $customer->name;
+        $data['commune'] = $customer->commune;
+        $data['wilaya'] = $customer->wilaya;
+        return response()->json($data, 200);
+    }
 
     /**
      * Delete an account

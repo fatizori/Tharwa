@@ -71,10 +71,12 @@ $app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesContr
 
 
 //Customers
-//get the exchange rate
+// get the exchange rate
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
-//route to subscribe a customer
+// route to subscribe a customer
 $app->post('customers',['uses' => 'RegistersController@registerCustomer']);
+// get account name
+$app->get('accounts/name/{id:[0-9]+}',['uses' => 'AccountsController@getNameAccount', 'middleware' =>['auth','role:customer']]);
 
 //Virements (same customer)
 $app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount', 'middleware' =>['auth','role:customer']]);

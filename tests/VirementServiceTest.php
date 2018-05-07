@@ -31,22 +31,66 @@ class VirementServiceTest extends TestCase
 //        DB::rollback();
 //    }
 //
-//    public function testGetInvalidVirementInternes(){
-//        DB::beginTransaction();
-//        $virement = $this->virementService->create();
-//        $virements = $this->virementService->getInvalidVirementInternes();
-//
-//        DB::rollback();
-//    }
+
+    public function testGetInvalidVirementInternes(){
+        DB::beginTransaction();
+        $sender_account = \App\Models\Account::where('type',1)->first();
+        $sender_account->balance =123.33;
+        $receiver_account = \App\Models\Account::where('type',1)->orderBy('created_at', 'desc')->first();
+        $virement = $this->virementService->createVirementBetweenCustomers($sender_account, $receiver_account, 123.33, 0, 0);
+        // add an invalid justif
+        $justif = \App\Models\JustificatifVirmInt::first();
+        $justif->id_vrm = $virement->id;
+        $justif->status = 0;
+        $justif->save();
+        // Get invalid virements
+        $invalid_virements = $this->virementService->getInvalidVirementInternes();
+        // Test that there is at least one invalid
+        $this->assertNotEmpty($invalid_virements);
+        // Test that all are invalid
+        foreach ($invalid_virements as $invalid_virement){
+               $virement = \App\Models\VirementInterne::find($invalid_virement->id_virement);
+               self::assertEquals(0,$virement->status);
+               // validate all virements
+               $invalid_virement->status = 1;
+               $invalid_virement->save();
+               $justifs = \App\Models\JustificatifVirmInt::where('id_vrm',$virement->id)->get();
+               foreach ($justifs as $justif){
+                   $justif->status = 1;
+                   $justif->save();
+               }
+        }
+
+        // Test that there is at no one invalid
+        // Get invalid virements
+        $invalid_virements = $this->virementService->getInvalidVirementInternes();
+        $this->assertEmpty($invalid_virements);
+
+        // Set virement invalid. Test if there is an invalid account
+        $justif->status = 0;
+        $justif->save();
+        $invalid_virements = $this->virementService->getInvalidVirementInternes();
+        $this->assertNotEmpty($invalid_virements);
+
+
+        // Set justif refused Test that virement is not invalid
+        $this->virementService->refuseJustif($justif->id,4);
+        $invalid_virements = $this->virementService->getInvalidVirementInternes();
+        $this->assertEmpty($invalid_virements);
+
+        DB::rollback();
+    }
 
 
     public function testCreateVirementBetweenCustomers(){
         DB::beginTransaction();
         $sender_account = \App\Models\Account::where('type',1)->first();
-        $receiver_account = \App\Models\Account::where('type',1)->last();
-        $virement = $this->createVirementBetweenCustomers($sender_account, $receiver_account, 200, 0, 1);
-        $last_created_virement = \App\Models\VirementInterne::all()->get()->last();
-        self::assertEquals(true,$virement === $last_created_virement);
+        $sender_account->balance =123.33;
+        $receiver_account = \App\Models\Account::where('type',1)->orderBy('created_at', 'desc')->first();
+        $this->virementService->createVirementBetweenCustomers($sender_account, $receiver_account, 123.33, 0, 1);
+        $this->seeInDatabase('virement_internes', [
+            'montant_virement' => 123.33
+        ]);
         DB::rollback();
     }
 

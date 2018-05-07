@@ -2,10 +2,12 @@
 
 namespace App\Services;
 use App\Jobs\LogJob;
+use App\Mail\VirementNotifMail;
 use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmInt;
 use App\Models\VirementInterne;
 use  App\Http\Controllers\FilesController;
+use Illuminate\Support\Facades\Mail;
 
 class VirementInternesServices
 {
@@ -98,7 +100,7 @@ class VirementInternesServices
     }
 
 
-    private function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status)
+    public function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status)
     {
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = strip_tags($sender_account->id);
@@ -121,12 +123,13 @@ class VirementInternesServices
     }
 
 
-    public function addJustif($justification, $id_sender)
+    public function addJustif($justification, $id_sender, $id_virement)
     {
         $file = new FilesController;
         $picture_url = $file->uploadImage($justification, self::IMAGE_JUSTiF, self::IMAGE_MIN, $id_sender);
         $justificatif_vrm = new JustificatifVirmInt();
         $justificatif_vrm->url_justif = $picture_url;
+        $justificatif_vrm->id_vrm = $id_virement;
         $justificatif_vrm->status = 0;
         $justificatif_vrm->save();
     }
@@ -136,7 +139,7 @@ class VirementInternesServices
         $virement = VirementInterne::join('justificatif_virm_int', 'justificatif_virm_int.id_vrm', '=', 'virement_internes.id')
             ->where('virement_internes.status', 0)
             ->where('justificatif_virm_int.status', 0)
-            ->select('justificatif_virm_int.id AS id_justif', 'virement_internes.id AS id_virement', 'num_acc_sender', 'num_acc_receiver', 'virement_internes.code_bnk_receiver', 'virement_internes.created_at', 'url_justif')
+            ->select('justificatif_virm_int.id AS id_justif', 'virement_internes.id AS id_virement', 'num_acc_sender', 'num_acc_receiver', 'virement_internes.code_bnk_receiver', 'virement_internes.created_at', 'virement_internes.montant_virement', 'url_justif')
             ->get();
         return $virement;
     }
@@ -197,6 +200,29 @@ class VirementInternesServices
     {
         $transfer->status = 2;
         $transfer->save();
+    }
+
+
+    /**
+     * This added function for sending auth mail
+     *
+     * @param $email1
+     * @param $email2
+     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     */
+    public function sendVirementNotifMAil($email1, $email2)
+    {
+        try {
+            $response = 'Vous avez reçu un nouveau virement';
+
+            Mail::to($email1)
+                ->send(new VirementNotifMail($email1, $email2));
+
+            return response()->json(['message' => $response], 200);
+
+        } catch (\Exception $exception) {
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
     }
 
 }

@@ -34,7 +34,6 @@ class AccountsServices
      */
     public function findById($id){
         $account = Account::find($id);
-
         return $account;
     }
 

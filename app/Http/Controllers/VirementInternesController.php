@@ -1,6 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Account;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
 use App\Services\AccountsServices;
@@ -142,6 +145,11 @@ class VirementInternesController extends Controller
 
         ];
         $data=$request->json()->all();
+        $user = $request->user();
+        if(emptyArray($data)){
+            $data = $request->input();
+        }
+        //return   response()->json(['data' => $data], 200);
         $data['justif'] = $request->file('justif');
         $montant = $data['montant_virement'];
 
@@ -152,13 +160,12 @@ class VirementInternesController extends Controller
         if ($montant > 200000 && is_null($data['justif'])) {
             return   response()->json(['message' => 'Justification required'], 403);
         }
-        //Run exchange
-        $user = $request->user();
+
 
         //Check the receiver
         $account_receiver = $this->accountService->findById($data['num_acc_receiver']);
         if (is_null($account_receiver) || 1 != $account_receiver->type){
-            dispatch(new LogJob($user->id,$data['num_acc_receiver'],'distnataire introuvable',11,
+            dispatch(new LogJob($user->id,$data['num_acc_receiver'],'distnataire introuvable',13,
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver account not found']),404);
         }
@@ -174,17 +181,20 @@ class VirementInternesController extends Controller
                 $new_sender_balance = $senderAccount->balance - $data['montant_virement'];
                 if($new_sender_balance < 0){
                     //log
-                    dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (montant insuffisant)', 11,
+                    dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (montant insuffisant)', 13,
                         LogJob::FAILED_STATUS));
-                    return response(json_encode(['message' => 'montant insuffisant']), 400);
+                    return response(json_encode(['message' => 'montant insuffisant']), 422);
                 }
 
                 $this->excuteInternalTransfer($senderAccount,$account_receiver,$virement->montant_virement,$virement->montant_commission);
+                $email_s = $user->email;
+                $receiver = User::find($account_receiver->id_customer);
+                $this->virementInterneService->sendVirementNotifMAil($receiver->email,$email_s);
 
             } catch (\Exception $exception) {
                 //log
                 DB::rollback();
-                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 11,
+                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 13,
                     LogJob::FAILED_STATUS));
                 return response(json_encode(['message' => $exception->getMessage()]), 500);
 
@@ -192,18 +202,19 @@ class VirementInternesController extends Controller
         } elseif ($montant > 200000) {
             try {
                 //add exchange
-                 $this->virementInterneService->createBetweenCustomersExchangeJustif($user, $data['num_acc_receiver'], $montant, $data['type']);
+                 $account_receiver = $this->accountService->findById($data['num_acc_receiver']);
+                 $virement = $this->virementInterneService->createBetweenCustomersExchangeJustif($senderAccount, $account_receiver, $montant, $data['type']);
                 //add justif
-                $this->virementInterneService->addJustif($data['justif'],$user->id);
+                $this->virementInterneService->addJustif($data['justif'],$user->id,$virement->id);
             } catch (\Exception $exception) {
                 DB::rollback();
-                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 11,
+                dispatch(new LogJob($user->id, $account_receiver->id_customer, 'Virement non effectué (erreur serveur)', 13,
                     LogJob::FAILED_STATUS));
                 return response(json_encode(['message' => $exception->getMessage()]), 500);
             }
         }
         //log
-        dispatch(new LogJob($user->id,$account_receiver->id_customer,'Virement effectué',11,
+        dispatch(new LogJob($user->id,$account_receiver->id_customer,'Virement effectué',13,
             LogJob::SUCCESS_STATUS));
         DB::commit();
         return response(json_encode(['message'=>'virement effectué']),201);
@@ -213,6 +224,7 @@ class VirementInternesController extends Controller
 
     public function validateTransfer(Request $request,$id_justif){
         //Validation of data
+        $user = $request->user();
         $rules = [
             'operation'=>'required | integer | between:1,2'
         ];
@@ -224,11 +236,13 @@ class VirementInternesController extends Controller
         $operation = $data['operation'];
         $justif = $this->virementInterneService->getJustifById($id_justif);
         if (is_null($justif)){
+            dispatch(new LogJob($user->email, null, 'justif inexistant', 15,LogJob::FAILED_STATUS));
             return   response()->json(['message' => 'justif non trouvé'], 404);
         }
         $id_transfert = $justif->id_vrm;
         $transfert = $this->virementInterneService->getTransferById($id_transfert);
         if (is_null($transfert)){
+            dispatch(new LogJob($user->email, $id_transfert, 'justif inexistant', 15,LogJob::FAILED_STATUS));
             return   response()->json(['message' => 'virement non trouvé'], 404);
         }
         $banker_id = $request->user()->id;
@@ -238,8 +252,9 @@ class VirementInternesController extends Controller
             if($operation == 2 && $justif->status == 0 && $transfert->status == 0){
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
                     $this->virementInterneService->refuseTranfer($transfert);
+                    dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     DB::commit();
-                return   response()->json(['message' => 'justificatif refusé'], 200);
+                    return   response()->json(['message' => 'justificatif refusé'], 200);
             }else if ($operation == 1 && $justif->status == 0 && $transfert->status == 0){
                 // Accept justif
                     $this->virementInterneService->acceptJustif($justif->id,$banker_id);
@@ -251,29 +266,38 @@ class VirementInternesController extends Controller
                     if($new_sender_balance < 0){
                         //log
                         DB::rollback();
-                        dispatch(new LogJob($senderAccount->id_customer, $receiverAccount->id_customer, 'Virement non effectué (montant insuffisant)', 11,
+                        dispatch(new LogJob($senderAccount->id_customer, $receiverAccount->id_customer, 'Virement non effectué (montant insuffisant)', 15,
                             LogJob::FAILED_STATUS));
                         return response(json_encode(['message' => 'montant insuffisant']), 206);
                     }
                     $this->excuteInternalTransfer($senderAccount,$receiverAccount,$transfert->montant_virement,$transfert->montant_commission);
-                    DB::commit();
+                    dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 14,LogJob::SUCCESS_STATUS));
 
+                    // Envoyer email de notification
+                    $sender = User::find($senderAccount->id_customer);
+                    $receiver = User::find($receiverAccount->id_customer);
+                    $this->virementInterneService->sendVirementNotifMAil($receiver->email,$sender->email);
+
+                    DB::commit();
                     return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
             }else if ( 0 != $transfert->status){
                     // Virement is already valide
                     // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     DB::commit();
                 return   response()->json(['message' => 'Virement est déja valide'], 422);
             }else if ( 0 != $justif->status){
                     // Justif is already valide
                     // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     DB::commit();
                 return response()->json(['message' => 'Justif est déja valide'], 422);
             }
         }catch (\Exception $exception) {
                     DB::rollback();
+                    dispatch(new LogJob($user->email, $id_transfert, 'virement non traité (erreur serveur)', 14,LogJob::FAILED_STATUS));
                     return response()->json(['message' => $exception->getMessage()], 500);
         }
 
