@@ -117,7 +117,7 @@ class VirementInternesController extends Controller
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
 
 
-        $this->virementInterneService->create($codeCommission,0,$amount,$account_sender,$account_receiver,$data['type']);
+         $virement = $this->virementInterneService->create($data['type'],$codeCommission,0,$amount,$account_sender,$account_receiver);
 
 
 

@@ -70,6 +70,7 @@ $app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesContr
 
 
 
+
 //Customers
 // get the exchange rate
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);

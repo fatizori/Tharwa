@@ -1,3 +1,3 @@
 Date and Time | Sender | Receiver | Log Message | Status | Type
-2018-05-07 15:10:10 | 6 | 5 | Virement effectué | success | internal transfer between users
-2018-05-07 15:10:23 | en_senouci@esi.dz | 10 | virement validé | success | validate internal transfer
+2018-05-07 13:47:09 | ilhem@gmail.com |  | Input validation error | failed | create
+2018-05-07 13:47:56 | ilhem@gmail.com |  | email exists | failed | create
