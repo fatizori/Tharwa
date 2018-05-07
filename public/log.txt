@@ -1,0 +1,18 @@
+tharwa1.client@gmail.com  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'function' in 'field list' (SQL: insert into `customers` (`name`, `address`, `function`, `wilaya`, `commune`, `type`, `photo`, `id`, `updated_at`, `created_at`) values (somebody, Lot 115 city example, teacher, Alger, Kouba, 0, default_user.png, 7, 2018-05-06 19:27:05, 2018-05-06 19:27:05)) failed create
+tharwa1.client@gmail.com  Input validation error failed create
+tharwa1.client@gmail.com  Input validation error failed create
+tharwa1.client@gmail.com  Undefined index: function failed create
+tharwa1.client@gmail.com  Undefined index: function failed create
+tharwa1.client@gmail.com  a new customer was created success create
+6 5 Virement non effectué (erreur serveur) failed virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement non effectué (montant insuffisant) failed virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement non effectué (montant insuffisant) failed virement interne Tharwa
+2 3 Virement effectue success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa

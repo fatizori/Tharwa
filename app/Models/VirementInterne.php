@@ -31,4 +31,15 @@ class VirementInterne extends Model
               'montant_commission'
     ];
 
+
+    public function account_sender()
+    {
+        return $this->belongsTo(Account::class,'num_acc_sender','id');
+    }
+
+    public function account_receiver()
+    {
+        return $this->belongsTo(Account::class,'num_acc_receiver','id');
+    }
+
 }

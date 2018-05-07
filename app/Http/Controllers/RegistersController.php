@@ -28,9 +28,11 @@ class RegistersController extends Controller {
     }
 
     //****************************    Creat a customer account    ******************************//
+
     /**
      * Create bank account for a customer
-     * @param user_id , accoutn type
+     * @param $id
+     * @param $type
      */
     public function createAccount($id,$type){
         $accountServices = new AccountsServices();
@@ -47,7 +49,7 @@ class RegistersController extends Controller {
         $rulesCustomer = [
             'name' => 'required',
             'address' => 'required',
-            'function'=>'required',
+            'fonction'=>'required',
             'wilaya'=>'required',
             'commune'=>'required',
             'type'=>'required | integer | between:0,1',

@@ -9,6 +9,7 @@
 namespace App\Services;
 use App\Models\Account;
 use App\Models\Customer;
+use App\Models\VirementInterne;
 
 
 class AccountsServices
@@ -61,6 +62,27 @@ class AccountsServices
         $accounts = Customer::find($user_id)->accounts()->get();
         return $accounts;
     }
+
+
+    /**
+     * @param $transfer
+     * @return mixed
+     */
+    public function findSenderCurrentAccountByTransfer($transfer)
+    {
+        return $transfer->account_sender()->first();
+    }
+
+    /**
+     * @param $transfer
+     * @return mixed
+     */
+    public function findReceiverCurrentAccountByTransfer($transfer)
+    {
+        return $transfer->account_receiver()->first();
+    }
+
+
 
     /**
      * Find  an account by id

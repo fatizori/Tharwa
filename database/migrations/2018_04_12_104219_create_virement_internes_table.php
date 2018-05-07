@@ -27,7 +27,7 @@ class CreateVirementInternesTable extends Migration
             $table->decimal('montant_virement');
             $table->integer('status');
             $table->integer('type');
-            $table->integer('id_commission');
+            $table->string('id_commission');
             $table->decimal('montant_commission');
             $table->timestamps();
             // Constraints declaration
