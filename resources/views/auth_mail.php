@@ -5,6 +5,6 @@
         <br>
         <p>Ce code est valable pour une heure depuis <b><?php echo \Carbon\Carbon::now() ?></b></p>
         <br>
-        <p>Tharwa Bank vous souheite une bonne journée.</p>
+        <p>Tharwa Bank vous souhaite une bonne journée.</p>
     </body>
 </html>

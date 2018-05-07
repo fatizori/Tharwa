@@ -38,9 +38,6 @@ class LoginsController extends Controller {
             'password' => 'required',
             'channel' => 'required | integer | between:0,1',
         ];
-
-        //TODO  THIS just for tests
-        return response()->json(['message' => 'Consultez votre email'], 200);
       $data=$request->json()->all();
 
        if(!$this->validateData($data,$rules)) {

@@ -187,9 +187,14 @@ class VirementInternesController extends Controller
                 }
 
                 $this->excuteInternalTransfer($senderAccount,$account_receiver,$virement->montant_virement,$virement->montant_commission);
+
+                // Send email to receiver
                 $email_s = $user->email;
                 $receiver = User::find($account_receiver->id_customer);
                 $this->virementInterneService->sendVirementNotifMAil($receiver->email,$email_s);
+
+                // Send email to sender
+                $this->virementInterneService->sendJustifNotifMAil($user->email,$account_receiver->id,'accepté');
 
             } catch (\Exception $exception) {
                 //log
@@ -221,7 +226,11 @@ class VirementInternesController extends Controller
     }
 
 
-
+    /**
+     * @param Request $request
+     * @param $id_justif
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function validateTransfer(Request $request,$id_justif){
         //Validation of data
         $user = $request->user();
@@ -246,6 +255,13 @@ class VirementInternesController extends Controller
             return   response()->json(['message' => 'virement non trouvé'], 404);
         }
         $banker_id = $request->user()->id;
+
+        $senderAccount = $this->accountService->findSenderCurrentAccountByTransfer($transfert);
+        $receiverAccount = $this->accountService->findReceiverCurrentAccountByTransfer($transfert);
+        // Envoyer email de notification
+        $sender = User::find($senderAccount->id_customer);
+        $receiver = User::find($receiverAccount->id_customer);
+
         try {
             DB::beginTransaction();
             // Refuse justif
@@ -253,15 +269,14 @@ class VirementInternesController extends Controller
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
                     $this->virementInterneService->refuseTranfer($transfert);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
+                    // Send email to sender
+                    $this->virementInterneService->sendJustifNotifMAil($sender->email,$receiverAccount->id,'refusé');
                     DB::commit();
                     return   response()->json(['message' => 'justificatif refusé'], 200);
             }else if ($operation == 1 && $justif->status == 0 && $transfert->status == 0){
                 // Accept justif
                     $this->virementInterneService->acceptJustif($justif->id,$banker_id);
                     $this->virementInterneService->acceptTranfer($transfert);
-                    // Excute transfert
-                    $senderAccount = $this->accountService->findSenderCurrentAccountByTransfer($transfert);
-                    $receiverAccount = $this->accountService->findReceiverCurrentAccountByTransfer($transfert);
                     $new_sender_balance = $senderAccount->balance - $transfert->montant_virement;
                     if($new_sender_balance < 0){
                         //log
@@ -270,14 +285,14 @@ class VirementInternesController extends Controller
                             LogJob::FAILED_STATUS));
                         return response(json_encode(['message' => 'montant insuffisant']), 206);
                     }
+
+                    // Execute transfert
                     $this->excuteInternalTransfer($senderAccount,$receiverAccount,$transfert->montant_virement,$transfert->montant_commission);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 14,LogJob::SUCCESS_STATUS));
 
-                    // Envoyer email de notification
-                    $sender = User::find($senderAccount->id_customer);
-                    $receiver = User::find($receiverAccount->id_customer);
                     $this->virementInterneService->sendVirementNotifMAil($receiver->email,$sender->email);
-
+                    // Send email to sender
+                    $this->virementInterneService->sendJustifNotifMAil($sender->email,$receiverAccount->id,'accepté');
                     DB::commit();
                     return   response()->json(['message' => 'justificatif accepté, virement validé'], 200);
             }else if ( 0 != $transfert->status){

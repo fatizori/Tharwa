@@ -2,6 +2,7 @@
 
 namespace App\Services;
 use App\Jobs\LogJob;
+use App\Mail\JustifNotifMail;
 use App\Mail\VirementNotifMail;
 use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmInt;
@@ -208,20 +209,36 @@ class VirementInternesServices
      *
      * @param $email1
      * @param $email2
-     * @return \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory
+     * @return bool
      */
     public function sendVirementNotifMAil($email1, $email2)
     {
         try {
-            $response = 'Vous avez reçu un nouveau virement';
-
             Mail::to($email1)
                 ->send(new VirementNotifMail($email1, $email2));
-
-            return response()->json(['message' => $response], 200);
-
+            return true;
         } catch (\Exception $exception) {
-            return response()->json(['message' => $exception->getMessage()], 500);
+            return false;
+        }
+    }
+
+
+    /**
+     * This added function for sending auth mail
+     *
+     * @param $email
+     * @param $account_id
+     * @param $action
+     * @return bool
+     */
+    public function sendJustifNotifMAil($email, $account_id, $action)
+    {
+        try {
+            Mail::to($email)
+                ->send(new JustifNotifMail($email, $account_id,$action));
+            return true;
+        } catch (\Exception $exception) {
+            return false;
         }
     }
 
