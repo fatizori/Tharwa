@@ -13,3 +13,6 @@ tharwa1.client@gmail.com  a new customer was created success create
 6 5 Virement effectué success virement interne Tharwa
 6 5 Virement non effectué (montant insuffisant) failed virement interne Tharwa
 2 3 Virement effectue success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa
+6 5 Virement effectué success virement interne Tharwa

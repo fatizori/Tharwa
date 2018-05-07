@@ -113,7 +113,7 @@ class VirementInternesServices
         //find commission by type
         $commissionC = new CommissionsServices();
         $commission = $commissionC->findById('VCT');
-        $virementInterne->id_commission = 5;
+        $virementInterne->id_commission = 'VCT';
         //Extract commission value
         $virementInterne->montant_commission = $commission->valeur / 100 * $montant;
         $virementInterne->save();
