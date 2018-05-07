@@ -223,4 +223,19 @@ class AccountsServices
        return  $newAccount->save();
     }
 
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function getUsernameByIdAccount($id){
+        $username  = Account::join('customers', 'customers.id', '=', 'accounts.id_customer')
+            ->where('accounts.id','=',$id)
+            ->where('accounts.type','=',1)
+            ->select('name','wilaya','commune')
+            ->first();
+        return $username;
+    }
+
+
 }

@@ -193,4 +193,19 @@ class AccountsController extends Controller
          dispatch(new LogJob($user->email, null, 'account created', 11,LogJob::SUCCESS_STATUS));
          return response(json_encode(['message' => 'account created successfully']),201);
     }
+
+    /**
+     * Get the username by id account (current account)
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     *
+     */
+    public function getUsernameByIdAccount($id){
+
+        $username = $this->accountsService->getUsernameByIdAccount($id);
+        if(!$username){
+            return response()->json(['message' => "No current account with this id"], 404);
+        }
+        return response()->json($username, 200);
+    }
 }
