@@ -18,3 +18,10 @@ Date and Time | Sender | Receiver | Log Message | Status | Type
 2018-05-07 16:25:53 | 6 | 5 | Virement non effectué (montant insuffisant) | failed | refuse internal transfer
 2018-05-07 16:26:23 | 6 | 5 | Virement non effectué (montant insuffisant) | failed | refuse internal transfer
 2018-05-07 16:27:31 | en_senouci@esi.dz | 23 | virement validé | success | validate internal transfer
+2018-05-07 16:48:19 | 6 | 5 | Virement effectué | success | internal transfer between users
+2018-05-07 16:50:21 | en_senouci@esi.dz | 24 | virement validé | success | validate internal transfer
+2018-05-07 16:52:36 | en_senouci@esi.dz | 24 | virement validé | success | validate internal transfer
+2018-05-07 16:53:37 | en_senouci@esi.dz | 24 | virement validé | success | validate internal transfer
+2018-05-07 16:55:54 | en_senouci@esi.dz | 24 | virement validé | success | validate internal transfer
+2018-05-07 16:58:48 | 6 | 5 | Virement effectué | success | internal transfer between users
+2018-05-07 17:00:17 | en_senouci@esi.dz | 25 | virement validé | success | validate internal transfer
