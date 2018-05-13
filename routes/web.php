@@ -33,6 +33,11 @@ $app->get('accounts/invalid',['uses' => 'AccountsController@invalidAccounts','mi
 $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middleware' => ['auth']]);
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
+//get the list of invalid virements
+$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes', 'middleware' =>['auth','role:banker']]);
+
+
+
 
 //Managers
 //get a manager by id
@@ -83,8 +88,9 @@ $app->get('accounts/name/{id:[0-9]+}',['uses' => 'AccountsController@getNameAcco
 $app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount', 'middleware' =>['auth','role:customer']]);
 //Virements interne Tharwa (two customers)
 $app->post('virements_internes_thw',['uses' => 'VirementInternesController@transferToOtherUser', 'middleware' =>['auth','role:customer']]);
-//get the list of invalid virements
-$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes', 'middleware' =>['auth','role:banker']]);
+//get the list of transactions
+$app->get('account/virements/{id_account:[0-9]+}',['uses' => 'AccountsController@getTransactions', 'middleware' =>['auth','role:customer']]);
+
 
 //Add other accounts
 $app->post('accounts',['uses' => 'AccountsController@addNewLocalAccount', 'middleware' =>['auth','role:customer']]);

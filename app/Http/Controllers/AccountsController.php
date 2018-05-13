@@ -2,9 +2,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\VirementInterne;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
 use App\Services\JustificationServices;
+use App\Services\VirementInternesServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -194,7 +196,7 @@ class AccountsController extends Controller
         $user = $request->user();
 
          // Get all accounts of the user
-        $accountList = $this->accountsService->findAccountsByUserId($user->id)->toArray();
+        $accountList = $this->accountsService->findAccountsByUserId($user->id);
 
         // Add Tharwa Account
         try {
@@ -224,4 +226,23 @@ class AccountsController extends Controller
         }
         return response()->json($username, 200);
     }
+
+    /**
+     * @param Request $request
+     * @param $id_account
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTransactions(Request $request, $id_account){
+        $user = $request->user();
+        $accountList = $this->accountsService->findAccountsByUserId($user->id);
+        $account = $this->accountsService->findById($id_account);
+        if (! in_array($account,$accountList)){
+            return response()->json(['message' => 'Not account of the user'], 404);
+        }
+        $virementInternesService = new VirementInternesServices();
+        $virementInternes = $virementInternesService->getValideTransferByAccountId($id_account);
+
+        return response()->json($virementInternes, 200);
+    }
+
 }

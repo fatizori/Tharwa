@@ -58,7 +58,7 @@ class AccountsServices
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
     public function findAccountsByUserId($user_id){
-        $accounts = Customer::find($user_id)->accounts()->get();
+        $accounts = Customer::find($user_id)->accounts()->get()->all();
         return $accounts;
     }
 

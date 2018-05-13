@@ -100,6 +100,23 @@ class VirementInternesServices
         return $virement;
     }
 
+    /**
+     * @param $id_account
+     * @return \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function getValideTransferByAccountId($id_account)
+    {
+        $virements = VirementInterne::where(function($q)use ($id_account){
+            $q->where('num_acc_sender',$id_account);
+            $q->where('status',1);
+           })->orWhere(function($q)use ($id_account){
+                $q->where('num_acc_receiver',$id_account);
+                $q->where('status',1);
+            })->simplePaginate(8)->setPath('');
+
+        return $virements;
+    }
+
 
     public function createVirementBetweenCustomers($sender_account, $reciever_account, $montant, $type, $status)
     {

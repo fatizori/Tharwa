@@ -31,6 +31,9 @@ class VirementInterne extends Model
               'montant_commission'
     ];
 
+    protected $hidden =[
+      'updated_at'
+    ];
 
 
     public function account_sender()
