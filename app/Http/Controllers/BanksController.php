@@ -103,7 +103,9 @@ class BanksController extends Controller
      */
      public function validateRequest(Request $request){
         $rules = [
+            'code' => 'required| string| max:3',
             'email' => 'required| email',
+            'name' => 'required',
             'address' => 'required',
             'social_reason'=> 'required'
         ];

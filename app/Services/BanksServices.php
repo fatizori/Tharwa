@@ -26,7 +26,7 @@ class BanksServices
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
      */
     public function findById($id){
-        $bank = Bank::find($id);
+        $bank = Bank::where('id','=',$id)->first();
         return $bank;
     }
 
@@ -36,7 +36,9 @@ class BanksServices
      */
     public function create($data){
         $bank  = new Bank();
+        $bank->id = strip_tags($data['code']);
         $bank->email = strip_tags($data['email']);
+        $bank->name = strip_tags($data['name']);
         $bank->address = strip_tags($data['address']);
         $bank->social_reason = strip_tags($data['social_reason']);
         $bank->save();
@@ -48,7 +50,7 @@ class BanksServices
      * @param $data
      */
     public function update($bank,$data){
-        $bank->update(['email'=> $data['email'], 'address'=> $data['address'], 'social_reason'=> $data['social_reason']]);
+        $bank->update(['id'=> $data['code'],'name'=> $data['name'],'email'=> $data['email'], 'address'=> $data['address'], 'social_reason'=> $data['social_reason']]);
     }
 
 

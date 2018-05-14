@@ -21,8 +21,11 @@ class CreateBanksTable extends Migration
             // Schema declaration
             $table->string('email')->unique();
             $table->string('address');
+            $table->string('nom');
             $table->string('social_reason');
             $table->boolean('status')->default(1);
+
+
             $table->timestamps();
             // Constraints declaration
         });
