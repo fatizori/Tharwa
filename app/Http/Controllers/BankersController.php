@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Banker;
+use App\Models\User;
 use App\Services\BankersServices;
 use Illuminate\Http\Request;
 
@@ -31,10 +32,16 @@ class BankersController extends Controller
     }
 
 
-
-
-    public function show($id){
-        $banker = Banker::find($id);
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request,$id){
+        $user = $request->user();
+        $role = $user->role();
+        dd($role);
+        $banker = $this->bankerService->findById($id);
         if(!$banker){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }
@@ -47,6 +54,7 @@ class BankersController extends Controller
 
         return response()->json($needed_banker, 200);
     }
+
 
 
     /**

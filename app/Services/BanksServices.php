@@ -36,6 +36,7 @@ class BanksServices
      */
     public function create($data){
         $bank  = new Bank();
+        $bank->id = strip_tags($data['code']);
         $bank->email = strip_tags($data['email']);
         $bank->address = strip_tags($data['address']);
         $bank->social_reason = strip_tags($data['social_reason']);

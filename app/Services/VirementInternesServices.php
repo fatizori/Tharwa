@@ -2,7 +2,8 @@
 
 namespace App\Services;
 use App\Jobs\LogJob;
-use App\Mail\JustifNotifMail;
+use App\Jobs\SendJustifNotifEmail;
+use App\Jobs\SendTransferNotifEmail;
 use App\Mail\VirementNotifMail;
 use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmInt;
@@ -226,17 +227,11 @@ class VirementInternesServices
      *
      * @param $email1
      * @param $email2
-     * @return bool
+     * @return void
      */
     public function sendVirementNotifMAil($email1, $email2)
     {
-        try {
-            Mail::to($email1)
-                ->send(new VirementNotifMail($email1, $email2));
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
+       dispatch(new SendTransferNotifEmail($email1, $email2));
     }
 
 
@@ -246,17 +241,11 @@ class VirementInternesServices
      * @param $email
      * @param $account_id
      * @param $action
-     * @return bool
+     * @return void
      */
     public function sendJustifNotifMAil($email, $account_id, $action)
     {
-        try {
-            Mail::to($email)
-                ->send(new JustifNotifMail($email, $account_id,$action));
-            return true;
-        } catch (\Exception $exception) {
-            return false;
-        }
+        dispatch(new SendJustifNotifEmail($email, $account_id, $action));
     }
 
 }
