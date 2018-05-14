@@ -32,9 +32,9 @@ class VirementExternesController extends Controller
     /**
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getInvalidVirementExternes(){
-        $virementInvalid = $this->virementExterneService->getInvalidVirementExternes();
-        return response()->json($virementInvalid, 200);
+    public function getVirementExternes(){
+        $virements = $this->virementExterneService->getVirementExternes();
+        return response()->json($virements, 200);
     }
 
 }

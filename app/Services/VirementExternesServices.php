@@ -32,4 +32,16 @@ class VirementExternesServices
         return $virement;
     }
 
+    public function getVirementExternes()
+    {
+        $virement = VirementExterne::select( 'id' , 'num_acc', 'num_acc_ext',
+            'virement_externes.code_bnk_ext','virement_externes.created_at', 'virement_externes.amount_vir','status')
+            ->get();
+
+
+        return $virement;
+    }
+
+
+
 }
