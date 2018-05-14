@@ -12,13 +12,14 @@
 
 $app->get('/', function () use ($app) {
     //return $app->version();
-    dispatch(new \App\Jobs\SendTransferNotifEmail());
+   // $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(4,'banker_1.png');
+   // dd($name);
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
 // Bankers
 //get a banker by id
-$app->get('bankers/{id:[0-9]+}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker,manager']]);
+$app->get('bankers/{id:[0-9]+}',['uses' => 'BankersController@show','middleware' => ['auth','role:manager,banker']]);
 
 $app->group( ['prefix' => 'accounts',
     'middleware' => ['auth','role:banker']],function () use ($app) {

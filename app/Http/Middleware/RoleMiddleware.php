@@ -23,18 +23,24 @@ class RoleMiddleware
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
-     * @param $role
+     * @param $role1
+     * @param null $role2
      * @return mixed
      */
-    public function handle($request, Closure $next,$role = null)
+    public function handle($request, Closure $next,$role1= null ,$role2 = null)
     {
         $user = $request->user();
-        if(! $user->hasRole($role)){
-            return response('Unauthorized.'.$role, 403);
+        $roles = [
+                    'role1' => $role1,
+                    'role2' => $role2
+        ];
+        $actualRole = $user->getRole();
+        if(! in_array($actualRole,$roles,false)){
+            return response('Unauthorized.'.$actualRole, 403);
         }
         //Verify whether the banker is blocked
         if($user->getRole() == 'banker' && !Banker::find($user->id)->is_active){
-            return response('Unauthorized.'.$role, 403);
+            return response('Unauthorized.'.$actualRole, 403);
         }
         return $next($request);
     }

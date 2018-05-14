@@ -24,8 +24,6 @@ class CreateBanksTable extends Migration
             $table->string('nom');
             $table->string('social_reason');
             $table->boolean('status')->default(1);
-
-
             $table->timestamps();
             // Constraints declaration
         });
