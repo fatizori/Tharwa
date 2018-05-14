@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
+use App\Services\VirementExternesServices;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
 use Illuminate\Support\Facades\Validator;
@@ -16,6 +17,7 @@ class VirementInternesController extends Controller
 {
 
     private $virementInterneService;
+    private $virementExterneService;
     private $accountService;
     /**
      * VirementInternesController constructor.
@@ -23,6 +25,7 @@ class VirementInternesController extends Controller
     public function __construct()
     {
         $this->virementInterneService = new VirementInternesServices();
+        $this->virementExterneService = new VirementExternesServices();
         $this->accountService = new AccountsServices();
     }
 
@@ -33,7 +36,9 @@ class VirementInternesController extends Controller
      */
     public function getInvalidVirementInternes(){
         $virementInvalid = $this->virementInterneService->getInvalidVirementInternes();
-        return response()->json($virementInvalid, 200);
+        $virementInvalid1 = $this->virementExterneService->getInvalidVirementExternes();
+
+        return response()->json(['interne'=>$virementInvalid,'externe'=>$virementInvalid1], 200);
     }
 
     /**

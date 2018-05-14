@@ -21,15 +21,16 @@ class VirementExterne extends Model
         'num_acc',
         'code_bnk',
         'code_curr',
-        'num_acc',
+        'num_acc_ext',
         'code_bnk_ext',
         'code_curr_ext',
         'amount_vir',
         'status',
         'sens',
         'status',
+        'url_xml',
         'id_commission',
-        'montant_commission'
+        'amount_commission'
     ];
 
 

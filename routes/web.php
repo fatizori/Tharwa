@@ -36,7 +36,7 @@ $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middlewar
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //get the list of invalid virements
-$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes', 'middleware' =>['auth','role:banker']]);
+$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes']);
 
 
 

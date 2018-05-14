@@ -156,10 +156,13 @@ class VirementInternesServices
     public function getInvalidVirementInternes()
     {
         $virement = VirementInterne::join('justificatif_virm_int', 'justificatif_virm_int.id_vrm', '=', 'virement_internes.id')
+
             ->where('virement_internes.status', 0)
             ->where('justificatif_virm_int.status', 0)
             ->select('justificatif_virm_int.id AS id_justif', 'virement_internes.id AS id_virement', 'num_acc_sender', 'num_acc_receiver', 'virement_internes.code_bnk_receiver', 'virement_internes.created_at', 'virement_internes.montant_virement', 'url_justif')
             ->get();
+
+
         return $virement;
     }
 
