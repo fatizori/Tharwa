@@ -22,7 +22,7 @@ class CreateJustificatifVirmIntTable extends Migration
             $table->integer('status');
             $table->date('date_action_banker')->nullable();
             $table->integer('id_vrm');
-            $table->integer('id_banker');
+            $table->integer('id_banker')->nullable();
             $table->timestamps();
             // Constraints declaration
         });

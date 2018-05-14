@@ -105,6 +105,15 @@ class LogJob extends Job
             case 12 :
                 $this->type = 'add another account';
                 break;
+            case 13 :
+                $this->type = 'internal transfer between users';
+                break;
+            case 14 :
+                $this->type = 'validate internal transfer';
+                break;
+            case 15 :
+                $this->type = 'refuse internal transfer';
+                break;
           
            default : return  response()->json(['message' => 'invalid type'], 400);
         }

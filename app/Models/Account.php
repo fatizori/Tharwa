@@ -40,7 +40,7 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
      * @var array
      */
     protected $hidden = [
-       'updated_at' , 'id_customer'
+       'created_at' , 'updated_at' , 'id_customer'
     ];
 
 
