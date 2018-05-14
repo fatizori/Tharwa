@@ -27,7 +27,7 @@ class CreateVirementExternesTable extends Migration
             $table->decimal('amount_vir');
             $table->boolean('sens');
             $table->integer('status');
-            $table->string('url_xml');
+            $table->string('url_xml')->nullable();
             $table->string('id_commission');
             $table->decimal('amount_commission');
             $table->timestamps();
