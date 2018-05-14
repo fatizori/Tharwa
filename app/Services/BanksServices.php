@@ -57,10 +57,9 @@ class BanksServices
     /**
      * Delete a bank
      * @param $bank
-     * @param $id
      */
 
-    public function delete($bank,$id){
+    public function delete($bank){
         $bank->delete();
     }
 

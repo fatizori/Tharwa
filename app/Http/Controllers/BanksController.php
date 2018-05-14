@@ -92,7 +92,7 @@ class BanksController extends Controller
             return response()->json(['message' => "The bank with {$id} doesn't exist"], 404);
         }
         //delete the bank
-       $this->bankService->delete($bank,$id);
+       $this->bankService->delete($bank);
         return response()->json(['message' =>"The bank with  id {$id} has been deleted"], 200);
     }
 
