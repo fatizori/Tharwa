@@ -43,8 +43,10 @@ class LoginsController extends Controller {
        if(!$this->validateData($data,$rules)) {
            return response()->json(['message' => 'invalid input data'], 400);
        }
+// TODO
+//       return $this->loginServices->sendCodeLogin($data);
+        return response()->json(['message' => 'Consultez votre emails'], 200);
 
-       return $this->loginServices->sendCodeLogin($data);
 
     }
 
@@ -69,6 +71,7 @@ class LoginsController extends Controller {
         }
 
         return $this->loginServices->checkCodeLogin($data);
+
     }
 
 

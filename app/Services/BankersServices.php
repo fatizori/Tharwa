@@ -26,6 +26,7 @@ class BankersServices
         return $banker;
     }
 
+
     /**
      * Create a new banker
      * @param $data

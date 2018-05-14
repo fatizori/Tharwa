@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Banker;
+use App\Models\User;
 use App\Services\BankersServices;
+use App\Services\UsersServices;
 use Illuminate\Http\Request;
 
 
@@ -31,22 +33,35 @@ class BankersController extends Controller
     }
 
 
-
-
-    public function show($id){
-        $banker = Banker::find($id);
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request,$id){
+        $user = $request->user();
+        $banker = $this->bankerService->findById($id);
         if(!$banker){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }
-        $keys = ['id', 'name','firstname','photo'];
         $needed_banker = array();
-        foreach ($keys as $key) {
-            $needed_banker[$key] = $banker[$key];
+        if ($user->hasRole('banker')){
+            $keys = ['id', 'name','firstname','photo'];
+            foreach ($keys as $key) {
+                $needed_banker[$key] = $banker[$key];
+            }
+        }elseif ($user->hasRole('manager')){
+            $needed_banker = $banker->toArray();
+            $user = $banker->user()->getAttributes();
+            $keys = ['email','phone_number'];
+            foreach ($keys as $key) {
+                $needed_banker[$key] = $user[$key];
+            }
         }
         $needed_banker['photo'] = FilesController::generateNameImageMinUser($banker['id'],$banker['photo']);
-
         return response()->json($needed_banker, 200);
     }
+
 
 
     /**

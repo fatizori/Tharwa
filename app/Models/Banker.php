@@ -40,13 +40,13 @@ class Banker extends Model implements AuthenticatableContract, AuthorizableContr
      * @var array
      */
     protected $hidden = [
-        'created_at' , 'updated_at'
+        'updated_at','is_active'
     ];
    
     
     public function user()
     {
-        return $this->belongsTo(User::class,'id');
+        return $this->belongsTo(User::class,'id')->get()->first();
     }
 
     public function accounts(){

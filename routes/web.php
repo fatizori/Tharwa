@@ -12,12 +12,14 @@
 
 $app->get('/', function () use ($app) {
     //return $app->version();
+   // $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(4,'banker_1.png');
+   // dd($name);
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
 });
 
 // Bankers
 //get a banker by id
-$app->get('bankers/{id:[0-9]+}',['uses' => 'BankersController@show','middleware' => ['auth','role:banker']]);
+$app->get('bankers/{id:[0-9]+}',['uses' => 'BankersController@show','middleware' => ['auth','role:manager,banker']]);
 
 $app->group( ['prefix' => 'accounts',
     'middleware' => ['auth','role:banker']],function () use ($app) {
@@ -51,7 +53,7 @@ $app->group( ['prefix' => 'bankers',
     //route to subscribe a banker
     $app->post('',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
     //route to block a banker
-    $app->put('/block/{id_banker:[0-9]+}',['uses' => 'BankersController@blockBanker']);
+    $app->put('/block/{id_banker:[0-9]+}',['uses' => 'BankersController@blockBanker'],['middleware' => ['auth','role:manager']]);
 });
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
