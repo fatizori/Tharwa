@@ -53,7 +53,7 @@ $app->group( ['prefix' => 'bankers',
     //route to subscribe a banker
     $app->post('',['uses' => 'RegistersController@registerBanker','middleware' => ['auth','role:manager']]);
     //route to block a banker
-    $app->put('/block/{id_banker:[0-9]+}',['uses' => 'BankersController@blockBanker'],['middleware' => ['auth','role:manager']]);
+    $app->delete('/{id_banker:[0-9]+}',['uses' => 'BankersController@blockBanker'],['middleware' => ['auth','role:manager']]);
 });
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);

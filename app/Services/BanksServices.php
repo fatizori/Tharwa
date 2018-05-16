@@ -51,6 +51,7 @@ class BanksServices
      */
     public function update($bank,$data){
         $bank->update(['id'=> $data['code'],'name'=> $data['name'],'email'=> $data['email'], 'address'=> $data['address'], 'social_reason'=> $data['social_reason']]);
+        $bank->save();
     }
 
 
