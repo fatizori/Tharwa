@@ -19,7 +19,7 @@ $app->get('/', function () use ($app) {
 
 // Bankers
 //get a banker by id
-$app->get('bankers/{id:[0-9]+}',['uses' => 'BankersController@show','middleware' => ['auth','role:manager,banker']]);
+$app->get('bankers/{id:[0-9]+}/{option:[01]}',['uses' => 'BankersController@show','middleware' => ['auth','role:manager,banker']]);
 
 $app->group( ['prefix' => 'accounts',
     'middleware' => ['auth','role:banker']],function () use ($app) {

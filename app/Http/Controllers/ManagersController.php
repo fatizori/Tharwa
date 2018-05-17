@@ -37,13 +37,17 @@ class ManagersController extends Controller
         if(!$manager){
             return response()->json(['message' => "The manager with {$id} doesn't exist"], 404);
         }
-        $keys = ['id', 'name','firstname','photo'];
+        $keys = ['id', 'name','firstname','photo', 'address'];
         $needed_manager = array();
         foreach ($keys as $key) {
             $needed_manager[$key] = $manager[$key];
         }
-       // $needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
-        $needed_manager['photo'] =  'mini_tom.jpg';
+        $user = $manager->user()->getAttributes();
+        $keys = ['email','phone_number'];
+        foreach ($keys as $key) {
+            $needed_manager[$key] = $user[$key];
+        }
+        $needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
         return response()->json($needed_manager, 200);
     }
 

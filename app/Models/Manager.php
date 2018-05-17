@@ -32,7 +32,8 @@ class Manager extends Model implements AuthenticatableContract, AuthorizableCont
     protected $fillable = [
         'name',
         'firstname',
-        'photo'
+        'photo',
+        'address'
 
     ];
 
@@ -50,7 +51,7 @@ class Manager extends Model implements AuthenticatableContract, AuthorizableCont
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'id')->get()->first();
     }
 
 }
