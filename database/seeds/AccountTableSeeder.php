@@ -28,6 +28,12 @@ class AccountTableSeeder extends Seeder
             'status' => 1,
             'type' => 2
         ]);
+        Account::create([
+            'id' => 4,
+            'id_customer' => 5,
+            'status' => 1,
+            'type' => 3
+        ]);
 
     }
 }

@@ -46,7 +46,7 @@ class UserTableSeeder extends Seeder
         DB::table( 'users' )->where( 'id', 5 )->update(
             [   'role' => 0 ,
                 'phone_number' => '213697332045',
-                'email' => 'ez_taklit@esi.dz'
+                'email' => 'dn_smaili@esi.dz'
             ]
         );
 
