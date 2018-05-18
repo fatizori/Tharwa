@@ -23,7 +23,7 @@ class CreateAccountsManagementTable extends Migration
             $table->string('object')->nullable();
             $table->string('justification');
             $table->timestamp('created_at')->default(\Illuminate\Support\Facades\DB::raw('CURRENT_TIMESTAMP'));
-            $table->timestamp('updated_at')->default(\Illuminate\Support\Facades\DB::raw('CURRENT_TIMESTAMP'))->nullable();
+            $table->timestamp('updated_at')->nullable();
             // Constraints declaration
             $table->foreign('banker_id')->references('id')->on('bankers');
             $table->foreign('account_id')->references('id')->on('accounts');
