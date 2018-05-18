@@ -155,6 +155,17 @@ class AccountsServices
     }
 
     /**
+     * @param $account
+     * @param $id_banker
+     * @param $operation
+     * @param $justif_obj
+     * @param $justif
+     */
+    public function createBankerAction($account, $id_banker, $operation,$justif_obj,$justif){
+        $account->bankers()->attach($id_banker, ['operation' => $operation,'object' => $justif_obj, 'justification' => $justif]);
+    }
+
+    /**
      *  Delete an account logically
      */
     public function refuseNewAccount($account){

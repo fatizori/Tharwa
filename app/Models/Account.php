@@ -53,8 +53,8 @@ class Account extends Model implements AuthenticatableContract, AuthorizableCont
 
     public function bankers(){
         return $this->belongsToMany(Banker::class, 'accounts_management')
-            ->withPivot('operation')
-            ->withTimestamps('created_at',null);
+            ->withPivot('operation','object','justification')
+            ->withTimestamps();
     }
 
     public function getCode(){
