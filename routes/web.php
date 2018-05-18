@@ -15,6 +15,7 @@ $app->get('/', function () use ($app) {
    // $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(4,'banker_1.png');
    // dd($name);
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
+
 });
 
 // Bankers
@@ -38,7 +39,7 @@ $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['
 //get the list of invalid virements
 $app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes', 'middleware' =>['auth','role:banker']]);
 //get the list of invalid virements
-$app->get('virements_externes',['uses' => 'VirementExternesController@getVirementExternes', 'middleware' =>['auth','role:banker']]);
+$app->get('virements_externes',['uses' => 'VirementExternesController@getVirementExternes']);
 
 
 
@@ -76,6 +77,8 @@ $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['
 //Validate exchange justif
 $app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
+//validate justif externe transfer
+$app->put('virement_externes/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
 
 
@@ -94,6 +97,7 @@ $app->post('virements_internes_thw',['uses' => 'VirementInternesController@trans
 //get the list of transactions
 $app->get('account/virements/{id_account:[0-9]+}',['uses' => 'AccountsController@getTransactions', 'middleware' =>['auth','role:customer']]);
 
+$app->post('virements_externes',['uses' => 'VirementExternesController@externeTransfer', 'middleware' =>['auth','role:customer']]);
 
 //Add other accounts
 $app->post('accounts',['uses' => 'AccountsController@addNewLocalAccount', 'middleware' =>['auth','role:customer']]);
@@ -105,4 +109,5 @@ $app->get('accounts/type/{type:[1-4]}', ['uses' => 'AccountsController@show', 'm
 $app->post('user/photo',['uses' => 'RegistersController@update_avatar']);
 $app->put('user/password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
+$app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
 

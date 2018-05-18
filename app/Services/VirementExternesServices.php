@@ -19,6 +19,37 @@ use Illuminate\Support\Facades\Mail;
 class VirementExternesServices
 {
 
+    const IMAGE_JUSTiF = 'images/justificatif_vrm/';
+    const IMAGE_MIN = 'images/justificatif_vrm_min/';
+
+    /**
+     * Get an externe transfer by id
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getTransferById($id)
+    {
+        $virement = VirementExterne::where('id', $id)->first();
+        return $virement;
+    }
+
+    public function getValideTransferByAccountId($id_account)
+    {
+        $virements = VirementExterne::where(function($q)use ($id_account){
+            $q->where('num_acc',$id_account);
+            $q->where('status',1);
+        })->orWhere(function($q)use ($id_account){
+            $q->where('num_acc_ext',$id_account);
+            $q->where('status',1);
+        })->simplePaginate(8)->setPath('');
+
+        return $virements;
+    }
+
+    /**
+     *  Find all invalid externe virement
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function getInvalidVirementExternes()
     {
         $virement = VirementExterne::join('justificatif_virm_ext', 'justificatif_virm_ext.id_vrm', '=', 'virement_externes.id')
@@ -32,6 +63,10 @@ class VirementExternesServices
         return $virement;
     }
 
+    /**
+     * Get all the externe virement
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
     public function getVirementExternes()
     {
         $virement = VirementExterne::select( 'id' , 'num_acc', 'num_acc_ext',
@@ -42,6 +77,134 @@ class VirementExternesServices
         return $virement;
     }
 
+    /**
+     * Create the externe virement
+     * @param $sender_account
+     * @param $data
+     * @param $amount
+     * @param $status
+     * @return VirementExterne
+     */
+    public function createVirementExterne($sender_account, $data, $amount,  $status)
+    {
+        $virementExterne = new VirementExterne();
+        $virementExterne->num_acc = strip_tags($sender_account->id);
+        $virementExterne->code_bnk = 'THW';
+        $virementExterne->code_curr = 'DZD';
+        $virementExterne->num_acc_ext = $data['num_acc_receiver'];
+        $virementExterne->code_bnk_ext = $data['code_bnk_receiver'];
+        $virementExterne->code_curr_ext = $data['code_curr_receiver'];
+        $virementExterne->name_ext = $data['name'];
+        $virementExterne->amount_vir = $amount;
+        $virementExterne->status = $status;
+        $virementExterne->sens = 0;
+        //find commission by type
+        $commissionC = new CommissionsServices();
+        $commission = $commissionC->findById('VCE');
+        $virementExterne->id_commission = 'VCE';
+        //Extract commission value
+        $virementExterne->amount_commission = $commission->valeur / 100 * $amount;
+        $virementExterne->save();
+        return $virementExterne;
+    }
 
+    /**
+     *  Add the justification for the externe virement
+     * @param $justification
+     * @param $id_sender
+     * @param $id_virement
+     */
+    public function addJustif($justification, $id_sender, $id_virement)
+    {
+        $file = new FilesController;
+        $picture_url = $file->uploadImage($justification, self::IMAGE_JUSTiF, self::IMAGE_MIN, $id_sender);
+        $justificatif_vrm = new JustificatifVirmExt();
+        $justificatif_vrm->url_justif = $picture_url;
+        $justificatif_vrm->id_vrm = $id_virement;
+        $justificatif_vrm->status = 0;
+        $justificatif_vrm->save();
+    }
+
+    /**
+     * @param $sender_account
+     * @param $data
+     * @param $amount
+     * @return VirementExterne
+     */
+    public function createExterneExchange($sender_account, $data, $amount)
+    {
+        return $this->createVirementExterne($sender_account, $data, $amount, 1);
+    }
+
+
+    /**
+     * @param $sender_account
+     * @param $data
+     * @param $amount
+     * @return VirementExterne
+     */
+    public function createExterneExchangeJustif($sender_account, $data, $amount)
+    {
+        return $this->createVirementExterne($sender_account, $data, $amount, 0);
+    }
+
+    /**
+     * Find a justification of externe transfer by id
+     * @param $id_justif
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getJustifById($id_justif)
+    {
+        $justif = JustificatifVirmExt::where('id', $id_justif)->first();
+        return $justif;
+    }
+
+
+    /**
+     * @param $justif_id
+     * @param $banker_id
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function acceptJustif($justif_id, $banker_id)
+    {
+        $justif = JustificatifVirmExt::where('id', $justif_id)->first();
+        $justif->status = 1;
+        $justif->id_banker = $banker_id;
+        $justif->save();
+    }
+
+
+    /**
+     * @param $transfer
+     */
+    public function acceptTranfer($transfer)
+    {
+        $transfer->status = 1;
+        $transfer->save();
+    }
+
+    /**
+     * Refuse a justfication
+     * @param $justif_id
+     * @param $banker_id
+     */
+    public function refuseJustif($justif_id, $banker_id)
+    {
+        $justif = JustificatifVirmExt::where('id', $justif_id)->first();
+        $justif->status = 2;
+        $justif->id_banker = $banker_id;
+        $justif->save();
+    }
+
+    /**
+     * Refuse a transfer
+     * @param $transfer
+     * @return JustificatifAccount|JustificatifAccount[]|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|mixed|null
+     */
+    public function refuseTranfer($transfer)
+    {
+        $transfer->status = 2;
+        $transfer->save();
+    }
 
 }

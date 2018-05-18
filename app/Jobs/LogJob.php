@@ -114,6 +114,15 @@ class LogJob extends Job
             case 15 :
                 $this->type = 'refuse internal transfer';
                 break;
+            case 16 :
+                $this->type = 'external transfer';
+                break;
+            case 17 :
+                $this->type = 'validate external transfer';
+                break;
+            case 18 :
+                $this->type = 'refuse external transfer';
+                break;
           
            default : return  response()->json(['message' => 'invalid type'], 400);
         }
