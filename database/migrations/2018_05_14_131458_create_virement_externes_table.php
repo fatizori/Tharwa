@@ -24,6 +24,7 @@ class CreateVirementExternesTable extends Migration
             $table->integer('num_acc_ext');
             $table->string('code_bnk_ext');
             $table->string('code_curr_ext');
+            $table->string('name_ext');
             $table->decimal('amount_vir');
             $table->boolean('sens');
             $table->integer('status');

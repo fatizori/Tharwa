@@ -24,6 +24,7 @@ class VirementExterne extends Model
         'num_acc_ext',
         'code_bnk_ext',
         'code_curr_ext',
+        'name_ext',
         'amount_vir',
         'status',
         'sens',

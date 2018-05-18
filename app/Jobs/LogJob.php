@@ -115,7 +115,7 @@ class LogJob extends Job
                 $this->type = 'refuse internal transfer';
                 break;
             case 16 :
-                $this->type = 'external transfer ';
+                $this->type = 'external transfer';
                 break;
             case 17 :
                 $this->type = 'validate external transfer';

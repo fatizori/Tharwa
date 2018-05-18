@@ -320,7 +320,11 @@ class VirementExternesController extends Controller
         }
 
 
+    /*===================================================================================================================================*/
+
+    public function executeTransfer(){
 
 
+    }
 
 }
