@@ -51,16 +51,16 @@ class BanksServices
      */
     public function update($bank,$data){
         $bank->update(['id'=> $data['code'],'name'=> $data['name'],'email'=> $data['email'], 'address'=> $data['address'], 'social_reason'=> $data['social_reason']]);
+        $bank->save();
     }
 
 
     /**
      * Delete a bank
      * @param $bank
-     * @param $id
      */
 
-    public function delete($bank,$id){
+    public function delete($bank){
         $bank->delete();
     }
 

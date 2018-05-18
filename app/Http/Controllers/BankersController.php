@@ -36,21 +36,22 @@ class BankersController extends Controller
     /**
      * @param Request $request
      * @param $id
+     * @param $option
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Request $request,$id){
+    public function show(Request $request,$id,$option){
         $user = $request->user();
         $banker = $this->bankerService->findById($id);
         if(!$banker){
             return response()->json(['message' => "The banker with {$id} doesn't exist"], 404);
         }
         $needed_banker = array();
-        if ($user->hasRole('banker')){
+        if ($user->hasRole('banker') && 0 == $option){
             $keys = ['id', 'name','firstname','photo'];
             foreach ($keys as $key) {
                 $needed_banker[$key] = $banker[$key];
             }
-        }elseif ($user->hasRole('manager')){
+        }elseif ($user->hasRole('manager') || ($user->hasRole('banker') && 1 == $option)){
             $needed_banker = $banker->toArray();
             $user = $banker->user()->getAttributes();
             $keys = ['email','phone_number'];

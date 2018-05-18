@@ -21,6 +21,8 @@ class CustomersServices
                     . sprintf('%06u', $account->id)
                     . $account->currency_code;
                 $current_account['balance'] = $account->balance;
+                $current_account['currency_code'] = $account->currency_code;
+                $current_account['type'] = $account->type;
             }
             array_push($accounts_types, $account->type );
 
