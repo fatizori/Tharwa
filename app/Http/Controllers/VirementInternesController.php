@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 class VirementInternesController extends Controller
 {
 
+    const max_amount_justif = 200000;
+
     private $virementInterneService;
     private $virementExterneService;
     private $accountService;
@@ -145,8 +147,7 @@ class VirementInternesController extends Controller
         $rules = [
             'num_acc_receiver'=>'required | integer',
             'montant_virement'=>'required | numeric',
-            'type'=>'required | integer | between:0,1',
-            'justif' => 'image|mimes:jpeg,png,jpg,bmp|max:2048'
+            'type'=>'required | integer | between:0,1'
 
         ];
         $data=$request->json()->all();
@@ -156,13 +157,16 @@ class VirementInternesController extends Controller
         }
         //return   response()->json(['data' => $data], 200);
         $data['justif'] = $request->file('justif');
+        if(!is_null($data['justif'])){
+            $rules['justif'] = 'image|mimes:jpeg,png,jpg,bmp|max:2048';
+        }
         $montant = $data['montant_virement'];
 
         $validator = Validator::make($data, $rules);
-        if ($montant < 0 && !$validator->passes()) {
+        if ($montant < 0 || !$validator->passes()) {
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-        if ($montant > 200000 && is_null($data['justif'])) {
+        if ($montant > self::max_amount_justif && is_null($data['justif'])) {
             return   response()->json(['message' => 'Justification required'], 403);
         }
 
@@ -179,7 +183,7 @@ class VirementInternesController extends Controller
         // Get sender account
         $senderAccount = $this->accountService->findCurrentAccountByUserId($user->id);
 
-        if ($montant <= 200000) {
+        if ($montant <= self::max_amount_justif) {
             try {
                 $virement = $this->virementInterneService->createBetweenCustomersExchange($senderAccount, $account_receiver, $montant, $data['type']);
 
@@ -209,7 +213,7 @@ class VirementInternesController extends Controller
                 return response(json_encode(['message' => $exception->getMessage()]), 500);
 
             }
-        } elseif ($montant > 200000) {
+        } elseif ($montant > self::max_amount_justif) {
             try {
                 //add exchange
                  $account_receiver = $this->accountService->findById($data['num_acc_receiver']);

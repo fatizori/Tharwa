@@ -55,26 +55,27 @@ class VirementExternesController extends Controller
     public function externeTransfer(Request $request){
         //Validation of data
         $rules = [
-
             'num_acc_receiver'=> 'required | integer',
             'code_bnk_receiver'=> 'required ',
             'code_curr_receiver'=> 'required ',
             'name'=> 'required ',
-            'amount_virement'=>'required | numeric',
-            'justif' => 'image|mimes:jpeg,png,jpg,bmp|max:2048'
-
+            'amount_virement'=>'required | numeric'
         ];
-        $data=$request->json()->all();
+
+        $data = $request->json()->all();
         $user = $request->user();
         if(emptyArray($data)){
             $data = $request->input();
         }
-
         $data['justif'] = $request->file('justif');
+        if(!is_null($data['justif'])){
+            $rules['justif'] = 'image|mimes:jpeg,png,jpg,bmp|max:2048';
+        }
+
         $amount = $data['amount_virement'];
 
         $validator = Validator::make($data, $rules);
-        if ($amount < 0 && !$validator->passes()) {
+        if ($amount < 0 || !$validator->passes()) {
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
         //amount > 200000
@@ -86,8 +87,6 @@ class VirementExternesController extends Controller
         DB::beginTransaction();
         // Get sender account
         $senderAccount = $this->accountService->findCurrentAccountByUserId($user->id);
-
-
         //amount < 200000
         if ($amount <= self::max_amount_justif) {
             try {
@@ -198,8 +197,6 @@ class VirementExternesController extends Controller
                     return response(json_encode(['message' => 'montant insuffisant']), 206);
                 }
 
-
-
                 //write the externe transfer
                 $this->writeToXml($transfert,$senderAccount->id_customer);
                 dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 17,LogJob::SUCCESS_STATUS));
@@ -242,6 +239,14 @@ class VirementExternesController extends Controller
 
 
             $numero = $doc->createElement( "numero" );
+//            $date = $transfert->created_at;
+            //dd($date);
+//            $y = $date->year;
+//            $m = $date->month;
+//            $d = $date->day;
+//            $h = $date->hour;
+//            $mi = $date->minute;
+//
             $transfer_date = $transfert->created_at;
             $date = explode('-',$transfer_date);
             $y = $date[0];
@@ -311,18 +316,18 @@ class VirementExternesController extends Controller
 
             $virement->appendChild( $destinataire );
 
-        $montant = $doc->createElement( "montant" );
+        $montant = $doc->createElement('montant');
         $montant->appendChild(
             $doc->createTextNode( $transfert->amount_vir )
         );
 
-        $motif = $doc->createElement( "motif" );
+        $motif = $doc->createElement('motif');
         $motif->appendChild(
-            $doc->createTextNode( "motif" )
+            $doc->createTextNode('motif')
         );
         $virement->appendChild( $montant );
         $virement->appendChild( $motif );
-            $doc->save("./XML_file/".$transfert->code_bnk.$transfert->num_acc."Vers".$transfert->code_bnk_ext.$transfert->num_acc_ext.".xml");
+            $doc->save('./XML_file/' .$transfert->code_bnk.$transfert->num_acc. 'Vers' .$transfert->code_bnk_ext.$transfert->num_acc_ext. '.xml');
         }
 
 
