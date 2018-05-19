@@ -282,7 +282,7 @@ class VirementExternesController extends Controller
 
             $compteSender = $doc->createElement( "compte" );
             $compteSender->appendChild(
-                $doc->createTextNode( $transfert->code_bnk.$transfert->num_acc.$transfert->code_curr )
+                $doc->createTextNode( $transfert->code_bnk.sprintf('%06u', $transfert->num_acc).$transfert->code_curr )
             );
 
              $titulaire->appendChild( $nomSender );
@@ -307,7 +307,7 @@ class VirementExternesController extends Controller
 
             $compteReceiver = $doc->createElement( "compte" );
            $compteReceiver->appendChild(
-                $doc->createTextNode( $transfert->code_bnk_ext.$transfert->num_acc_ext.$transfert->code_curr )
+                $doc->createTextNode( $transfert->code_bnk_ext.sprintf('%06u', $transfert->num_acc_ext).$transfert->code_curr )
             );
 
             $destinataire->appendChild( $nomReceiver );

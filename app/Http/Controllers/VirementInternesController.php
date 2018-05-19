@@ -101,7 +101,7 @@ class VirementInternesController extends Controller
         //if the receiver account dosen't exist
         if(is_null($account_receiver)){
             //log
-            dispatch(new LogJob($account_sender->id_customer,$account_receiver->id,'receiver not found',11,
+            dispatch(new LogJob($account_sender->id_customer,null,'receiver not found',11,
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver not found']),404);
         }
@@ -117,16 +117,15 @@ class VirementInternesController extends Controller
 
         // type currency dollar or euro
          if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
-             $amount = $currency->exchangeRate($amount,$account_sender->code_curr_sender,$account_receiver->code_curr_receiver);
+        //    dd($account_sender);
+             $amount = $currency->exchangeRate($amount,$account_sender->currency_code,$account_receiver->currency_code);
          }
 
          //Find the commission code
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
 
 
-         $virement = $this->virementInterneService->create($data['type'],$codeCommission,0,$amount,$account_sender,$account_receiver);
-
-
+         $virement = $this->virementInterneService->create($codeCommission,0,$amount,$account_sender,$account_receiver,$data['type']);
 
             DB::commit();
         return response(json_encode(['message' => 'transfer success']),201);

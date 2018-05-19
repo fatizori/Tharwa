@@ -109,10 +109,10 @@ class VirementInternesServices
     {
         $virements = VirementInterne::where(function($q)use ($id_account){
             $q->where('num_acc_sender',$id_account);
-            $q->where('status',1);
+//            $q->where('status',1);
            })->orWhere(function($q)use ($id_account){
                 $q->where('num_acc_receiver',$id_account);
-                $q->where('status',1);
+//                $q->where('status',1);
             })->simplePaginate(8)->setPath('');
 
         return $virements;

@@ -94,7 +94,7 @@ class VirementExternesServices
         $virementExterne->num_acc_ext = $data['num_acc_receiver'];
         $virementExterne->code_bnk_ext = $data['code_bnk_receiver'];
         $virementExterne->code_curr_ext = $data['code_curr_receiver'];
-//        $virementExterne->name_ext = $data['name'];
+        $virementExterne->name_ext = $data['name'];
         $virementExterne->amount_vir = $amount;
         $virementExterne->status = $status;
         $virementExterne->sens = 0;

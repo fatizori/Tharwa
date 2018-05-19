@@ -32,7 +32,8 @@ class AccountTableSeeder extends Seeder
             'id' => 4,
             'id_customer' => 5,
             'status' => 1,
-            'type' => 3
+            'type' => 3,
+            'currency_code' => 'EUR'
         ]);
 
     }
