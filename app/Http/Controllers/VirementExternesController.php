@@ -9,6 +9,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Services\VirementExternesServices;
 use App\Services\AccountsServices;
@@ -85,7 +86,8 @@ class VirementExternesController extends Controller
         DB::beginTransaction();
         // Get sender account
         $senderAccount = $this->accountService->findCurrentAccountByUserId($user->id);
-        $sender = User::find($senderAccount->id_customer);
+
+
         //amount < 200000
         if ($amount <= self::max_amount_justif) {
             try {
@@ -99,7 +101,9 @@ class VirementExternesController extends Controller
                     return response(json_encode(['message' => 'montant insuffisant']), 422);
                 }
 
-                $this->$this->writeToXml($virement,$sender);
+                $new_sender_balance = $senderAccount->balance - $data['amount_virement'] - $virement->amount_commission;
+                $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
+                $this->writeToXml($virement,$senderAccount->id_customer);
 
 
                 // Send email to sender
@@ -197,7 +201,7 @@ class VirementExternesController extends Controller
 
 
                 //write the externe transfer
-                $this->writeToXml($transfert,$sender);
+                $this->writeToXml($transfert,$senderAccount->id_customer);
                 dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 17,LogJob::SUCCESS_STATUS));
 
 
@@ -227,8 +231,9 @@ class VirementExternesController extends Controller
     }
 
     /*===================================================================================================================================*/
-    public function writeToXml($transfert,$sender){
+    public function writeToXml($transfert,$sender_id){
 
+        $sender = Customer::find($sender_id);
         $doc = new \DOMDocument();
         $doc->formatOutput = true;
 
