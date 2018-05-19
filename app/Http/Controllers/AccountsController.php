@@ -150,9 +150,10 @@ class AccountsController extends Controller
                             return response()->json(['message' => $validator->errors()->all()], 400);
                         }
                         $action = $this->accountsService->blockAccount($account);
-                        //Create justif
-                        $justifServices = new JustificationServices();
-                        $justifServices->createAccountJustif($banker->id, $account->id, $justif, $justif_object);
+                        if ($action){
+                            //Save Banker Operation
+                            $this->accountsService->createBankerAction($account, $banker->id, 3,$justif_object,$justif);
+                        }
                     }break;
                 case 4:{
                     $message = 'new account was refused';

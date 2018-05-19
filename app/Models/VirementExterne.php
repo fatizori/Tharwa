@@ -28,12 +28,14 @@ class VirementExterne extends Model
         'amount_vir',
         'status',
         'sens',
-        'status',
         'url_xml',
         'id_commission',
         'amount_commission'
     ];
 
+    protected $hidden =[
+
+    ];
 
 
 

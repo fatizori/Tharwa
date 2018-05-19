@@ -14,10 +14,10 @@ class CustomerTableSeeder extends Seeder
     {
         Customer::create([
                 'id' => 5,
-                'name' => 'Karim',
+                'name' => 'Naziha',
                 'address'=>'Alger qq part',
                 'wilaya'=> 'Alger',
-                'commune' => 'ben aknoun',
+                'commune' => 'Ben aknoun',
                 'fonction' => 'Developpeur',
                 'type' => 0,
                 'photo' => 'customer1.jpg',
@@ -25,7 +25,7 @@ class CustomerTableSeeder extends Seeder
 
         Customer::create([
             'id' => 6,
-            'name' => 'Khadidja',
+            'name' => 'Karim',
             'address'=>'Oran qq part',
             'wilaya'=> 'Oran',
             'commune' => 'ben Khadda',
