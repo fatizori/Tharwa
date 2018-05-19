@@ -237,7 +237,8 @@ class VirementExternesController extends Controller
 
 
             $numero = $doc->createElement( "numero" );
-            $date = $transfert->created_at;
+            $transfer_date = $transfert->created_at;
+            $date = explode('-',$transfer_date);
             $y = $date[0];
             $m = $date[1];
             $d = substr($date[2],0,2);
