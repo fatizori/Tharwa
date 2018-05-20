@@ -17,8 +17,8 @@ class LogJob extends Job
     /**
      * email subject
      */
-    const FAILED_STATUS  = "failed";
-    const SUCCESS_STATUS  = "success";
+    const FAILED_STATUS  = 'failed';
+    const SUCCESS_STATUS  = 'success';
     /**
      * email subject
      */

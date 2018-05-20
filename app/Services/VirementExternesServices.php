@@ -83,25 +83,31 @@ class VirementExternesServices
      * @param $data
      * @param $amount
      * @param $status
+     * @param $sens
      * @return VirementExterne
      */
-    public function createVirementExterne($sender_account, $data, $amount,  $status)
+    public function createVirementExterne($local_account, $data, $amount,  $status , $sens)
     {
         $virementExterne = new VirementExterne();
-        $virementExterne->num_acc = strip_tags($sender_account->id);
+        $virementExterne->num_acc = strip_tags($local_account->id);
         $virementExterne->code_bnk = 'THW';
         $virementExterne->code_curr = 'DZD';
-        $virementExterne->num_acc_ext = $data['num_acc_receiver'];
-        $virementExterne->code_bnk_ext = $data['code_bnk_receiver'];
-        $virementExterne->code_curr_ext = $data['code_curr_receiver'];
+        $virementExterne->num_acc_ext = $data['num_acc_ext'];
+        $virementExterne->code_bnk_ext = $data['code_bnk_ext'];
+        $virementExterne->code_curr_ext = $data['code_curr_ext'];
         $virementExterne->name_ext = $data['name'];
         $virementExterne->amount_vir = $amount;
         $virementExterne->status = $status;
-        $virementExterne->sens = 0;
+        $virementExterne->sens = $sens;
         //find commission by type
         $commissionC = new CommissionsServices();
-        $commission = $commissionC->findById('VCE');
-        $virementExterne->id_commission = 'VCE';
+        if($sens == 0){
+            $commission = $commissionC->findById('VCE');
+            $virementExterne->id_commission = 'VCE';
+        }else{
+            $commission = $commissionC->findById('VRE');
+            $virementExterne->id_commission = 'VRE';
+        }
         //Extract commission value
         $virementExterne->amount_commission = $commission->valeur / 100 * $amount;
         $virementExterne->save();
@@ -126,14 +132,15 @@ class VirementExternesServices
     }
 
     /**
-     * @param $sender_account
+     * @param $local_account
      * @param $data
      * @param $amount
+     * @param $sens
      * @return VirementExterne
      */
-    public function createExterneExchange($sender_account, $data, $amount)
+    public function createExterneExchange($local_account, $data, $amount,$sens)
     {
-        return $this->createVirementExterne($sender_account, $data, $amount, 1);
+        return $this->createVirementExterne($local_account, $data, $amount, 1,$sens);
     }
 
 
@@ -145,7 +152,7 @@ class VirementExternesServices
      */
     public function createExterneExchangeJustif($sender_account, $data, $amount)
     {
-        return $this->createVirementExterne($sender_account, $data, $amount, 0);
+        return $this->createVirementExterne($sender_account, $data, $amount, 0,0);
     }
 
     /**

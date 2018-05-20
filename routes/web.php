@@ -116,3 +116,7 @@ $app->put('user/password',['uses' => 'UsersController@changePassword', 'middlewa
 
 $app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
 
+
+
+
+$app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);
