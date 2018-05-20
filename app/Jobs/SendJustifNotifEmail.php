@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\JustifNotifMail;
+use Illuminate\Support\Facades\Mail;
 
 class SendJustifNotifEmail extends Job
 {

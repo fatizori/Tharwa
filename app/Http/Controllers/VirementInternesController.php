@@ -85,8 +85,8 @@ class VirementInternesController extends Controller
             dispatch(new LogJob('','',"Input validation error",11,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-        try{
-            DB::beginTransaction();
+    try{
+        DB::beginTransaction();
         $currency = new CurrenciesController();
         $amount = $data['montant_virement'];
 
@@ -117,25 +117,32 @@ class VirementInternesController extends Controller
 
         // type currency dollar or euro
          if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
-        //    dd($account_sender);
+
              $amount = $currency->exchangeRate($amount,$account_sender->currency_code,$account_receiver->currency_code);
          }
-
          //Find the commission code
         $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
-
 
          $virement = $this->virementInterneService->create($codeCommission,0,$amount,$account_sender,$account_receiver,$data['type']);
 
             DB::commit();
-        return response(json_encode(['message' => 'transfer success']),201);
+        $newBalance = $account_receiver->balance;
+        return response(json_encode(['message' => 'transfer success', 'balance' => $newBalance]),201);
         } catch (\Exception $e) {
             DB::rollback();
             //log information
             //dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
-            return response()->json(['message' => $e->getMessage()], 500);
+        return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+
+
+
+
+
+
+
 
     /**
      * @param Request $request
@@ -230,8 +237,12 @@ class VirementInternesController extends Controller
         dispatch(new LogJob($user->id,$account_receiver->id_customer,'Virement effectué',13,
             LogJob::SUCCESS_STATUS));
         DB::commit();
+
         return response(json_encode(['message'=>'virement effectué']),201);
     }
+
+
+
 
 
     /**
@@ -325,6 +336,10 @@ class VirementInternesController extends Controller
         }
 
     }
+
+
+
+
 
     /**
      * @param $senderAccount
