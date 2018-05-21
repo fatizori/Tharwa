@@ -93,18 +93,22 @@ class VirementServiceTest extends TestCase
         //========================Test Virement current to Epargne==============================//
 
         //get the sender and the receiver account
-        $sender_account =Account::where('type','=',1)->first();
-        $receiver_account = Account::where('type','=',2)->first();
+        $sender_account =Account::where('type','=',1)
+                         ->where('id_customer','=',6)
+                         ->first();
+        $receiver_account = Account::where('type','=',2)
+                            ->where('id_customer','=',$sender_account->id_customer)
+                            ->first();
 
         //the new balaance of the sender and receiver accounts
-        $new_sender_balance = $sender_account->balance - 300;
-        $new_receiver_balance = $receiver_account->balance + 300 - 0.00 ;
+        $new_sender_balance = $sender_account->balance - 50  ;
+        $new_receiver_balance = $receiver_account->balance + 50 ;
 
 
-        $this->virementService->create('CVE',0,300,$sender_account,$receiver_account,0);
+        $this->virementService->create('CVE',0,50,$sender_account,$receiver_account,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account->id,'num_acc_receiver' => $receiver_account->id,
-            'montant_virement'=>300,'code_curr_sender' => $sender_account->currency_code, 'code_curr_receiver' => $receiver_account->currency_code,
+            'montant_virement'=>50,'code_curr_sender' => $sender_account->currency_code, 'code_curr_receiver' => $receiver_account->currency_code,
             'id_commission'=>'CVE','type'=>0,'montant_commission'=>0.00]);
         self::assertEquals(true,$sender_account->balance === $new_sender_balance);
         self::assertEquals(true,$receiver_account->balance === $new_receiver_balance );
@@ -115,7 +119,9 @@ class VirementServiceTest extends TestCase
         //================================= Epargne to Current =======================================//
         //get the sender and the receiver account
         $sender_account1 =Account::where('type','=',2)->first();
-        $receiver_account1 = Account::where('type','=',1)->first();
+        $receiver_account1 = Account::where('type','=',1)
+                            ->where('id_customer','=',$sender_account1->id_customer)
+                            ->first();
 
         //the new balaance of the sender and receiver accounts
         $commission_amount = 0.10*50/100;
@@ -124,6 +130,52 @@ class VirementServiceTest extends TestCase
 
 
          $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+
+        $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
+            'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
+            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+
+        //compare the sender and the receiver balance
+        self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);
+        self::assertEquals(true,$receiver_account1->balance === $new_receiver_balance1 );
+
+        //=================================  Current to Euro  =======================================//
+        //get the sender and the receiver account
+        $sender_account1 =Account::where('type','=',1)->first();
+        $receiver_account1 = Account::where('type','=',3)
+                            ->where('id_customer','=',$sender_account1->id_customer)
+                            ->first();
+
+        //the new balaance of the sender and receiver accounts
+        $commission_amount = 2.00*50/100;
+        $new_sender_balance1 = $sender_account1->balance - 50 - $commission_amount;
+        $new_receiver_balance1 = $receiver_account1->balance + 50   ;
+
+
+        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+
+        $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
+            'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
+            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+
+        //compare the sender and the receiver balance
+        self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);
+        self::assertEquals(true,$receiver_account1->balance === $new_receiver_balance1 );
+
+        //================================= Euro to Current   =======================================//
+        //get the sender and the receiver account
+        $sender_account1 =Account::where('type','=',3)->first();
+        $receiver_account1 = Account::where('type','=',1)
+                            ->where('id_customer','=',$sender_account1->id_customer)
+                            ->first();
+
+        //the new balaance of the sender and receiver accounts
+        $commission_amount = 1.50*50/100;
+        $new_sender_balance1 = $sender_account1->balance - 50 - $commission_amount;
+        $new_receiver_balance1 = $receiver_account1->balance + 50   ;
+
+
+        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,

@@ -113,7 +113,7 @@ class AccountsServices
         $accounts  = Account::join('customers', 'customers.id', '=', 'accounts.id_customer')
             ->join('users','users.id','=','accounts.id_customer')
             ->where('accounts.status','=',0)
-            ->select('accounts.id','name','function','address','phone_number','email','accounts.type','accounts.status')
+            ->select('accounts.id','name','fonction','address','phone_number','email','accounts.type','accounts.status')
             ->get();
         return $accounts;
     }

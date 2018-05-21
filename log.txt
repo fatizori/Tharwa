@@ -53,3 +53,8 @@ Date and Time | Sender | Receiver | Log Message | Status | Type
 2018-05-20 21:34:30 | 5 | 6 | Virement effectué | success | internal transfer between users
 2018-05-21 00:36:59 | BNA003003DZD | 5 | client destinataire non trouvé | failed | external transfer
 2018-05-21 00:37:01 | BNA003003DZD | 5 | client destinataire non trouvé | failed | external transfer
+2018-05-21 11:21:58 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-05-21 11:23:05 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-05-21 11:25:06 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-05-21 11:25:39 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-05-21 11:25:39 | 3 | 2 | Virement effectue | success | virement interne Tharwa
