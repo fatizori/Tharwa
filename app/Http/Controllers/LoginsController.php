@@ -74,6 +74,22 @@ class LoginsController extends Controller {
 
     }
 
+    //*************************refresh ***************************************//
+     public function refresh(Request $request){
+         $rules = [
+             'refresh_token' => 'required'
+         ];
+
+         $data = $request->json()->all();
+
+         if (!$this->validateData($data,$rules)) {
+             return response()->json(['message' => 'invalid input data'], 400);
+         }
+
+         return $this->loginServices->refreshToken($data);
+
+     }
+
 
     //****************************    Logout    ******************************//
     /**

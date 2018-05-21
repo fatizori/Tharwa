@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Jobs\LogJob;
 use App\Jobs\SendJustifNotifEmail;
 use App\Jobs\SendTransferNotifEmail;
+use App\Jobs\SendTransferSameUserNotifEmail;
 use App\Mail\VirementNotifMail;
 use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmInt;
@@ -236,6 +237,22 @@ class VirementInternesServices
     {
        dispatch(new SendTransferNotifEmail($email1, $email2));
     }
+
+    /**
+     * This added function for sending auth mail
+     *
+     * @param $email_receiver
+     * @param $account_sender
+     * @param $account_receiver
+     * @param $amount
+     * @param $account_currency
+     * @return void
+     */
+    public function sendVirementSameUserNotifMAil($email_receiver,$account_sender,$account_receiver,$amount,$account_currency)
+    {
+        dispatch(new SendTransferSameUserNotifEmail($email_receiver,$account_sender,$account_receiver,$amount,$account_currency));
+    }
+
 
 
     /**

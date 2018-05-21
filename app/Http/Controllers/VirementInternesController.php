@@ -86,10 +86,10 @@ class VirementInternesController extends Controller
         $data=$request->json()->all();
         $validator = Validator::make($data, $rules);
         if (!$validator->passes()) {
-            dispatch(new LogJob('','',"Input validation error",11,LogJob::FAILED_STATUS));
+            dispatch(new LogJob('','', 'Input validation error',11,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-        try{
+//        try{
             DB::beginTransaction();
         $currency = new CurrenciesController();
         $amount = $data['montant_virement'];
@@ -125,9 +125,10 @@ class VirementInternesController extends Controller
          }
 
 
-         // type currency dollar or euro
-         if ($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 || $data['type_acc_sender'] >= 4 || $data['type_acc_receiver'] >= 4) {
-             $amount = $currency->exchangeRate($amount, $account_sender->code_curr_sender, $account_receiver->code_curr_receiver);
+        // type currency dollar or euro
+         if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
+
+             $amount = $currency->exchangeRate($amount,$account_sender->currency_code,$account_receiver->currency_code);
          }
 
          //Find the commission code
@@ -137,17 +138,25 @@ class VirementInternesController extends Controller
          $this->virementInterneService->create($codeCommission, 0, $amount, $account_sender, $account_receiver, $data['type']);
 
 
-         DB::commit();
+            DB::commit();
+        $newBalance = $account_receiver->balance;
+        // Send mail
+        $customer = $request->user()->customer();
+        dd($customer);
+        $this->virementInterneService->sendVirementSameUserNotifMAil($customer->email,
+            $account_sender->getCode(),$account_receiver->getCode(),
+            $amount,$account_receiver->code_curr_receiver);
 
-        return response(json_encode(['message' => 'transfer success']),201);
-
-        } catch (\Exception $e) {
+        return response(json_encode(['message' => 'transfer success', 'balance' => $newBalance]),201);
+//        } catch (\Exception $e) {
             DB::rollback();
             //log information
             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
-        }
+//        }
     }
+
+
 
     /**
      * @param Request $request

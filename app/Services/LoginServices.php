@@ -225,6 +225,7 @@ class LoginServices
                 'user_type' => $user->role,
                 'access_token' => $response->token_type . ' ' . $response->access_token,
                 'expires_in' => $response->expires_in,
+                'refresh_token' => $response->refresh_token
             ];
 
             //Case of customers
@@ -265,5 +266,10 @@ class LoginServices
             'message' => 'You are Logged out',
         ];
         return response()->json($json, '200');
+    }
+
+    //**************************refresh***********************//
+    public function refreshToken($data){
+        $token = $data['refresh_token'];
     }
 }

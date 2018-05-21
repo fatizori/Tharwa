@@ -46,4 +46,6 @@ class VirementInterne extends Model
         return $this->belongsTo(Account::class,'num_acc_receiver','id');
     }
 
+
+
 }
