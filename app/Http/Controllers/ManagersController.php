@@ -8,12 +8,17 @@
 
 namespace App\Http\Controllers;
 use App\Models\Manager;
+use App\Services\ManagersServices;
+use Illuminate\Http\Request;
 
 
 class ManagersController extends Controller
 {
+    private $managerServices;
+
     public function __construct()
     {
+        $this->managerServices = new ManagersServices();
     }
 
     public function index(){
@@ -50,6 +55,31 @@ class ManagersController extends Controller
         $needed_manager['photo'] = FilesController::generateNameImageMinUser($manager['id'],$manager['photo']);
         return response()->json($needed_manager, 200);
     }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changeInfo(Request $request){
+        //Validate input
+        $rules = [
+            'name' => 'alpha',
+            'firstname'=> 'alpha',
+            'address' => '',
+            'email' => 'email | filled',
+            'phone_number' => 'numeric | filled | min:12',
+        ];
+        $data = $request->json()->all();
+
+        if(! $this->validateData($data,$rules)){
+            return response()->json(['message' => 'invalid input data'], 400);
+        }
+
+        //call for update infos
+        return $this->managerServices->updateInfo($request);
+    }
+
 
 
 

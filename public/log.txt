@@ -25,3 +25,6 @@ Date and Time | Sender | Receiver | Log Message | Status | Type
 2018-05-07 16:55:54 | en_senouci@esi.dz | 24 | virement validé | success | validate internal transfer
 2018-05-07 16:58:48 | 6 | 5 | Virement effectué | success | internal transfer between users
 2018-05-07 17:00:17 | en_senouci@esi.dz | 25 | virement validé | success | validate internal transfer
+2018-05-20 21:13:39 | 5 | 6 | Virement effectué | success | internal transfer between users
+2018-05-20 21:17:01 | 5 | 6 | Virement effectué | success | internal transfer between users
+2018-05-21 00:45:01 |  |  | destinataire non tharwa | failed | external transfer

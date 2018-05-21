@@ -60,6 +60,8 @@ $app->group( ['prefix' => 'bankers',
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
 //route to add a bank
 $app->post('banks',['uses' => 'BanksController@store','middleware' => ['auth','role:manager']]);
+//route to change personal info manager
+$app->put('managers',['uses' => 'ManagersController@changeInfo','middleware' => ['auth','role:manager']]);
 //route to update a bank's data
 $app->put('banks/{id}',['uses' => 'BanksController@update','middleware' => ['auth','role:manager']]);
 //route to delete a bank
@@ -107,7 +109,14 @@ $app->get('accounts/type/{type:[1-4]}', ['uses' => 'AccountsController@show', 'm
 //All users
 // update user photo
 $app->post('user/photo',['uses' => 'RegistersController@update_avatar']);
+// update authenticated user  photo
+$app->post('user/photo',['uses' => 'UsersController@updatePhoto', 'middleware' =>['auth']]);
+
 $app->put('user/password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
 $app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
 
+
+
+
+$app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);

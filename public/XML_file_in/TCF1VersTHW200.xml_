@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<virement>
+  <numero>THW1DZDBNA200DZD201805191924</numero>
+  <date>201805191924</date>
+  <titulaire>
+    <nom>Bakir</nom>
+    <banque>TCF</banque>
+    <compte>BNA003004DZD</compte>
+  </titulaire>
+  <destinataire>
+    <nom>Karim</nom>
+    <banque>THW</banque>
+    <compte>THW000002DZD</compte>
+  </destinataire>
+  <montant>200</montant>
+  <motif>motif</motif>
+</virement>

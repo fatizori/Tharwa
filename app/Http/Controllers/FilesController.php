@@ -98,7 +98,7 @@ class FilesController extends Controller {
         //the name of the new picture (after minimisation)
         $imageMinName = $this->generateNameImageMinUser($id_user,$imagename);
         $this->insertMiniImage($destinationPath.$imagename,$path_min,$imageMinName,100,100);
-        return  $imageMinName ;
+        return  $imagename ;
    
     }
 

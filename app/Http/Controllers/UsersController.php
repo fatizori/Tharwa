@@ -1,12 +1,20 @@
 <?php
 namespace App\Http\Controllers;
+use App\Jobs\LogJob;
 use App\Models\User;
+use App\Services\BankersServices;
+use App\Services\CustomersServices;
+use App\Services\ManagersServices;
 use App\Services\UsersServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
+    const IMAGE_USER = 'images/customer/';
+    const IMAGE_MIN = 'images/customer_min/';
+    const DEFAULT_USER_IMG = 'default_user.png';
+
     private $userService;
     public function __construct()
     {       //TODO the middleware is applied before in the route but we can do this
@@ -76,6 +84,53 @@ class UsersController extends Controller
          $this->userService->update($user,$data);
 
         return response()->json(['message' => "The user with  id {$user->id} has been updated"], 200);
+    }
+
+    /**
+     * Update the user data
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updatePhoto(Request $request)
+    {
+        //find the user by id
+        $user = $request->user();
+        $data['photo'] = $request->file('photo');
+        $rules = [
+            'photo' => 'required|image|mimes:jpeg,png,jpg,bmp|max:2048'
+        ];
+        $validator = Validator::make($data, $rules);
+        if (!$validator->passes()) {
+            // log information
+            return response()->json(['message' => $validator->errors()->all()], 400);
+        }
+        $file = new FilesController;
+        $picture_url = $file->uploadImage($data['photo'], self::IMAGE_USER, self::IMAGE_MIN, $user->id);
+
+        switch ($user->getRole()) {
+            case  'customer':
+                {
+                    $customerService = new CustomersServices();
+                    $customerService->updatePhoto($user->id, $picture_url);
+                    break;
+                }
+            case  'banker':
+                {
+                    $bankerService = new BankersServices();
+                    $bankerService->updatePhoto($user->id, $picture_url);
+                    break;
+                }
+            case 'manager':
+                {
+                    $managerService = new ManagersServices();
+                    $managerService->updatePhoto($user->id, $picture_url);
+                    break;
+                }
+            default:
+        }
+        //log information
+        dispatch(new LogJob($user->email, '', 'a user avatar has been updated', 3, LogJob::SUCCESS_STATUS));
+        return response()->json(['message' => 'photo has been updated successfully'], 200);
     }
 
     /**
