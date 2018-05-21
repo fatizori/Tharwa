@@ -59,6 +59,10 @@ class VirementInternesController extends Controller
              $codeCommission = 'CVD';
          }else if($senderAcountType == 3 && $receiverAccountType == 1){
              $codeCommission = 'DVC';
+         }else if($senderAcountType == 1 && $receiverAccountType ==4){
+             $codeCommission = 'CVD';
+         }else if($senderAcountType == 4 && $receiverAccountType == 1){
+             $codeCommission = 'DVC';
          }
 
          return $codeCommission;
@@ -105,35 +109,42 @@ class VirementInternesController extends Controller
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver not found']),404);
         }
+    //if the receiver account != current account
+     if($data['type_acc_receiver'] == $data['type_acc_sender']) {
+         //log
+         dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer to the same account', 11,
+             LogJob::FAILED_STATUS));
+         return response(json_encode(['message' => 'Virement vers le meme compte ']), 400);
+     }
+         //if the amount is bigger than the sender balance
+         if ($amount > $account_sender->balance) {
+             //log
+             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer with insuffsant balance', 11,
+                 LogJob::FAILED_STATUS));
+             return response(json_encode(['message' => 'balance insuffisant ']), 400);
+         }
 
-        //if the amount is bigger than the sender balance
-        if($amount> $account_sender->balance ) {
-            //log
-            dispatch(new LogJob($account_sender->id_customer,$account_receiver->id_customer,'Transfer with insuffsant balance',11,
-                LogJob::FAILED_STATUS));
-            return response(json_encode(['message' => 'balance insuffisant ']),400);
-        }
 
-
-        // type currency dollar or euro
-         if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
-             $amount = $currency->exchangeRate($amount,$account_sender->code_curr_sender,$account_receiver->code_curr_receiver);
+         // type currency dollar or euro
+         if ($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 || $data['type_acc_sender'] >= 4 || $data['type_acc_receiver'] >= 4) {
+             $amount = $currency->exchangeRate($amount, $account_sender->code_curr_sender, $account_receiver->code_curr_receiver);
          }
 
          //Find the commission code
-        $codeCommission= $this->codeCommission($data['type_acc_sender'],$data['type_acc_receiver']);
+         $codeCommission = $this->codeCommission($data['type_acc_sender'], $data['type_acc_receiver']);
 
 
-         $virement = $this->virementInterneService->create($data['type'],$codeCommission,0,$amount,$account_sender,$account_receiver);
+         $this->virementInterneService->create($codeCommission, 0, $amount, $account_sender, $account_receiver, $data['type']);
 
 
+         DB::commit();
 
-            DB::commit();
         return response(json_encode(['message' => 'transfer success']),201);
+
         } catch (\Exception $e) {
             DB::rollback();
             //log information
-            //dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
+            dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }

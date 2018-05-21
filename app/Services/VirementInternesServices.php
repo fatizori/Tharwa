@@ -47,7 +47,7 @@ class VirementInternesServices
         $commission = $commissionC->findById($codeCommission);
         $virementInterne->id_commission = $codeCommission;
         if ($typeCommission == 0) {
-            $virementInterne->montant_commission = $commission->valeur * $amount;
+            $virementInterne->montant_commission = $commission->valeur * $amount/100;
         } else {
             $virementInterne->montant_commission = $commission->valeur;
         }
