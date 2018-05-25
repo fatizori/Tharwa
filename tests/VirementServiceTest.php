@@ -101,18 +101,18 @@ class VirementServiceTest extends TestCase
                             ->first();
 
         //the new balaance of the sender and receiver accounts
-        $new_sender_balance = $sender_account->balance - 50  ;
+        $new_sender_balance = $sender_account->balance - 50 ;
         $new_receiver_balance = $receiver_account->balance + 50 ;
 
 
-        $this->virementService->create('CVE',0,50,$sender_account,$receiver_account,0);
+        $this->virementService->create('CVE',0,50,50,$sender_account,$receiver_account,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account->id,'num_acc_receiver' => $receiver_account->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account->currency_code, 'code_curr_receiver' => $receiver_account->currency_code,
             'id_commission'=>'CVE','type'=>0,'montant_commission'=>0.00]);
         self::assertEquals(true,$sender_account->balance === $new_sender_balance);
         self::assertEquals(true,$receiver_account->balance === $new_receiver_balance );
-        DB::rollback();
+
 
 
 
@@ -129,7 +129,7 @@ class VirementServiceTest extends TestCase
         $new_receiver_balance1 = $receiver_account1->balance + 50   ;
 
 
-         $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+         $this->virementService->create('EVC',0,50,50,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
@@ -149,14 +149,14 @@ class VirementServiceTest extends TestCase
         //the new balaance of the sender and receiver accounts
         $commission_amount = 2.00*50/100;
         $new_sender_balance1 = $sender_account1->balance - 50 - $commission_amount;
-        $new_receiver_balance1 = $receiver_account1->balance + 50   ;
+        $new_receiver_balance1 = $receiver_account1->balance + 20   ;
 
 
-        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+        $this->virementService->create('CVD',0,50,20,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
-            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+            'id_commission'=>'CVD','type'=>0,'montant_commission'=>$commission_amount]);
 
         //compare the sender and the receiver balance
         self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);
@@ -172,14 +172,14 @@ class VirementServiceTest extends TestCase
         //the new balaance of the sender and receiver accounts
         $commission_amount = 1.50*50/100;
         $new_sender_balance1 = $sender_account1->balance - 50 - $commission_amount;
-        $new_receiver_balance1 = $receiver_account1->balance + 50   ;
+        $new_receiver_balance1 = $receiver_account1->balance + 20   ;
 
 
-        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+        $this->virementService->create('DVC',0,50,20,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
-            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+            'id_commission'=>'DVC','type'=>0,'montant_commission'=>$commission_amount]);
 
         //compare the sender and the receiver balance
         self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);

@@ -42,13 +42,16 @@ class AccountsServices
      *  Find an account by type and id customer
      * @param $type
      * @param $id_customer
+     * @param $withCode
      * @return \Illuminate\Database\Eloquent\Model|null|static
      */
-    public function findAccountByType($type,$id_customer){
+    public function findAccountByType($type,$id_customer,$withCode){
         $account = Account::where('id_customer',$id_customer)
             ->where('type',$type)
             ->first();
-
+        if($withCode){
+            $account->setAttribute('account_code',$account->getCode());
+        }
         return $account;
     }
 

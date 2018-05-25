@@ -27,11 +27,12 @@ class VirementInternesServices
      * @param $codeCommission
      * @param $typeCommission
      * @param $amount
+     * @param $new_amount
      * @param $sender
      * @param $receiver
      * @param $type
      */
-    public function create( $codeCommission, $typeCommission, $amount, $sender, $receiver, $type)
+    public function create( $codeCommission, $typeCommission, $amount, $new_amount, $sender, $receiver, $type)
     {
         $virementInterne = new VirementInterne();
         $virementInterne->num_acc_sender = $sender->id;
@@ -59,7 +60,7 @@ class VirementInternesServices
         $this->accountService->updateAccountBalance($sender, $senderBalance);
 
         //update the receiver's account balance
-        $receiverBalance = $amount + $receiver->balance;
+        $receiverBalance = $new_amount + $receiver->balance;
         $this->accountService->updateAccountBalance($receiver, $receiverBalance);
 
         //log
@@ -110,7 +111,7 @@ class VirementInternesServices
     {
         $virements = VirementInterne::where(function($q)use ($id_account){
             $q->where('num_acc_sender',$id_account);
-//            $q->where('status',1);
+//            $q->where('status',1);            // Not just the valid ones
            })->orWhere(function($q)use ($id_account){
                 $q->where('num_acc_receiver',$id_account);
 //                $q->where('status',1);

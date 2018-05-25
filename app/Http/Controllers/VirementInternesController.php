@@ -89,71 +89,70 @@ class VirementInternesController extends Controller
             dispatch(new LogJob('','', 'Input validation error',11,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-//        try{
+        try{
             DB::beginTransaction();
-        $currency = new CurrenciesController();
-        $amount = $data['montant_virement'];
+            $currency = new CurrenciesController();
+            $amount = $data['montant_virement'];
+            $new_amount = $amount;
 
-        //Get the id of the customer
-            $id_customer = $request->user()->id;
+             //Get the id of the customer
+             $id_customer = $request->user()->id;
 
 
-        //sender and receiver account
-        $account_sender = $this->accountService->findAccountByType($data['type_acc_sender'],$id_customer);
-        $account_receiver = $this->accountService->findAccountByType($data['type_acc_receiver'],$id_customer);
-
-        //if the receiver account dosen't exist
-        if(is_null($account_receiver)){
-            //log
-            dispatch(new LogJob($account_sender->id_customer,$account_receiver->id,'receiver not found',11,
-                LogJob::FAILED_STATUS));
-            return response(json_encode(['message'=>'receiver not found']),404);
-        }
-    //if the receiver account != current account
-     if($data['type_acc_receiver'] == $data['type_acc_sender']) {
-         //log
-         dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer to the same account', 11,
-             LogJob::FAILED_STATUS));
-         return response(json_encode(['message' => 'Virement vers le meme compte ']), 400);
-     }
-         //if the amount is bigger than the sender balance
-         if ($amount > $account_sender->balance) {
+                 //sender and receiver account
+            $account_sender = $this->accountService->findAccountByType($data['type_acc_sender'],$id_customer,0);
+            $account_receiver = $this->accountService->findAccountByType($data['type_acc_receiver'],$id_customer,0);
+                //if the receiver account dosen't exist
+            if(is_null($account_receiver)){
+                //log
+                dispatch(new LogJob($account_sender->id_customer,$account_receiver->id,'receiver not found',11,
+                    LogJob::FAILED_STATUS));
+                return response(json_encode(['message'=>'receiver not found']),404);
+            }
+        //if the receiver account != current account
+         if($data['type_acc_receiver'] == $data['type_acc_sender']) {
              //log
-             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer with insuffsant balance', 11,
+             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer to the same account', 11,
                  LogJob::FAILED_STATUS));
-             return response(json_encode(['message' => 'balance insuffisant ']), 400);
+             return response(json_encode(['message' => 'Virement vers le meme compte ']), 400);
          }
+             //if the amount is bigger than the sender balance
+             if ($amount > $account_sender->balance) {
+                 //log
+                 dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer with insuffsant balance', 11,
+                     LogJob::FAILED_STATUS));
+                 return response(json_encode(['message' => 'balance insuffisant ']), 400);
+             }
 
 
-        // type currency dollar or euro
-         if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
+            // type currency dollar or euro
+                if($data['type_acc_sender'] >= 3 || $data['type_acc_receiver'] >= 3 ){
 
-             $amount = $currency->exchangeRate($amount,$account_sender->currency_code,$account_receiver->currency_code);
-         }
+                     $new_amount = $currency->exchangeRate($amount,$account_sender->currency_code,$account_receiver->currency_code);
+                }
 
-         //Find the commission code
-         $codeCommission = $this->codeCommission($data['type_acc_sender'], $data['type_acc_receiver']);
-
-
-         $this->virementInterneService->create($codeCommission, 0, $amount, $account_sender, $account_receiver, $data['type']);
+             //Find the commission code
+                $codeCommission = $this->codeCommission($data['type_acc_sender'], $data['type_acc_receiver']);
 
 
-            DB::commit();
-        $newBalance = $account_receiver->balance;
-        // Send mail
-        $customer = $request->user()->customer();
-        dd($customer);
-        $this->virementInterneService->sendVirementSameUserNotifMAil($customer->email,
-            $account_sender->getCode(),$account_receiver->getCode(),
-            $amount,$account_receiver->code_curr_receiver);
+                 $this->virementInterneService->create($codeCommission, 0, $amount,$new_amount, $account_sender, $account_receiver, $data['type']);
 
-        return response(json_encode(['message' => 'transfer success', 'balance' => $newBalance]),201);
-//        } catch (\Exception $e) {
+
+                 DB::commit();
+                 $newBalance = $account_receiver->balance;
+            // Send mail
+                $customer = $request->user();
+                $this->virementInterneService->sendVirementSameUserNotifMAil($customer->email,
+                $account_sender->getCode(),$account_receiver->getCode(),
+                $new_amount,$account_receiver->code_curr_receiver);
+
+            return response(json_encode(['message' => 'transfer success', 'balance' => $newBalance]),201);
+        } catch (\Exception $e) {
             DB::rollback();
             //log information
             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
-//        }
+        }
     }
 
 

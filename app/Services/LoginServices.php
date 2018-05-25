@@ -157,7 +157,9 @@ class LoginServices
             return $this->sendFailedLoginResponse();
         }
 
-        return $this->access('password', $user, $data['password']);
+        $info['user'] = $user;
+        $info['password'] = $data['password'];
+        return $this->access('password', $info);
     }
 
     /**
@@ -185,27 +187,42 @@ class LoginServices
      * Send request to the laravel passport.
      *
      * @param  string $grantType
-     * @param $user
-     * @param $password
+     * @param $data
      * @return array|\Illuminate\Http\JsonResponse|mixed
-     * @throws \InvalidArgumentException
      */
-    private function access($grantType, $user, $password)
+    private function access($grantType, $data)
     {
         try {
+
             //Get client secrets
             $config = app()->make('config');
             $secrets = $config->get('oauth.secrets');
 
-            $credentials['username'] = $user['email'];
-            $credentials['password'] = $password;
 
-            $credentials = array_merge([
-                'client_id' => $secrets['client_id'],
-                'client_secret' => $secrets['client_secret'],
-                'grant_type' => $grantType,
-                'scope' => $user->getRole()
-            ], $credentials);
+            if($grantType == 'password'){
+                $password = $data['password'];
+                $user = $data['user'];
+                $credentials['username'] = $user['email'];
+                $credentials['password'] = $password;
+
+
+                $credentials = array_merge([
+                    'client_id' => $secrets['client_id'],
+                    'client_secret' => $secrets['client_secret'],
+                    'grant_type' => $grantType,
+                    'scope' => $user->getRole()
+                ], $credentials);
+
+            }elseif ($grantType == 'refresh_token'){
+                $credentials = $data;
+                $credentials = array_merge([
+                    'client_id' => $secrets['client_id'],
+                    'client_secret' => $secrets['client_secret'],
+                    'grant_type' => $grantType,
+                    'scope' => ''
+                ], $credentials);
+            }
+
 
             $http = new Client();
 
@@ -219,14 +236,19 @@ class LoginServices
 
         $response = json_decode($guzzleResponse->getBody());
 
-        if (property_exists($response, 'access_token')) {
-            $response = [
+        $response = [
+            'access_token' => $response->token_type . ' ' . $response->access_token,
+            'expires_in' => $response->expires_in,
+            'refresh_token' => $response->refresh_token
+        ];
+
+
+        if ($grantType == 'password') {
+
+            $response = $credentials = array_merge([
                 'user_id' => $user->id,
-                'user_type' => $user->role,
-                'access_token' => $response->token_type . ' ' . $response->access_token,
-                'expires_in' => $response->expires_in,
-                'refresh_token' => $response->refresh_token
-            ];
+                'user_type' => $user->role
+            ],$response);
 
             //Case of customers
             if ($user->role == 0) {
@@ -270,6 +292,8 @@ class LoginServices
 
     //**************************refresh***********************//
     public function refreshToken($data){
-        $token = $data['refresh_token'];
+        return $this->access('refresh_token', [
+            'refresh_token' => $data['refresh_token'],
+        ]);
     }
 }
