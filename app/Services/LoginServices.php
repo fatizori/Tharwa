@@ -236,30 +236,34 @@ class LoginServices
 
         $response = json_decode($guzzleResponse->getBody());
 
-        $response = [
-            'access_token' => $response->token_type . ' ' . $response->access_token,
-            'expires_in' => $response->expires_in,
-            'refresh_token' => $response->refresh_token
-        ];
+        if (property_exists($response, 'access_token')){
+            $response = [
+                'access_token' => $response->token_type . ' ' . $response->access_token,
+                'expires_in' => $response->expires_in,
+                'refresh_token' => $response->refresh_token
+            ];
 
 
-        if ($grantType == 'password') {
+            if ($grantType == 'password') {
+                $response = array_merge([
+                    'user_id' => $user->id,
+                    'user_type' => $user->role
+                ],$response);
 
-            $response = $credentials = array_merge([
-                'user_id' => $user->id,
-                'user_type' => $user->role
-            ],$response);
+                //Case of customers
+                if ($user->role == 0) {
+                    $customerService = new CustomersServices();
+                    $customer_init_info = $customerService->getInitialInfos($user->id);
+                    $response = array_merge($customer_init_info, $response);
+                }
 
-            //Case of customers
-            if ($user->role == 0) {
-                $customerService = new CustomersServices();
-                $customer_init_info = $customerService->getInitialInfos($user->id);
-                $response = array_merge($customer_init_info, $response);
             }
-
+            $response = response()->json($response,200);
+        }else{
+            $response = response()->json($response,401);
         }
 
-        $response = response()->json($response);
+
 
         return $response;
     }
