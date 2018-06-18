@@ -23,11 +23,11 @@
         'connections' => [
             'mysql' => [
                 'driver' => 'mysql',
-                'host' => env('DB_HOST', 'sql2.freemysqlhosting.net'),
+                'host' => env('DB_HOST', 'sql7.freemysqlhosting.net'),
                 'port' => env('DB_PORT', '3306'),
-                'database' => env('DB_DATABASE', 'sql2236379'),
-                'username' => env('DB_USERNAME', 'sql2236379'),
-                'password' => env('DB_PASSWORD', 'kC2!rC2%'),
+                'database' => env('DB_DATABASE', 'sql7243438'),
+                'username' => env('DB_USERNAME', 'sql7243438'),
+                'password' => env('DB_PASSWORD', 'cUnGaRkiua'),
                 'unix_socket' => env('DB_SOCKET', ''),
 //                'charset' => 'utf8mb4',
 //                'collation' => 'utf8mb4_unicode_ci',
