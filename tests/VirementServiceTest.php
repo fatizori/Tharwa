@@ -75,6 +75,7 @@ class VirementServiceTest extends TestCase
 
 
     public function testCreateVirementBetweenCustomers(){
+
         DB::beginTransaction();
         $sender_account = \App\Models\Account::where('type',1)->first();
         $sender_account->balance =123.33;
@@ -88,6 +89,7 @@ class VirementServiceTest extends TestCase
 
     //Test the service of creation of a virement betwwen the same user account
     public function testCreate(){
+
         DB::beginTransaction();
 
         //========================Test Virement current to Epargne==============================//
@@ -112,13 +114,15 @@ class VirementServiceTest extends TestCase
             'id_commission'=>'CVE','type'=>0,'montant_commission'=>0.00]);
         self::assertEquals(true,$sender_account->balance === $new_sender_balance);
         self::assertEquals(true,$receiver_account->balance === $new_receiver_balance );
-        DB::rollback();
+
 
 
 
         //================================= Epargne to Current =======================================//
         //get the sender and the receiver account
-        $sender_account1 =Account::where('type','=',2)->first();
+        $sender_account1 =Account::where('type','=',2)
+                            ->where('id_customer','=',6)
+                            ->first();
         $receiver_account1 = Account::where('type','=',1)
                             ->where('id_customer','=',$sender_account1->id_customer)
                             ->first();
@@ -141,7 +145,9 @@ class VirementServiceTest extends TestCase
 
         //=================================  Current to Euro  =======================================//
         //get the sender and the receiver account
-        $sender_account1 =Account::where('type','=',1)->first();
+        $sender_account1 =Account::where('type','=',1)
+                            ->where('id_customer','=',6)
+                            ->first();
         $receiver_account1 = Account::where('type','=',3)
                             ->where('id_customer','=',$sender_account1->id_customer)
                             ->first();
@@ -152,11 +158,11 @@ class VirementServiceTest extends TestCase
         $new_receiver_balance1 = $receiver_account1->balance + 50   ;
 
 
-        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+        $this->virementService->create('CVD',0,50,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
-            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+            'id_commission'=>'CVD','type'=>0,'montant_commission'=>$commission_amount]);
 
         //compare the sender and the receiver balance
         self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);
@@ -164,7 +170,9 @@ class VirementServiceTest extends TestCase
 
         //================================= Euro to Current   =======================================//
         //get the sender and the receiver account
-        $sender_account1 =Account::where('type','=',3)->first();
+        $sender_account1 =Account::where('type','=',3)
+                            ->where('id_customer','=',6)
+                            ->first();
         $receiver_account1 = Account::where('type','=',1)
                             ->where('id_customer','=',$sender_account1->id_customer)
                             ->first();
@@ -175,11 +183,11 @@ class VirementServiceTest extends TestCase
         $new_receiver_balance1 = $receiver_account1->balance + 50   ;
 
 
-        $this->virementService->create('EVC',0,50,$sender_account1,$receiver_account1,0);
+        $this->virementService->create('DVC',0,50,$sender_account1,$receiver_account1,0);
 
         $this->seeInDatabase('virement_internes', ['num_acc_sender' => $sender_account1->id,'num_acc_receiver' => $receiver_account1->id,
             'montant_virement'=>50,'code_curr_sender' => $sender_account1->currency_code, 'code_curr_receiver' => $receiver_account1->currency_code,
-            'id_commission'=>'EVC','type'=>0,'montant_commission'=>$commission_amount]);
+            'id_commission'=>'DVC','type'=>0,'montant_commission'=>$commission_amount]);
 
         //compare the sender and the receiver balance
         self::assertEquals(true,$sender_account1->balance === $new_sender_balance1);

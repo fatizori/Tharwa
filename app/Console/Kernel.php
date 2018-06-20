@@ -8,12 +8,12 @@ use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     /**
-     * The Artisan commands provided by your application.
+     * The Artisan commands provided by the application.
      *
      * @var array
      */
     protected $commands = [
-      //
+        \App\Console\Commands\ExecuteExterneTransfer::class,
 ];
 
     /**
@@ -24,6 +24,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        //
+        $schedule->command('execute:externe_transfer')->dailyAt('17:39');
     }
 }

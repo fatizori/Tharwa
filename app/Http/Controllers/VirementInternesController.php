@@ -40,7 +40,8 @@ class VirementInternesController extends Controller
         $virementInvalid = $this->virementInterneService->getInvalidVirementInternes();
         $virementInvalid1 = $this->virementExterneService->getInvalidVirementExternes();
 
-        return response()->json(['interne'=>$virementInvalid,'externe'=>$virementInvalid1], 200);
+
+        return response()->json( [ $virementInvalid,$virementInvalid1], 200);
     }
 
     /**
@@ -89,7 +90,7 @@ class VirementInternesController extends Controller
             dispatch(new LogJob('','', 'Input validation error',11,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
-//        try{
+        try{
             DB::beginTransaction();
         $currency = new CurrenciesController();
         $amount = $data['montant_virement'];
@@ -109,7 +110,7 @@ class VirementInternesController extends Controller
                 LogJob::FAILED_STATUS));
             return response(json_encode(['message'=>'receiver not found']),404);
         }
-    //if the receiver account != current account
+    //if the receiver  and the sender account are the same
      if($data['type_acc_receiver'] == $data['type_acc_sender']) {
          //log
          dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, 'Transfer to the same account', 11,
@@ -148,12 +149,12 @@ class VirementInternesController extends Controller
             $amount,$account_receiver->code_curr_receiver);
 
         return response(json_encode(['message' => 'transfer success', 'balance' => $newBalance]),201);
-//        } catch (\Exception $e) {
+       } catch (\Exception $e) {
             DB::rollback();
             //log information
             dispatch(new LogJob($account_sender->id_customer, $account_receiver->id_customer, $e->getMessage(), 11, LogJob::FAILED_STATUS));
             return response()->json(['message' => $e->getMessage()], 500);
-//        }
+       }
     }
 
 

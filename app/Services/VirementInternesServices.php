@@ -56,11 +56,11 @@ class VirementInternesServices
 
         //update the  sender's account balance
         $senderBalance = $sender->balance - $amount - $virementInterne->montant_commission ;
-        $this->accountService->updateAccountBalance($sender, $senderBalance);
+        $this->accountService->updateAccountBalance($sender, round($senderBalance,2));
 
         //update the receiver's account balance
         $receiverBalance = $amount + $receiver->balance;
-        $this->accountService->updateAccountBalance($receiver, $receiverBalance);
+        $this->accountService->updateAccountBalance($receiver, round($receiverBalance,2));
 
         //log
         dispatch(new LogJob($sender->id, $receiver->id, 'Virement effectue', 11, LogJob::SUCCESS_STATUS));
