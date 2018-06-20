@@ -43,7 +43,7 @@ class VirementSameUserNotifMail extends Mail\Mailable
      */
     public function build()
     {
-        return $this->view('virement_mail',
+        return $this->view('virement_same_user_mail',
             ['email_receiver' => $this->email_receiver,'account_sender' => $this->account_sender,
                 'account_receiver' => $this->account_receiver, 'amount' => $this->amount,
                 'account_currency' => $this->account_currency],

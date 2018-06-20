@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Mail\VirementNotifMail;
 use App\Mail\VirementSameUserNotifMail;
 use Illuminate\Support\Facades\Mail;
 
@@ -40,13 +39,12 @@ class SendTransferSameUserNotifEmail extends Job
     public function handle()
     {
         try {
-            Mail::to($this->emailReceiver)
+            Mail::to($this->email_receiver)
                 ->send(new VirementSameUserNotifMail($this->email_receiver, $this->account_sender,
                     $this->account_receiver,$this->amount,$this->account_currency));
             return true;
         } catch (\Exception $exception) {
             return false;
         }
-
     }
 }

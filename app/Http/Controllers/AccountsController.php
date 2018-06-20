@@ -58,7 +58,7 @@ class AccountsController extends Controller
      */
     public function show(Request $request, $type){
         $user_id = $request->user()->id;
-        $account = $this->accountsService->findAccountByType($type, $user_id);
+        $account = $this->accountsService->findAccountByType($type, $user_id,1);
         if(!$account){
             return response()->json(['message' => "The account with {$type} doesn't exist"], 404);
         }

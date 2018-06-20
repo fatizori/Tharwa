@@ -15,8 +15,9 @@ $app->get('/', function () use ($app) {
    // $name = \App\Http\Controllers\FilesController::generateNameImageMinUser(4,'banker_1.png');
    // dd($name);
     return '<h1>Tharwa bank ... powered by SOLIDTeam 2018 ^^</h1>';
-
 });
+
+
 
 // Bankers
 //get a banker by id
@@ -94,6 +95,8 @@ $app->get('accounts/name/{id:[0-9]+}',['uses' => 'AccountsController@getNameAcco
 
 //Virements (same customer)
 $app->post('virements_internes',['uses' => 'VirementInternesController@transferToAccount', 'middleware' =>['auth','role:customer']]);
+
+
 //Virements interne Tharwa (two customers)
 $app->post('virements_internes_thw',['uses' => 'VirementInternesController@transferToOtherUser', 'middleware' =>['auth','role:customer']]);
 //get the list of transactions
@@ -117,6 +120,5 @@ $app->put('user/password',['uses' => 'UsersController@changePassword', 'middlewa
 $app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
 
 
-
-
+// To test the excution of externes transfers
 $app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);
