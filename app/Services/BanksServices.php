@@ -54,7 +54,9 @@ class BanksServices
         $bank->save();
     }
 
-
+    public function updateBalance($bank,$amount){
+        $bank->update(['balance'=> $amount]);
+    }
     /**
      * Delete a bank
      * @param $bank
