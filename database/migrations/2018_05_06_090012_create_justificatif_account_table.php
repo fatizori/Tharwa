@@ -18,13 +18,10 @@ class CreateJustificatifAccountTable extends Migration
             $table->increments('id');
 
             // Schema declaration
-            $table->string('object',190);
             $table->text('justification');
             $table->integer('id_account')->unsigned();
-            $table->integer('id_banker')->unsigned();
             $table->tinyInteger('status')->default(0);
             $table->foreign('id_account')->references('id')->on('accounts');
-            $table->foreign('id_banker')->references('id')->on('bankers');
             $table->timestamps();
             // Constraints declaration
         });

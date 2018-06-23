@@ -49,3 +49,7 @@ Date and Time | Sender | Receiver | Log Message | Status | Type
 2018-05-21 14:05:38 | 1 | 4 | Virement effectue | success | virement interne Tharwa
 2018-05-25 12:04:22 | 5 | 5 | SQLSTATE[42S22]: Column not found: 1054 Unknown column 'account_code' in 'field list' (SQL: update `accounts` set `balance` = 19898, `updated_at` = 2018-05-25 12:04:22, `account_code` = THW000001DZD where `id` = 1) | failed | virement interne Tharwa
 2018-05-25 12:07:33 | 1 | 4 | Virement effectue | success | virement interne Tharwa
+2018-06-23 09:19:58 | 6 |  | receiver not found | failed | virement interne Tharwa
+2018-06-23 09:20:14 | 6 | 6 | Transfer with insuffsant balance | failed | virement interne Tharwa
+2018-06-23 09:20:41 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-06-23 09:21:32 | 2 | 3 | Virement effectue | success | virement interne Tharwa

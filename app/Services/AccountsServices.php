@@ -65,6 +65,16 @@ class AccountsServices
         return $accounts;
     }
 
+    /**
+     * @param $customer
+     * @param $type
+     * @return mixed
+     */
+    public function findAccountTypeByUserId($customer,$type){
+        $account = $customer->accounts()->where('type','=',$type)->first();
+        return $account;
+    }
+
 
     /**
      * @param $transfer
@@ -121,6 +131,7 @@ class AccountsServices
         return $accounts;
     }
 
+
     /**
      * @param $account
      * @return bool
@@ -167,6 +178,7 @@ class AccountsServices
     public function createBankerAction($account, $id_banker, $operation,$justif_obj,$justif){
         $account->bankers()->attach($id_banker, ['operation' => $operation,'object' => $justif_obj, 'justification' => $justif]);
     }
+
 
     /**
      *  Delete an account logically
@@ -249,6 +261,5 @@ class AccountsServices
             ->first();
         return $username;
     }
-
 
 }

@@ -36,7 +36,7 @@ class VirementInternesController extends Controller
      * Get Invalid Virements Internes
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getInvalidVirementInternes(){
+    public function getInvalidVirement(){
         $virementInvalid = $this->virementInterneService->getInvalidVirementInternes();
         $virementInvalid1 = $this->virementExterneService->getInvalidVirementExternes();
 
@@ -105,7 +105,7 @@ class VirementInternesController extends Controller
                 //if the receiver account dosen't exist
             if(is_null($account_receiver)){
                 //log
-                dispatch(new LogJob($account_sender->id_customer,$account_receiver->id,'receiver not found',11,
+                dispatch(new LogJob($account_sender->id_customer,null,'receiver not found',11,
                     LogJob::FAILED_STATUS));
                 return response(json_encode(['message'=>'receiver not found']),404);
             }
@@ -171,6 +171,7 @@ class VirementInternesController extends Controller
         ];
         $data=$request->json()->all();
         $user = $request->user();
+        // TODO
         if(emptyArray($data)){
             $data = $request->input();
         }

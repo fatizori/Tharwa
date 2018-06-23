@@ -97,3 +97,6 @@ Date and Time | Sender | Receiver | Log Message | Status | Type
 2018-05-21 14:29:58 | 3 | 2 | Virement effectue | success | virement interne Tharwa
 2018-05-21 14:29:58 | 1 | 4 | Virement effectue | success | virement interne Tharwa
 2018-05-21 14:29:58 | 4 | 1 | Virement effectue | success | virement interne Tharwa
+2018-06-23 09:24:40 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-06-23 09:27:53 | 2 | 3 | Virement effectue | success | virement interne Tharwa
+2018-06-23 09:31:05 | 6 | 5 | Virement effectué | success | internal transfer between users

@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\JustificatifAccount;
+use App\Models\User;
 use App\Models\VirementInterne;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
@@ -105,8 +107,7 @@ class AccountsController extends Controller
      * @param $id_account
      * @return \Illuminate\Http\JsonResponse
      */
-
-    public function  validateAccount(Request $request,$id_account){
+    public function  actionOnAccount(Request $request,$id_account){
         //Validation of data
         $rules = [
             'type' => 'numeric',
@@ -116,7 +117,7 @@ class AccountsController extends Controller
         $data=$request->json()->all();
         $validator = Validator::make($data, $rules);
         if (!$validator->passes()) {
-            dispatch(new LogJob('','',"Input validation error",11,LogJob::FAILED_STATUS));
+            dispatch(new LogJob('','', 'Input validation error',11,LogJob::FAILED_STATUS));
             return   response()->json(['message' => $validator->errors()->all()], 400);
         }
 
@@ -138,6 +139,11 @@ class AccountsController extends Controller
                     $message = 'account was unblocked';
                     // unblock an account
                     $action = $this->accountsService->unblockAccount($account);
+                    if ($action){
+                        // Update Justif status
+                        $justifServices = new JustificationServices();
+                        $justifServices->disactiverJustif(1,$account->id);
+                    }
                 }break;
                 case 3:
                     {
@@ -146,12 +152,12 @@ class AccountsController extends Controller
                         $justif = $data['justif'];
                         $justif_object = $data['justif_object'];
                         if (is_null($justif) || !isset($justif)) {
-                            dispatch(new LogJob('', '', "Justif manque", 11, LogJob::FAILED_STATUS));
+                            dispatch(new LogJob('', '', 'Justif manque', 11, LogJob::FAILED_STATUS));
                             return response()->json(['message' => $validator->errors()->all()], 400);
                         }
                         $action = $this->accountsService->blockAccount($account);
                         if ($action){
-                            //Save Banker Operation
+                            // Save Banker Operation
                             $this->accountsService->createBankerAction($account, $banker->id, 3,$justif_object,$justif);
                         }
                     }break;
@@ -244,6 +250,91 @@ class AccountsController extends Controller
         $virementInternes = $virementInternesService->getValideTransferByAccountId($id_account);
 
         return response()->json($virementInternes, 200);
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addJustifAccount(Request $request){
+        $rules = [
+            'account_type' => 'required | integer | between:1,4',
+            'justif' => 'required'
+        ];
+
+        $data = $request->json()->all();
+
+        if (!$this->validateData($data,$rules)) {
+            return response()->json(['message' => 'invalid input data'], 400);
+        }
+        $user = $request->user();
+        $customer = $user->customer();
+        $account = $this->accountsService->findAccountTypeByUserId($customer,$data['account_type']);
+        // Check if account exists
+        if(is_null($account)){
+            return response()->json(['message' => 'type compte non trouvé'], 404);
+        }
+        // Check if the account is is valide
+        if($account->status != 3){
+            return response()->json(['message' => 'compte n\'est en mode de blockage'], 405);
+        }
+        // Check if there is a justif non validated yet
+        $justifServices = new JustificationServices();
+        $lastJustif = $justifServices->getLastJustifByAccountId($account->id);
+        if(!is_null($lastJustif) && $lastJustif->status == 0){
+            return response()->json(['message' => 'vous avez déposer un justif'], 405);
+        }
+        // Inserer le justif
+        try{
+            $justifServices->createAccountJustif($account->id,$data['justif']);
+            return response()->json(['message' => 'Justif ajouté avec succes'], 201);
+        }catch (\Exception $exception){
+            return response()->json(['message' => 'erreur serveur'], 500);
+        }
+    }
+
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUnblockDemands(Request $request){
+        $justifServices = new JustificationServices();
+        try {
+            $invalidatedJustif = $justifServices->getInvalidatedJustif();
+            if (!is_null($invalidatedJustif)) {
+                return response()->json($invalidatedJustif, 200);
+            }
+        }catch (\Exception $exception){
+            return response()->json(['message' => 'erreur serveur'], 500);
+        }
+    }
+
+
+    /**
+     * @param Request $request
+     * @param id_justif_account
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refuseAccountJustif(Request $request, $id_justif_account){
+        $justifServices = new JustificationServices();
+        try{
+            $justif = $justifServices->findById($id_justif_account);
+            if (is_null($justif)){
+                return response()->json(['message' => 'non justif trouvé'], 404);
+            }
+            // check if account needs to be refused
+            if ($justif->status != 0){
+                return response()->json(['message' => 'justif est déja accepté ou réfusé'], 405);
+            }
+            $justifServices->disactiverJustif(2,$justif->id_account);
+            return response()->json(['message' => 'justif réfusé'], 200);
+        }catch (\Exception $exception){
+            return response()->json(['message' => $exception->getMessage()], 500);
+        }
+
+
     }
 
 }

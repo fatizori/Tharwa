@@ -17,20 +17,54 @@ use Carbon\Carbon;
 
 class JustificationServices
 {
+
     /**
-     * Create Account
-     * @param $id_banker
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function findById($id){
+        return JustificatifAccount::find($id);
+    }
+
+    /**
+     *
      * @param $id_account
      * @param $justification
-     * @param $justifObject
+     * @return void
      */
-    public function createAccountJustif($id_banker,$id_account,$justification,$justifObject){
-        $justif=new JustificatifAccount();
-        $justif->object = $justifObject;
-        $justif->justification = $justification;
-        $justif->id_account = $id_account;
-        $justif->id_banker = $id_banker;
-        $justif->save();
+    public function createAccountJustif($id_account,$justification){
+            $justif = new JustificatifAccount();
+            $justif->justification = $justification;
+            $justif->id_account = $id_account;
+            $justif->save();
+    }
+
+    /**
+     * @param $id_account
+     * @return JustificatifAccount
+     */
+    public function getLastJustifByAccountId($id_account){
+        $justif = JustificatifAccount::where('id_account',$id_account)->get()->last();
+        return $justif;
+    }
+
+    /**
+     * Waiting justifs
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getInvalidatedJustif(){
+        $justif = JustificatifAccount::where('status',0)->get()->all();
+        return $justif;
+    }
+
+    /**
+     * @param $action
+     * @param $id_account
+     */
+    public function disactiverJustif($action , $id_account){
+        JustificatifAccount::where('id_account',$id_account)
+        ->update(['status'=>$action]);
+               //action == 1 -> accepted | action == 2 -> refused
     }
 
 }

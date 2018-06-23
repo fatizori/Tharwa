@@ -93,7 +93,4 @@ class ManagersController extends Controller
         return response()->json(['message' =>"The manager with  id {$id} has been deleted"], 200);
     }
 
-
-
-
 }

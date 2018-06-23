@@ -14,6 +14,9 @@ use App\Models\JustificatifAccount;
 use App\Models\JustificatifVirmExt;
 use App\Models\VirementExterne;
 use  App\Http\Controllers\FilesController;
+use App\Models\VirementInterne;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
 class VirementExternesServices
@@ -21,6 +24,7 @@ class VirementExternesServices
 
     const IMAGE_JUSTiF = 'images/justificatif_vrm/';
     const IMAGE_MIN = 'images/justificatif_vrm_min/';
+    const TYPES_TRANS = ['VCE','VCT'];
 
     /**
      * Get an externe transfer by id
@@ -71,6 +75,7 @@ class VirementExternesServices
     {
         $virement = VirementExterne::select( 'id' , 'num_acc', 'num_acc_ext',
             'virement_externes.code_bnk_ext','virement_externes.created_at', 'virement_externes.amount_vir','status')
+
             ->get();
 
 
@@ -212,6 +217,134 @@ class VirementExternesServices
     {
         $transfer->status = 2;
         $transfer->save();
+    }
+
+    /**
+     *
+     */
+    public function getExternTransferStat(){
+        try{
+            $data = array();
+            $dataQ = array();
+            $dataM = array();
+            $dataY = array();
+            // Per Quarter
+            foreach (self::TYPES_TRANS as $type){
+                $dataQ[$type] = $this->getTransferPerQuarterOfType($type);
+            }
+            $data['quarter'] = $dataQ;
+
+            // Per Mounth
+            foreach (self::TYPES_TRANS as $type){
+                $dataM[$type] = $this->getTransferPerMonthOfType($type);
+            }
+            $data['month'] = $dataM;
+
+            // Per Year
+            foreach (self::TYPES_TRANS as $type){
+                $dataY[$type] = $this->getTransferPerYearOfType($type,3);
+            }
+            $data['year'] = $dataY;
+
+            return $data;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getTransferPerQuarterOfType($type){
+        $chartDatas = VirementExterne::select([
+            DB::raw('QUARTER(created_at) AS quarter'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('status','=',1)            // valid transfers
+            ->where('id_commission','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subQuarter(4), Carbon::now()])
+            ->groupBy('quarter')
+            ->orderBy('quarter', 'ASC')
+            ->get()
+            ->toArray();
+
+        $chartDataByDay = array();
+        foreach($chartDatas as $data) {
+            $chartDataByDay[$data['quarter']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < 4; $i++) {
+            $dateString = $date->quarter;
+            if(!isset($chartDataByDay[ $dateString ])){
+                $chartDataByDay[ $dateString ] = 0;
+            }
+            $date->subQuarter();
+        }
+
+        return $chartDataByDay;
+    }
+
+    /**
+     * @param $type
+     * @return array
+     */
+    public function getTransferPerMonthOfType($type){
+        $chartDatas = VirementExterne::select([
+            DB::raw('MONTH(created_at) AS month'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('status','=',1)            // valid transfers
+            ->where('id_commission','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subMonth(5), Carbon::now()])
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get()
+            ->toArray();
+        $chartDataByDay = array();
+        foreach($chartDatas as $data) {
+            $chartDataByDay[$data['month']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < 12; $i++) {
+            $dateString = $date->month;
+            if(!isset($chartDataByDay[ $dateString ])){
+                $chartDataByDay[$dateString] = 0;
+            }
+            $date->subMonth();
+        }
+        return $chartDataByDay;
+    }
+
+    /**
+     * @param $type
+     * @param $nbYear
+     * @return array
+     */
+    public function getTransferPerYearOfType($type, $nbYear){
+        $chartDatas = VirementExterne::select([
+            DB::raw('YEAR(created_at) AS year'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('status','=',1)            // valid transfers
+            ->where('id_commission','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subYear($nbYear), Carbon::now()])
+            ->groupBy('year')
+            ->orderBy('year', 'ASC')
+            ->get()
+            ->toArray();
+        $chartDataByDay = array();
+        foreach($chartDatas as $data) {
+            $chartDataByDay[$data['year']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < $nbYear; $i++) {
+            $dateString = $date->year;
+            if(!isset($chartDataByDay[ $dateString ])){
+                $chartDataByDay[$dateString] = 0;
+            }
+            $date->subYear();
+        }
+        return $chartDataByDay;
     }
 
 }

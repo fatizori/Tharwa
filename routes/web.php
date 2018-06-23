@@ -28,7 +28,7 @@ $app->group( ['prefix' => 'accounts',
     // get the list of all accounts
     $app->get('', ['uses' => 'AccountsController@index']);
     // manage the user account
-    $app->put('/{id:[0-9]+}',['uses' => 'AccountsController@validateAccount']);
+    $app->put('/{id:[0-9]+}',['uses' => 'AccountsController@actionOnAccount']);
 
 });
 // get the list of non valide accounts
@@ -38,9 +38,14 @@ $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middlewar
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //get the list of invalid virements
-$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirementInternes', 'middleware' =>['auth','role:banker']]);
-//get the list of invalid virements
-$app->get('virements_externes',['uses' => 'VirementExternesController@getVirementExternes']);
+$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
+////get the list of invalid virements
+    //$app->get('virements_externes',['uses' => 'VirementExternesController@getInvalidVirementExternes', 'middleware' =>['auth','role:banker']]);
+// get list of unblock demands
+$app->get('justif_account',['uses' => 'AccountsController@getUnblockDemands', 'middleware' =>['auth','role:banker']]);
+// refuse account unblock demand (justif)
+$app->put('justif_account/{id_justif_account}',['uses' => 'AccountsController@refuseAccountJustif', 'middleware' =>['auth','role:banker']]);
+
 
 
 
@@ -83,6 +88,8 @@ $app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesContr
 //validate justif externe transfer
 $app->put('virement_externes/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
+//get Dashboard stat
+$app->get('dashboard',['uses' => 'DashboardController@getStat']);
 
 
 //Customers
@@ -108,6 +115,12 @@ $app->post('virements_externes',['uses' => 'VirementExternesController@externeTr
 $app->post('accounts',['uses' => 'AccountsController@addNewLocalAccount', 'middleware' =>['auth','role:customer']]);
 // get info of an account
 $app->get('accounts/type/{type:[1-4]}', ['uses' => 'AccountsController@show', 'middleware' =>['auth','role:customer']]);
+// To set the FCM token
+$app->post('fcm/register',['uses' => 'UsersController@registerFCMToken']);
+
+// Set an unblocking justif
+$app->post('justif_account',['uses' => 'AccountsController@addJustifAccount', 'middleware' =>['auth','role:customer']]);
+
 
 //All users
 // update user photo
@@ -117,8 +130,10 @@ $app->post('user/photo',['uses' => 'UsersController@updatePhoto', 'middleware' =
 
 $app->put('user/password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
-$app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
+//$app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
 
 
 // To test the excution of externes transfers
 $app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);
+
+

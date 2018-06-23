@@ -14,9 +14,7 @@ class JustificatifAccount extends Model
      */
 
     protected $fillable = [
-       'object',
         'justification',
-        'id_account',
-        'id_banker',
+        'id_account'
     ];
 }

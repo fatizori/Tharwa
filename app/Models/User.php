@@ -34,7 +34,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'phone_number',
         'role',
         'nonce_auth',
-        'expire_date_nonce'
+        'expire_date_nonce',
+        'fcm_token'
     ];
 
     /**
@@ -43,7 +44,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'password',
+        'password', 'fcm_token'
     ];
 
     /**
@@ -71,7 +72,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function customer()
     {
-        return $this->hasOne(Customer::class,'id');
+        return $this->hasOne(Customer::class,'id')->first();
     }
     public function banker()
     {

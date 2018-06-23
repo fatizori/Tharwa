@@ -5,6 +5,7 @@ use App\Models\User;
 use App\Services\BankersServices;
 use App\Services\CustomersServices;
 use App\Services\ManagersServices;
+use App\Services\PushNotificationService;
 use App\Services\UsersServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -193,6 +194,21 @@ class UsersController extends Controller
         }
 
         return response()->json(['message' => 'Password changed!'], 200);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function registerFCMToken(Request $request){
+        $token = $request->input('token');
+        $user_id = $request->input('user_id');
+        $user = $this->userService->findById($user_id);
+        $user->fcm_token = $token;
+        $user->save();
+        $serviceNotif = new PushNotificationService();
+        $serviceNotif->sendPushStream($user->id);
+        return response()->json(['message' => 'token changed! '.$user->email] , 200);
     }
 
 }

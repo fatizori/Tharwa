@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone_number',50);
+            $table->string('fcm_token',200)->nullable();
             $table->integer('role')->default(0);
             $table->string('nonce_auth',4);
             $table->dateTime('expire_date_nonce');
