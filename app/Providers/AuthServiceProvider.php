@@ -35,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Passport\Passport::tokensCan(config('oauth.roles'));
         // Second parameter is the client Id
-        LumenPassport::tokensExpireIn(Carbon::now()->addHour(2), 2);
+        LumenPassport::tokensExpireIn(Carbon::now()->addMinute(1), 2);
 
         $this->app['auth']->viaRequest('api', function ($request) {
             if ($request->input('api_token')) {
