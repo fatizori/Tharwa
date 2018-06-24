@@ -19,7 +19,6 @@ class VirementInternesController extends Controller
     const max_amount_justif = 200000;
 
     private $virementInterneService;
-    private $virementExterneService;
     private $accountService;
     /**
      * VirementInternesController constructor.
@@ -27,7 +26,6 @@ class VirementInternesController extends Controller
     public function __construct()
     {
         $this->virementInterneService = new VirementInternesServices();
-        $this->virementExterneService = new VirementExternesServices();
         $this->accountService = new AccountsServices();
     }
 
@@ -38,9 +36,7 @@ class VirementInternesController extends Controller
      */
     public function getInvalidVirement(){
         $virementInvalid = $this->virementInterneService->getInvalidVirementInternes();
-        $virementInvalid1 = $this->virementExterneService->getInvalidVirementExternes();
-
-        return response()->json(['interne'=>$virementInvalid,'externe'=>$virementInvalid1], 200);
+        return response()->json($virementInvalid, 200);
     }
 
     /**

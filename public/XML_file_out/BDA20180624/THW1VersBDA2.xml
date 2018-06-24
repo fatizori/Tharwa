@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<virement>
+  <numero>THW1DZDBDA2DZD201806240000</numero>
+  <date>201806240000</date>
+  <titulaire>
+    <nom>Naziha</nom>
+    <banque>THW</banque>
+    <compte>THW000001DZD</compte>
+  </titulaire>
+  <destinataire>
+    <nom>Achor B</nom>
+    <banque>BDA</banque>
+    <compte>BDA000002DZD</compte>
+  </destinataire>
+  <montant>250000.00</montant>
+  <motif>motif</motif>
+</virement>

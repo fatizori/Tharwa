@@ -108,6 +108,7 @@ class VirementInternesServices
         return $virement;
     }
 
+
     /**
      * @param $id_account
      * @return \Illuminate\Contracts\Pagination\Paginator
@@ -119,8 +120,10 @@ class VirementInternesServices
 //            $q->where('status',1);            // Not just the valid ones
            })->orWhere(function($q)use ($id_account){
                 $q->where('num_acc_receiver',$id_account);
-//                $q->where('status',1);
-            })->simplePaginate(8)->setPath('');
+                $q->where('status',1);
+            })
+            ->orderBy('created_at','DESC')
+            ->simplePaginate(8)->setPath('');
 
         return $virements;
     }
@@ -404,116 +407,7 @@ class VirementInternesServices
             return $chartDataByDay;
     }
 
-    //--------------------------------------  comm stat  ---------------------------------------//
 
-//    /**   TODO */
-//     * @param $type
-//     * @return array
-//     */
-//    public function getCommissionPerQuarterOfType($type){
-//        $chartDatas = VirementInterne::select([
-//            DB::raw('QUARTER(created_at) AS quarter'),
-//            DB::raw('SUM(id) AS count'),
-//        ]) ->where('status','=',1)            // valid transfers
-//            ->where('id_commission','=',$type)
-//            ->whereBetween('created_at', [Carbon::now()->subQuarter(4), Carbon::now()])
-//            ->groupBy('quarter')
-//            ->orderBy('quarter', 'ASC')
-//            ->union(
-//                VirementExterne::select([
-//                        DB::raw('QUARTER(created_at) AS quarter'),
-//                        DB::raw('SUM(id) AS count'),
-//                    ]
-//                )
-//            ->where('status','=',1)            // valid transfers
-//            ->where('id_commission','=',$type)
-//            ->whereBetween('created_at', [Carbon::now()->subQuarter(4), Carbon::now()])
-//            ->groupBy('quarter')
-//            ->orderBy('quarter', 'ASC'))
-//            ->get()
-//            ->toArray();
-//
-//        $chartDataByDay = array();
-//        foreach($chartDatas as $data) {
-//            $chartDataByDay[$data['quarter']] = $data['count'];
-//        }
-//
-//        $date = new Carbon;
-//        for($i = 0; $i < 4; $i++) {
-//            $dateString = $date->quarter;
-//            if(!isset($chartDataByDay[ $dateString ])){
-//                $chartDataByDay[ $dateString ] = 0;
-//            }
-//            $date->subQuarter();
-//        }
-//
-//        return $chartDataByDay;
-//    }
-//
-//    /**
-//     * @param $type
-//     * @return array|null
-//     */
-//    public function getCommissionPerMonthOfType($type){
-//        $chartDatas = VirementInterne::select([
-//            DB::raw('MONTH(created_at) AS month'),
-//            DB::raw('COUNT(id) AS count'),
-//        ])
-//            ->where('status','=',1)            // valid transfers
-//            ->where('id_commission','=',$type)
-//            ->whereBetween('created_at', [Carbon::now()->subMonth(5), Carbon::now()])
-//            ->groupBy('month')
-//            ->orderBy('month', 'ASC')
-//            ->get()
-//            ->toArray();
-//        $chartDataByDay = array();
-//        foreach($chartDatas as $data) {
-//            $chartDataByDay[$data['month']] = $data['count'];
-//        }
-//
-//        $date = new Carbon;
-//        for($i = 0; $i < 12; $i++) {
-//            $dateString = $date->month;
-//            if(!isset($chartDataByDay[ $dateString ])){
-//                $chartDataByDay[$dateString] = 0;
-//            }
-//            $date->subMonth();
-//        }
-//        return $chartDataByDay;
-//    }
-//
-//    /**
-//     * @param $type
-//     * @param $nbYear
-//     * @return array|null
-//     */
-//    public function getCommissionPerYearOfType($type,$nbYear){
-//        $chartDatas = VirementInterne::select([
-//            DB::raw('YEAR(created_at) AS year'),
-//            DB::raw('COUNT(id) AS count'),
-//        ])
-//            ->where('status','=',1)            // valid transfers
-//            ->where('id_commission','=',$type)
-//            ->whereBetween('created_at', [Carbon::now()->subYear($nbYear), Carbon::now()])
-//            ->groupBy('year')
-//            ->orderBy('year', 'ASC')
-//            ->get()
-//            ->toArray();
-//        $chartDataByDay = array();
-//        foreach($chartDatas as $data) {
-//            $chartDataByDay[$data['year']] = $data['count'];
-//        }
-//
-//        $date = new Carbon;
-//        for($i = 0; $i < $nbYear; $i++) {
-//            $dateString = $date->year;
-//            if(!isset($chartDataByDay[ $dateString ])){
-//                $chartDataByDay[$dateString] = 0;
-//            }
-//            $date->subYear();
-//        }
-//        return $chartDataByDay;
-//    }
 
 }
 

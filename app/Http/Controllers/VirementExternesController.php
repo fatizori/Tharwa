@@ -52,6 +52,16 @@ class VirementExternesController extends Controller
 
     }
 
+
+    /**
+     * Get Invalid Virements invalid
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getInvalidVirement(){
+        $virementInvalid = $this->virementExterneService->getInvalidVirementExternes();
+        return response()->json($virementInvalid, 200);
+    }
+
     /*===================================================================================================================================*/
 
     /**
@@ -183,10 +193,9 @@ class VirementExternesController extends Controller
         $banker_id = $request->user()->id;
 
         $senderAccount = $this->accountService->findSenderCurrentAccountByTransfer($transfert);
-        $sender = User::find($senderAccount->id_customer);
+//        $sender = User::find($senderAccount->id_customer);
 
-
-        try {
+//        try {
             DB::beginTransaction();
             // Refuse justif
             if ($operation == 2 && $justif->status == 0 && $transfert->status == 0) {
@@ -213,8 +222,6 @@ class VirementExternesController extends Controller
                 //write the externe transfer
                 $this->writeToXml($transfert, $senderAccount->id_customer);
                 dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 17, LogJob::SUCCESS_STATUS));
-
-
                 DB::commit();
                 return response()->json(['message' => 'justificatif accepté, virement validé'], 200);
             } else if (0 != $transfert->status) {
@@ -232,11 +239,11 @@ class VirementExternesController extends Controller
                 DB::commit();
                 return response()->json(['message' => 'Justif est déja valide'], 422);
             }
-        } catch (\Exception $exception) {
-            DB::rollback();
-            dispatch(new LogJob($user->email, $id_transfert, 'virement non traité (erreur serveur)', 17, LogJob::FAILED_STATUS));
-            return response()->json(['message' => $exception->getMessage()], 500);
-        }
+//        } catch (\Exception $exception) {
+//            DB::rollback();
+//            dispatch(new LogJob($user->email, $id_transfert, 'virement non traité (erreur serveur)', 17, LogJob::FAILED_STATUS));
+//            return response()->json(['message' => $exception->getMessage()], 500);
+//        }
 
     }
 

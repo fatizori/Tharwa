@@ -37,10 +37,12 @@ $app->get('accounts/invalid',['uses' => 'AccountsController@invalidAccounts','mi
 $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middleware' => ['auth']]);
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
-//get the list of invalid virements
-$app->get('virements_invalid',['uses' => 'VirementInternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
-////get the list of invalid virements ?!!!!! TODO
- $app->get('virements_externes',['uses' => 'VirementExternesController@getVirementExternes', 'middleware' =>['auth','role:banker']]);
+//get the list of invalid virements intern
+$app->get('virements/intern/invalid',['uses' => 'VirementInternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
+//get the list of invalid virements extern
+$app->get('virements/extern/invalid',['uses' => 'VirementExternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
+////get the list of virements extern
+ $app->get('virements/extern',['uses' => 'VirementExternesController@getVirementExternes', 'middleware' =>['auth','role:banker']]);
 // get list of unblock demands
 $app->get('justif_account',['uses' => 'AccountsController@getUnblockDemands', 'middleware' =>['auth','role:banker']]);
 // refuse account unblock demand (justif)
@@ -83,12 +85,12 @@ $app->delete('commissions/{id}',['uses' => 'CommissionsController@destroy','midd
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //Validate exchange justif
-$app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
+$app->put('virements/intern/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 //validate justif externe transfer
-$app->put('virement_externes/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
+$app->put('virements/extern/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
 //get Dashboard stat
-$app->get('dashboard',['uses' => 'DashboardController@getStat']);
+$app->get('dashboard',['uses' => 'DashboardController@getStat','middleware' => ['auth','role:banker']]);
 
 
 //Customers
@@ -130,7 +132,6 @@ $app->post('user/photo',['uses' => 'UsersController@updatePhoto', 'middleware' =
 $app->put('user/password',['uses' => 'UsersController@changePassword', 'middleware' => 'auth']);
 
 //$app->post('xml',['uses' => 'VirementExternesController@writeToXml']);
-
 
 // To test the excution of externes transfers
 $app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);

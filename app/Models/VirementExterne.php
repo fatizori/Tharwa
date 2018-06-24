@@ -34,9 +34,12 @@ class VirementExterne extends Model
     ];
 
     protected $hidden =[
-
+        'updated_at'
     ];
 
-
+    public function account_sender()
+    {
+        return $this->belongsTo(Account::class,'num_acc','id');
+    }
 
 }
