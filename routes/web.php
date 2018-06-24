@@ -135,5 +135,3 @@ $app->put('user/password',['uses' => 'UsersController@changePassword', 'middlewa
 
 // To test the excution of externes transfers
 $app->get('excute',['uses' => 'VirementExternesController@executeTransfer']);
-
-

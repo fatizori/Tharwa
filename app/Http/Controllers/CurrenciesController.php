@@ -40,11 +40,19 @@ class CurrenciesController extends Controller
         return response(json_encode($tabRates),200);
    }
 
+    /**
+     * @param $amount
+     * @param $from
+     * @param $to
+     * @return null|string|string[]
+     */
    public function exchangeRate($amount,$from,$to){
-     $result = file_get_contents('https://finance.google.com/bctzjpnsun/converter?a='.$amount.'&from='.$from.'&to='.$to);
-    preg_match('#\<span class=bld\>(.+?)\<\/span\>#s', $result, $finalData);
-    $result1 = preg_replace("/[^0-9.]/", "", $finalData[1]);
-    return $result1;
+
+       $conv_id = "{$from}_{$to}";
+       $string = file_get_contents("http://free.currencyconverterapi.com/api/v3/convert?q=$conv_id&compact=ultra");
+       $json_a = json_decode($string, true);
+
+       return $amount * round($json_a[$conv_id], 4);
    }
 
 }
