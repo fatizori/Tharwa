@@ -353,6 +353,26 @@ class AccountsController extends Controller
 
 
     /**
+     *
+     */
+    public function getUnBlockedAccountsToblock(){
+        try{
+            $accounts = $this->accountsService->findAllAccountsToBlock();
+            $customerServices = new CustomersServices();
+             if (!is_null($accounts)){
+                 foreach ($accounts as $account){
+                     $customer = $customerServices->findById($account->id_customer);
+                     $account->setAttribute('nom',$customer->name);
+                     $account->setAttribute('code',$account->getCode());
+                 }
+             }
+             return response()->json($accounts, 200);
+        }catch (\Exception $exception){
+            return response()->json(['message' => 'erreur serveur'], 500);
+        }
+    }
+
+    /**
      * @param Request $request
      * @param id_justif_account
      * @return \Illuminate\Http\JsonResponse

@@ -109,6 +109,17 @@ class AccountsServices
         return $accounts;
     }
 
+
+    /**
+     * Find  an account by id
+     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]
+     */
+    public function findAllAccountsToBlock(){
+        $accounts = Account::where('status',1)->orWhere('status',2)
+        ->get()->all();
+        return $accounts;
+    }
+
     /**
      * Create Account
      * @param $id

@@ -9,6 +9,7 @@
 namespace App\Services;
 
 Use App\Models\Commission;
+use App\Models\MensuelleCommission;
 use App\Models\VirementExterne;
 use App\Models\VirementInterne;
 use Carbon\Carbon;
@@ -125,6 +126,30 @@ class CommissionsServices
             ->get()
             ->toArray();
 
+        $commMens = MensuelleCommission::select([
+                DB::raw('QUARTER(created_at) AS quarter'),
+                DB::raw('SUM(amount) AS sum'),
+            ]
+            )->whereBetween('created_at', [Carbon::now()->subQuarter(4), Carbon::now()])
+            ->groupBy('quarter')
+            ->orderBy('quarter', 'ASC')
+            ->get()
+            ->toArray();
+
+        // menseulles
+        $date = new Carbon;
+        $chartDataMens= array();
+        foreach ($commMens as $data) {
+            $chartDataMens[$data['quarter']] = $data['sum'];
+        }
+        for ($i = 0; $i < 4; $i++) {
+            $dateString = $date->quarter;
+            if (!isset($chartDataMens[$dateString])) {
+                $chartDataMens[$dateString] = 0;
+            }
+            $date->subQuarter();
+        }
+
 
         $chartDataByQ = array();
         foreach($chartDatas1 as $data) {
@@ -154,10 +179,18 @@ class CommissionsServices
             $date->subQuarter();
         }
 
-        for($i = 1; $i < 5; $i++) {
-            $chartDataByQ[$i] += $chartDataByQ2[$i];
+        $date = new Carbon;
+        for ($i = 1; $i < 5; $i++) {
+            if (!isset($chartDataByQ2[$i ])) {
+                $chartDataByQ2[$i] = $chartDataByQ[$i]+$chartDataMens[$i];
+            }else{
+                $chartDataByQ2[$i] += $chartDataByQ[$i]+$chartDataMens[$i];
+            }
+            $date->subQuarter();
         }
-        return $chartDataByQ;
+
+
+        return $chartDataByQ2;
     }
 
     /**
@@ -184,6 +217,30 @@ class CommissionsServices
             ->orderBy('month', 'ASC')
             ->get()
             ->toArray();
+
+        $commMens = MensuelleCommission::select([
+                DB::raw('MONTH(created_at) AS month'),
+                DB::raw('SUM(amount) AS sum'),
+            ]
+        )->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()])
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get()
+            ->toArray();
+
+        // menseulles
+        $date = new Carbon;
+        $chartDataMens= array();
+        foreach ($commMens as $data) {
+            $chartDataMens[$data['month']] = $data['sum'];
+        }
+        for ($i = 0; $i < 12; $i++) {
+            $dateString = $date->month;
+            if (!isset($chartDataMens[$dateString])) {
+                $chartDataMens[$dateString] = 0;
+            }
+            $date->subMonth();
+        }
 
         $chartDataByQ = array();
         foreach($chartDatas1 as $data) {
@@ -213,10 +270,17 @@ class CommissionsServices
             $date->subMonth();
         }
 
-        for($i = 1; $i < 13; $i++) {
-            $chartDataByQ[$i] += $chartDataByQ2[$i];
+        $date = new Carbon;
+        for ($i = 1; $i < 13; $i++) {
+            if (!isset($chartDataByQ2[$i])) {
+                $chartDataByQ2[$i] = $chartDataByQ[$i]+$chartDataMens[$i];
+            }else{
+                $chartDataByQ2[$i] += $chartDataByQ[$i]+$chartDataMens[$i];
+            }
+            $date->subMonth();
         }
-        return $chartDataByQ;
+
+        return $chartDataByQ2;
     }
 
     /**
@@ -246,6 +310,33 @@ class CommissionsServices
             ->get()
             ->toArray();
 
+        $commMens = MensuelleCommission::select([
+                DB::raw('YEAR(created_at) AS year'),
+                DB::raw('SUM(amount) AS sum'),
+            ]
+        )
+            ->whereBetween('created_at', [Carbon::now()->subYear($nbYear), Carbon::now()])
+            ->groupBy('year')
+            ->orderBy('year', 'ASC')
+            ->get()
+            ->toArray();
+
+        // menseulles
+        $date = new Carbon;
+        $chartDataMens= array();
+        foreach ($commMens as $data) {
+            $chartDataMens[$data['year']] = $data['sum'];
+        }
+        for ($i = 0; $i < $nbYear; $i++) {
+            $dateString = $date->year;
+            if (!isset($chartDataMens[$dateString])) {
+                $chartDataMens[$dateString] = 0;
+            }
+            $date->subYear();
+        }
+
+
+        // internes
         $chartDataByQ = array();
         foreach ($chartDatas1 as $data) {
             $chartDataByQ[$data['year']] = $data['sum'];
@@ -260,6 +351,8 @@ class CommissionsServices
             $date->subYear();
         }
 
+
+        // extrenes with others
         $chartDataByQ2 = array();
         foreach ($chartDatas2 as $data) {
             $chartDataByQ2[$data['year']] = $data['sum'];
@@ -269,12 +362,13 @@ class CommissionsServices
         for ($i = 0; $i < $nbYear; $i++) {
             $dateString = $date->year;
             if (!isset($chartDataByQ2[$dateString])) {
-                $chartDataByQ2[$dateString] = $chartDataByQ[$dateString];
+                $chartDataByQ2[$dateString] = $chartDataByQ[$dateString]+$chartDataMens[$dateString];
             }else{
-                $chartDataByQ2[$dateString] += $chartDataByQ[$dateString];
+                $chartDataByQ2[$dateString] += $chartDataByQ[$dateString]+$chartDataMens[$dateString];
             }
             $date->subYear();
         }
+
 
         return $chartDataByQ2;
     }

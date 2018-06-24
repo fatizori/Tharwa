@@ -49,6 +49,9 @@ $app->get('justif_account/{account_id}',['uses' => 'AccountsController@getUnbloc
 $app->put('justif_account/{id_justif_account}',['uses' => 'AccountsController@refuseAccountJustif', 'middleware' =>['auth','role:banker']]);
 // get all blocked accounts need to be deblocked
 $app->get('accounts/block',['uses' => 'AccountsController@getBlockedAccountsToUnblock', 'middleware' =>['auth','role:banker']]);
+// get all unblocked accounts need to be block
+$app->get('accounts/unblock',['uses' => 'AccountsController@getUnBlockedAccountsToblock', 'middleware' =>['auth','role:banker']]);
+
 
 
 
@@ -90,7 +93,6 @@ $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['
 $app->put('virements/intern/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 //validate justif externe transfer
 $app->put('virements/extern/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
-
 //get Dashboard stat
 $app->get('dashboard',['uses' => 'DashboardController@getStat','middleware' => ['auth','role:banker']]);
 

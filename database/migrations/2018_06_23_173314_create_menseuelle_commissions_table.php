@@ -19,7 +19,7 @@ class CreateMenseuelleCommissionsTable extends Migration
             // Schema declaration
             $table->string('type');
             $table->integer('id_account');
-            $table->float('amount');
+            $table->double('amount');
             $table->timestamps();
             // Constraints declaration
         });
