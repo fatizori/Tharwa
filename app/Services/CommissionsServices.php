@@ -79,9 +79,6 @@ class CommissionsServices
     public function getCommissionStat(){
 //        try{
             $data = array();
-            $dataQ = array();
-            $dataM = array();
-            $dataY = array();
             // Per Quarter
             $dataQ = $this->getCommissionPerQuarter();
             $data['quarter'] = $dataQ;
@@ -222,7 +219,7 @@ class CommissionsServices
                 DB::raw('MONTH(created_at) AS month'),
                 DB::raw('SUM(amount) AS sum'),
             ]
-        )->whereBetween('created_at', [Carbon::now()->subMonth(4), Carbon::now()])
+        )->whereBetween('created_at', [Carbon::now()->subMonth(12), Carbon::now()])
             ->groupBy('month')
             ->orderBy('month', 'ASC')
             ->get()
