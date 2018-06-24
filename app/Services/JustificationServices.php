@@ -53,7 +53,19 @@ class JustificationServices
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function getInvalidatedJustif(){
-        $justif = JustificatifAccount::where('status',0)->get()->all();
+        $justif = JustificatifAccount::where('status',0)
+            ->get()->all();
+        return $justif;
+    }
+
+    /**
+     * Waiting justifs
+     * @param $account_id
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function getInvalidatedJustifByAccountId($account_id){
+        $justif = JustificatifAccount::where('status',0)
+            ->where('id_account',$account_id)->get()->last();
         return $justif;
     }
 

@@ -398,4 +398,15 @@ class AccountsServices
     }
 
 
+    /**
+     * @param $account_id
+     * @return array
+     */
+    public function getLastBlockingMotif($account_id){
+        $motif =  AccountAction::where('account_id',$account_id)
+            ->where('operation',3)->select(['object','justification'])
+            ->get()->last()->toArray();
+        return $motif;
+    }
+
 }

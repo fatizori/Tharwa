@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\VirementInterne;
 use App\Services\AccountsServices;
 use  App\Jobs\LogJob;
+use App\Services\CustomersServices;
 use App\Services\JustificationServices;
 use App\Services\VirementInternesServices;
 use Illuminate\Http\Request;
@@ -307,13 +308,44 @@ class AccountsController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getUnblockDemands(Request $request){
+    public function getBlockedAccountsToUnblock(Request $request){
         $justifServices = new JustificationServices();
+        $customerServices = new CustomersServices();
         try {
-            $invalidatedJustif = $justifServices->getInvalidatedJustif();
-            if (!is_null($invalidatedJustif)) {
-                return response()->json($invalidatedJustif, 200);
+            $blockedAccounts = array();
+            $invalidatedJustifs = $justifServices->getInvalidatedJustif();
+            if (!is_null($invalidatedJustifs)){
+                foreach ($invalidatedJustifs as $invJustif){
+                    $account = $this->accountsService->findById($invJustif->id_account);
+                    $customer = $customerServices->findById($account->id_customer);
+                    $account->setAttribute('nom',$customer->name);
+                    $account->setAttribute('code',$account->getCode());
+                    array_push($blockedAccounts,$account);
+                }
             }
+            return response()->json($blockedAccounts, 200);
+        }catch (\Exception $exception){
+            return response()->json(['message' => 'erreur serveur'], 500);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param $account_id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUnblockDemandByAccountId(Request $request, $account_id){
+        $justifServices = new JustificationServices();
+        $accountServ = new AccountsServices();
+        try {
+            $invalidatedJustif = $justifServices->getInvalidatedJustifByAccountId($account_id);
+            // Get blocking info
+            if(!is_null($invalidatedJustif)) {
+                $motif = $accountServ->getLastBlockingMotif($invalidatedJustif->id_account);
+                $invalidatedJustif->setAttribute('motif_object', $motif['object']);
+                $invalidatedJustif->setAttribute('motif_justif', $motif['justification']);
+            }
+            return response()->json($invalidatedJustif, 200);
         }catch (\Exception $exception){
             return response()->json(['message' => 'erreur serveur'], 500);
         }

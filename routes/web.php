@@ -43,10 +43,12 @@ $app->get('virements/intern/invalid',['uses' => 'VirementInternesController@getI
 $app->get('virements/extern/invalid',['uses' => 'VirementExternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
 ////get the list of virements extern
  $app->get('virements/extern',['uses' => 'VirementExternesController@getVirementExternes', 'middleware' =>['auth','role:banker']]);
-// get list of unblock demands
-$app->get('justif_account',['uses' => 'AccountsController@getUnblockDemands', 'middleware' =>['auth','role:banker']]);
+// get the unblock demand
+$app->get('justif_account/{account_id}',['uses' => 'AccountsController@getUnblockDemandByAccountId', 'middleware' =>['auth','role:banker']]);
 // refuse account unblock demand (justif)
 $app->put('justif_account/{id_justif_account}',['uses' => 'AccountsController@refuseAccountJustif', 'middleware' =>['auth','role:banker']]);
+// get all blocked accounts need to be deblocked
+$app->get('accounts/block',['uses' => 'AccountsController@getBlockedAccountsToUnblock', 'middleware' =>['auth','role:banker']]);
 
 
 
@@ -94,6 +96,8 @@ $app->get('dashboard',['uses' => 'DashboardController@getStat','middleware' => [
 
 
 //Customers
+// get init info
+$app->get('init',['uses'=>'CustomersController@initInfo', 'middleware' => ['auth','role:customer']]);
 // get the exchange rate
 $app->get('currency',['uses'=>'CurrenciesController@getExchangeRate']);
 // route to subscribe a customer
