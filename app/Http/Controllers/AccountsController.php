@@ -134,15 +134,19 @@ class AccountsController extends Controller
                     $message = 'new account was validated';
                     // validate a new account
                     $action = $this->accountsService->validateNewAccount($account);
+                    // Save Banker Operation
+                    $this->accountsService->createBankerAction($account, $banker->id, 1,'','');
                 }break;
                 case 2:{
                     $message = 'account was unblocked';
                     // unblock an account
                     $action = $this->accountsService->unblockAccount($account);
-                    if ($action){
+                    if ($action) {
                         // Update Justif status
                         $justifServices = new JustificationServices();
-                        $justifServices->disactiverJustif(1,$account->id);
+                        $justifServices->disactiverJustif(1, $account->id);
+                        // Save Banker Operation
+                        $this->accountsService->createBankerAction($account, $banker->id, 2, '', '');
                     }
                 }break;
                 case 3:
@@ -165,6 +169,10 @@ class AccountsController extends Controller
                     $message = 'new account was refused';
                     // delete new account
                     $action = $this->accountsService->refuseNewAccount($account);
+                    if ($action){
+                        // Save Banker Operation
+                        $this->accountsService->createBankerAction($account, $banker->id, 4,'','');
+                    }
                 }break;
                 default:{
                     return  response()->json(['message' => 'invalid operation'], 400);

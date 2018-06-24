@@ -8,8 +8,11 @@
 
 namespace App\Services;
 use App\Models\Account;
+use App\Models\AccountAction;
 use App\Models\Customer;
 use App\Models\VirementInterne;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class AccountsServices
@@ -261,5 +264,138 @@ class AccountsServices
             ->first();
         return $username;
     }
+
+    /**
+     * @return array|null
+     */
+    public function getAccountsStat(){
+        try{
+            $data = array();
+            $dataQ = array();
+            $dataM = array();
+            $dataY = array();
+            // Per Quarter
+            $dataQ['block'] = $this->getTransferPerQuarter(3);
+            $dataQ['unblock'] = $this->getTransferPerQuarter(2);
+            $dataQ['accepte'] = $this->getTransferPerQuarter(1);
+            $dataQ['refuse'] = $this->getTransferPerQuarter(4);
+            $data['quarter'] = $dataQ;
+
+            // Per Mounth
+            $dataM['block'] = $this->getTransferPerMonth(3);
+            $dataM['unblock'] = $this->getTransferPerMonth(2);
+            $dataM['accepte'] = $this->getTransferPerMonth(1);
+            $dataM['refuse'] = $this->getTransferPerMonth(4);
+            $data['month'] = $dataM;
+
+            // Per Year
+            $dataY['block'] = $this->getTransferPerYear(3,3);
+            $dataY['unblock'] = $this->getTransferPerYear(2,3);
+            $dataY['accepte'] = $this->getTransferPerYear(1,3);
+            $dataY['refuse'] = $this->getTransferPerYear(4,3);
+            $data['year'] = $dataY;
+
+            return $data;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    /**
+     * @param $type
+     * @return array
+     */
+    public function getTransferPerQuarter($type){
+        $chartDatas = AccountAction::select([
+            DB::raw('QUARTER(created_at) AS quarter'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('operation','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subQuarter(4), Carbon::now()])
+            ->groupBy('quarter')
+            ->orderBy('quarter', 'ASC')
+            ->get()
+            ->toArray();
+
+        $chartDataByQuarter = array();
+        foreach($chartDatas as $data) {
+            $chartDataByQuarter[$data['quarter']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < 4; $i++) {
+            $dateString = $date->quarter;
+            if(!isset($chartDataByQuarter[ $dateString ])){
+                $chartDataByQuarter[ $dateString ] = 0;
+            }
+            $date->subQuarter();
+        }
+
+        return $chartDataByQuarter;
+    }
+
+    /**
+     * @param $type
+     * @return array|null
+     */
+    public function getTransferPerMonth($type){
+        $chartDatas =   AccountAction::select([
+            DB::raw('MONTH(created_at) AS month'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('operation','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subMonth(12), Carbon::now()])
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get()
+            ->toArray();
+        $chartDataByM = array();
+        foreach($chartDatas as $data) {
+            $chartDataByM[$data['month']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < 12; $i++) {
+            $dateString = $date->month;
+            if(!isset($chartDataByM[ $dateString ])){
+                $chartDataByM[$dateString] = 0;
+            }
+            $date->subMonth();
+        }
+        return $chartDataByM;
+    }
+
+    /**
+     * @param $type
+     * @param $nbYear
+     * @return array|null
+     */
+    public function getTransferPerYear($type,$nbYear){
+        $chartDatas = AccountAction::select([
+            DB::raw('YEAR(created_at) AS year'),
+            DB::raw('COUNT(id) AS count'),
+        ])
+            ->where('operation','=',$type)
+            ->whereBetween('created_at', [Carbon::now()->subYear($nbYear), Carbon::now()])
+            ->groupBy('year')
+            ->orderBy('year', 'ASC')
+            ->get()
+            ->toArray();
+        $chartDataByYear = array();
+        foreach($chartDatas as $data) {
+            $chartDataByYear[$data['year']] = $data['count'];
+        }
+
+        $date = new Carbon;
+        for($i = 0; $i < $nbYear; $i++) {
+            $dateString = $date->year;
+            if(!isset($chartDataByYear[ $dateString ])){
+                $chartDataByYear[$dateString] = 0;
+            }
+            $date->subYear();
+        }
+        return $chartDataByYear;
+    }
+
 
 }

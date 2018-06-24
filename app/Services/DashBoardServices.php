@@ -6,22 +6,26 @@ class DashBoardServices
 {
     private $virementInternesService;
     private $virementExternesService;
+    private $accountsService;
     public function __construct()
     {
-        $this->virementInternesService =new VirementInternesServices();
-        $this->virementExternesService =new VirementExternesServices();
+        $this->virementInternesService = new VirementInternesServices();
+        $this->virementExternesService = new VirementExternesServices();
+        $this->accountsService = new AccountsServices();
     }
 
     /**
      * @return bool
      */
-    public function getTransferStat(){
+    public function getStat(){
         $internTransfers = $this->virementInternesService->getInternTransferStat();
         $externTransfers = $this->virementExternesService->getExternTransferStat();
+        $accountStat = $this->accountsService->getAccountsStat();
         if (!is_null($internTransfers) && !is_null($externTransfers) ){
             $resulalt = [
                 'trIntern' =>  $internTransfers,
-                'trExtern' =>  $externTransfers
+                'trExtern' =>  $externTransfers,
+                'accountManage' => $accountStat
             ];
             return $resulalt;
         }else{

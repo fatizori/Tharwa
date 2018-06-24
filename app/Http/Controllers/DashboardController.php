@@ -14,7 +14,7 @@ class DashboardController extends Controller
     }
 
     public function getStat(){
-        $stat = $this->dashboardServices->getTransferStat();
+        $stat = $this->dashboardServices->getStat();
         if($stat){
             return response()->json($stat, 200);
         }else{

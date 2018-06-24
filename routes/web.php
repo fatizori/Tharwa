@@ -38,9 +38,9 @@ $app->get('notif',['uses' => 'NotificationsController@getNotifNumber','middlewar
 //route to update banker personal info
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //get the list of invalid virements
-$app->get('virements_internes',['uses' => 'VirementInternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
-////get the list of invalid virements
-    //$app->get('virements_externes',['uses' => 'VirementExternesController@getInvalidVirementExternes', 'middleware' =>['auth','role:banker']]);
+$app->get('virements_invalid',['uses' => 'VirementInternesController@getInvalidVirement', 'middleware' =>['auth','role:banker']]);
+////get the list of invalid virements ?!!!!! TODO
+ $app->get('virements_externes',['uses' => 'VirementExternesController@getVirementExternes', 'middleware' =>['auth','role:banker']]);
 // get list of unblock demands
 $app->get('justif_account',['uses' => 'AccountsController@getUnblockDemands', 'middleware' =>['auth','role:banker']]);
 // refuse account unblock demand (justif)
@@ -84,7 +84,6 @@ $app->delete('commissions/{id}',['uses' => 'CommissionsController@destroy','midd
 $app->put('bankers',['uses' => 'BankersController@changeInfo','middleware' => ['auth','role:banker']]);
 //Validate exchange justif
 $app->put('virement/justif/{id_justif:[0-9]+}',['uses' => 'VirementInternesController@validateTransfer','middleware' => ['auth','role:banker']]);
-
 //validate justif externe transfer
 $app->put('virement_externes/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 
