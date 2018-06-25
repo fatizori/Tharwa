@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
         $this->call('AccountTableSeeder');
         $this->call('ManagerTableSeeder');
         $this->call('CommissionTableSeeder');
-        
+        $this->call('BankTableSeeder');
+        $this->call('VirementExterneeTableSeeder');
+        $this->call('JustificatifVirmExtTableSeeder');
+        $this->call('VirementInterneTableSeeder');
+        $this->call('JustificatifVirmIntTableSeeder');
+        $this->call('MensuelleCommissionTableSeeder');
     }
 }

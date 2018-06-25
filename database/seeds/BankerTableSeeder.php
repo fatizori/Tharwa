@@ -13,6 +13,24 @@ class BankerTableSeeder extends Seeder
     public function run()
     {
         Banker::create([
+            'id'=> 2,
+            'name' => 'imane',
+            'firstname' => 'senouci',
+            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',
+            'photo' => 'photo.jpg',
+            'id_creator' => 1
+        ]);
+
+        Banker::create([
+            'id'=> 3,
+            'name' => 'mahfoud',
+            'firstname' => 'cheikh aissa',
+            'address'=> 'ex domaine morsli ahmed routes des dunes cheraga',
+            'photo' => 'photo.jpg',
+            'id_creator' => 1
+        ]);
+
+        Banker::create([
             'id'=> 4,
             'name' => 'nihad',
             'firstname' => 'banat',

@@ -17,9 +17,7 @@ class CreateMenseuelleCommissionsTable extends Migration
             $table->engine='InnoDB';
             $table->increments('id');
             // Schema declaration
-            $table->string('type');
-            $table->integer('id_account');
-            $table->double('amount');
+            $table->float('amount');
             $table->timestamps();
             // Constraints declaration
         });

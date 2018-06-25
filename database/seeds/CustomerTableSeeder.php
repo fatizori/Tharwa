@@ -34,5 +34,16 @@ class CustomerTableSeeder extends Seeder
             'photo' => 'customer1.jpg',
         ]);
 
+        Customer::create([
+            'id' => 7,
+            'name' => 'zina',
+            'address'=>'setif qq part',
+            'wilaya'=> 'Setif',
+            'commune' => 'setif',
+            'fonction' => 'Developpeur',
+            'type' => 0,
+            'photo' => 'customer1.jpg',
+        ]);
+
     }
 }
