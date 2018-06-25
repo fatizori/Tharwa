@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\ExecuteExterneTransfer::class,
-        \App\Console\Commands\ExecuteMensuelleCommissions::class,
+       // \App\Console\Commands\ExecuteMensuelleCommissions::class,
 ];
 
     /**
@@ -25,9 +25,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('execute:externe_transfer')->dailyAt('00:00s');
-        $schedule->command('execute:mensuelle_commissions')->dailyAt('08:00')->when(function () {
+        $schedule->command('execute:externe_transfer')->dailyAt('12:46');
+        /*$schedule->command('execute:mensuelle_commissions')->dailyAt('08:00')->when(function () {
             return \Carbon\Carbon::now()->endOfMonth()->isToday();
-        });
+        });*/
     }
 }

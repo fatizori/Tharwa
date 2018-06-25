@@ -355,7 +355,10 @@ class VirementExternesController extends Controller
             mkdir('./XML_file_out/' . $transfert->code_bnk_ext . $y . $m . $d, 0777, true);
         }
 
-        $doc->save('./XML_file_out/' . $transfert->code_bnk_ext . $y . $m . $d . '/' . $transfert->code_bnk . $transfert->num_acc . 'Vers' . $transfert->code_bnk_ext . $transfert->num_acc_ext . '.xml');
+        $doc->save('./XML_file_out/' . $transfert->code_bnk_ext . $y . $m . $d . '/' . $transfert->code_bnk .
+            $transfert->num_acc . 'Vers' . $transfert->code_bnk_ext . $transfert->num_acc_ext . '.xml');
+
+
     }
 
 
