@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\Customer;
 use App\Models\User;
+use App\Services\CustomersServices;
 use Illuminate\Http\Request;
 use App\Services\VirementInternesServices;
 use App\Services\VirementExternesServices;
@@ -234,7 +235,16 @@ class VirementInternesController extends Controller
                 //add exchange
                  $account_receiver = $this->accountService->findById($data['num_acc_receiver']);
                  $virement = $this->virementInterneService->createBetweenCustomersExchangeJustif($senderAccount, $account_receiver, $montant, $data['type']);
-                //add justif
+                 // Execute transfer
+                 $operation = $this->excuteInternalTransferJustif($senderAccount,$virement->montant_virement,$virement->montant_commission);
+                if (!$operation){
+                 //log
+                    DB::rollback();
+                    dispatch(new LogJob($senderAccount->id_customer, $account_receiver->id_customer, 'Virement non effectué (montant insuffisant)', 15,
+                        LogJob::FAILED_STATUS));
+                    return response(json_encode(['message' => 'montant insuffisant']), 206);
+                    }
+                 //add justif
                 $this->virementInterneService->addJustif($data['justif'],$user->id,$virement->id);
             } catch (\Exception $exception) {
                 DB::rollback();
@@ -293,6 +303,8 @@ class VirementInternesController extends Controller
             if($operation == 2 && $justif->status == 0 && $transfert->status == 0){
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
                     $this->virementInterneService->refuseTranfer($transfert);
+                    // revoke amount to sender account
+                    $this->revokeInternalTransferJustif($senderAccount,$transfert);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     // Send email to sender
                     $this->virementInterneService->sendJustifNotifMAil($sender->email,$receiverAccount->id,'refusé');
@@ -302,17 +314,7 @@ class VirementInternesController extends Controller
                 // Accept justif
                     $this->virementInterneService->acceptJustif($justif->id,$banker_id);
                     $this->virementInterneService->acceptTranfer($transfert);
-                    $new_sender_balance = $senderAccount->balance - $transfert->montant_virement;
-                    if($new_sender_balance < 0){
-                        //log
-                        DB::rollback();
-                        dispatch(new LogJob($senderAccount->id_customer, $receiverAccount->id_customer, 'Virement non effectué (montant insuffisant)', 15,
-                            LogJob::FAILED_STATUS));
-                        return response(json_encode(['message' => 'montant insuffisant']), 206);
-                    }
-
-                    // Execute transfert
-                    $this->excuteInternalTransfer($senderAccount,$receiverAccount,$transfert->montant_virement,$transfert->montant_commission);
+                    $this->finalizeInternalTransferJustif($receiverAccount,$transfert);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement validé', 14,LogJob::SUCCESS_STATUS));
 
                     $this->virementInterneService->sendVirementNotifMAil($receiver->email,$sender->email);
@@ -324,6 +326,8 @@ class VirementInternesController extends Controller
                     // Virement is already valide
                     // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    // revoke amount to sender account
+                    $this->revokeInternalTransferJustif($senderAccount,$transfert);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     DB::commit();
                 return   response()->json(['message' => 'Virement est déja valide'], 422);
@@ -331,6 +335,8 @@ class VirementInternesController extends Controller
                     // Justif is already valide
                     // Refuse justif
                     $this->virementInterneService->refuseJustif($justif->id,$banker_id);
+                    // revoke amount to sender account
+                    $this->revokeInternalTransferJustif($senderAccount,$transfert);
                     dispatch(new LogJob($user->email, $id_transfert, 'virement refusé', 15,LogJob::SUCCESS_STATUS));
                     DB::commit();
                 return response()->json(['message' => 'Justif est déja valide'], 422);
@@ -356,6 +362,42 @@ class VirementInternesController extends Controller
 
         //update the  receiver's account balance
         $new_receiver_balance = $receiver_account->balance + $amount;
+        $this->accountService->updateAccountBalance($receiver_account, $new_receiver_balance);
+    }
+
+    /**
+     * @param $senderAccount
+     * @param $amount
+     * @param $commission
+     * @return bool
+     */
+    public function excuteInternalTransferJustif($senderAccount, $amount, $commission){
+        //update the  sender's account balance
+        $new_sender_balance = $senderAccount->balance - $amount - $commission;
+        if($new_sender_balance < 0) {
+            return false;
+        }
+        $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
+        return true;
+    }
+
+    /**
+     * @param $senderAccount
+     * @param $transfer
+     */
+    public function revokeInternalTransferJustif($senderAccount, $transfer){
+        //update the  sender's account balance
+        $new_sender_balance = $senderAccount->balance + $transfer->montant_virement;
+        $this->accountService->updateAccountBalance($senderAccount, $new_sender_balance);
+    }
+
+    /**
+     * @param $receiver_account
+     * @param $transfer
+     */
+    public function finalizeInternalTransferJustif($receiver_account,$transfer){
+        //update the  receiver's account balance
+        $new_receiver_balance = $receiver_account->balance + $transfer->montant_virement;
         $this->accountService->updateAccountBalance($receiver_account, $new_receiver_balance);
     }
 

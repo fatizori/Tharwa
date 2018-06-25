@@ -141,9 +141,10 @@ class VirementExternesController extends Controller
         } elseif ($amount > self::max_amount_justif) {
             try {
                 //add exchange
+            $virement = $this->virementExterneService->createExterneExchangeJustif($senderAccount, $info, $amount);
 
-                $virement = $this->virementExterneService->createExterneExchangeJustif($senderAccount, $data, $amount);
-                //add justif
+
+            //add justif
                 $this->virementExterneService->addJustif($data['justif'], $user->id, $virement->id);
             } catch (\Exception $exception) {
                 DB::rollback();

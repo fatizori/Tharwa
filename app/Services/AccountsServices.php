@@ -394,16 +394,15 @@ class AccountsServices
             ->toArray();
         $chartDataByYear = array();
         foreach($chartDatas as $data) {
-            $chartDataByYear[$data['year']] = $data['count'];
+            $i=1;
+            $chartDataByYear[$i] = $data['count'];
+            $i++;
         }
 
-        $date = new Carbon;
-        for($i = 0; $i < $nbYear; $i++) {
-            $dateString = $date->year;
-            if(!isset($chartDataByYear[ $dateString ])){
-                $chartDataByYear[$dateString] = 0;
+        for($i = 1; $i < $nbYear+1; $i++) {
+            if(!isset($chartDataByYear[ $i])){
+                $chartDataByYear[$i] = 0;
             }
-            $date->subYear();
         }
         return $chartDataByYear;
     }

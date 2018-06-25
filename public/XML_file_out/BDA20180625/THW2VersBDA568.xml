@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<virement>
+  <numero>THW2DZDBDA568DZD201806250325</numero>
+  <date>201806250325</date>
+  <titulaire>
+    <nom>Karim</nom>
+    <banque>THW</banque>
+    <compte>THW000002DZD</compte>
+  </titulaire>
+  <destinataire>
+    <nom>ggg</nom>
+    <banque>BDA</banque>
+    <compte>BDA000568DZD</compte>
+  </destinataire>
+  <montant>6522</montant>
+  <motif>motif</motif>
+</virement>

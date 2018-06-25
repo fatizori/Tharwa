@@ -125,7 +125,7 @@ $app->post('accounts',['uses' => 'AccountsController@addNewLocalAccount', 'middl
 // get info of an account
 $app->get('accounts/type/{type:[1-4]}', ['uses' => 'AccountsController@show', 'middleware' =>['auth','role:customer']]);
 // To set the FCM token
-$app->post('fcm/register',['uses' => 'UsersController@registerFCMToken']);
+$app->post('fcm/register',['uses' => 'UsersController@registerFCMToken', 'middleware' =>['auth','role:customer']]);
 
 // Set an unblocking justif
 $app->post('justif_account',['uses' => 'AccountsController@addJustifAccount', 'middleware' =>['auth','role:customer']]);

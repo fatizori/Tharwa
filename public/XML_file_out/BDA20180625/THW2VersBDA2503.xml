@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<virement>
+  <numero>THW2DZDBDA2503DZD201806250547</numero>
+  <date>201806250547</date>
+  <titulaire>
+    <nom>Karim</nom>
+    <banque>THW</banque>
+    <compte>THW000002DZD</compte>
+  </titulaire>
+  <destinataire>
+    <nom>Bournane Abdelkrim</nom>
+    <banque>BDA</banque>
+    <compte>BDA002503DZD</compte>
+  </destinataire>
+  <montant>25000</montant>
+  <motif>motif</motif>
+</virement>

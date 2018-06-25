@@ -29,7 +29,7 @@
                 'username' => env('DB_USERNAME', 'sql7243438'),
                 'password' => env('DB_PASSWORD', 'cUnGaRkiua'),
                 'unix_socket' => env('DB_SOCKET', ''),
-//                'charset' => 'utf8mb4',
+                'charset' => 'utf8mb4',
 //                'collation' => 'utf8mb4_unicode_ci',
                 'prefix' => '',
                 'strict' => true,

@@ -20,7 +20,7 @@ class PushNotificationService
             ->setSound('default');
 
         $dataBuilder = new PayloadDataBuilder();
-        $dataBuilder->addData(['message' => 'fuck off!']);
+        $dataBuilder->addData(['message' => 'Hello world!']);
 
         $option = $optionBuilder->build();
         $notification = $notificationBuilder->build();

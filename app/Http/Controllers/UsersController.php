@@ -201,9 +201,8 @@ class UsersController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function registerFCMToken(Request $request){
+        $user = $request->user();
         $token = $request->input('token');
-        $user_id = $request->input('user_id');
-        $user = $this->userService->findById($user_id);
         $user->fcm_token = $token;
         $user->save();
         $serviceNotif = new PushNotificationService();

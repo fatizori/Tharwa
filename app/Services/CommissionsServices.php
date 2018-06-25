@@ -91,6 +91,10 @@ class CommissionsServices
              $dataY = $this->getCommissionPerYear(3);
             $data['year'] = $dataY;
 
+            // Per Week
+            $dataW = $this->getCommissionPerDaysOfWeek();
+            $data['week'] = $dataW;
+
             return $data;
 //        }catch (\Exception $e){
 //            return null;
@@ -319,55 +323,126 @@ class CommissionsServices
             ->toArray();
 
         // menseulles
-        $date = new Carbon;
         $chartDataMens= array();
         foreach ($commMens as $data) {
-            $chartDataMens[$data['year']] = $data['sum'];
+            $i = 1;
+            $chartDataMens[$i] = $data['sum'];
+            $i++;
         }
-        for ($i = 0; $i < $nbYear; $i++) {
-            $dateString = $date->year;
-            if (!isset($chartDataMens[$dateString])) {
-                $chartDataMens[$dateString] = 0;
+        for ($i = 1; $i < $nbYear+1; $i++) {
+            if (!isset($chartDataMens[$i])) {
+                $chartDataMens[$i] = 0;
             }
-            $date->subYear();
         }
 
 
         // internes
         $chartDataByQ = array();
         foreach ($chartDatas1 as $data) {
-            $chartDataByQ[$data['year']] = $data['sum'];
+            $i = 1;
+            $chartDataByQ[$i] = $data['sum'];
+            $i++;
         }
 
-        $date = new Carbon;
-        for ($i = 0; $i < $nbYear; $i++) {
-            $dateString = $date->year;
-            if (!isset($chartDataByQ[$dateString])) {
-                $chartDataByQ[$dateString] = 0;
+        for ($i = 1; $i < $nbYear+1; $i++) {
+            if (!isset($chartDataByQ[$i])) {
+                $chartDataByQ[$i] = 0;
             }
-            $date->subYear();
         }
 
 
         // extrenes with others
         $chartDataByQ2 = array();
         foreach ($chartDatas2 as $data) {
-            $chartDataByQ2[$data['year']] = $data['sum'];
+            $i = 1;
+            $chartDataByQ2[$i] = $data['sum'];
+            $i++;
         }
 
-        $date = new Carbon;
-        for ($i = 0; $i < $nbYear; $i++) {
-            $dateString = $date->year;
-            if (!isset($chartDataByQ2[$dateString])) {
-                $chartDataByQ2[$dateString] = $chartDataByQ[$dateString]+$chartDataMens[$dateString];
+        for ($i = 1; $i < $nbYear+1; $i++) {
+            if (!isset($chartDataByQ2[$i])) {
+                $chartDataByQ2[$i] = $chartDataByQ[$i]+$chartDataMens[$i];
             }else{
-                $chartDataByQ2[$dateString] += $chartDataByQ[$dateString]+$chartDataMens[$dateString];
+                $chartDataByQ2[$i] += $chartDataByQ[$i]+$chartDataMens[$i];
             }
-            $date->subYear();
         }
 
 
         return $chartDataByQ2;
+    }
+
+    /**
+     *
+     */
+    public function getCommissionPerDaysOfWeek(){
+        $chartDatas1 = VirementInterne::select([
+            DB::raw('DAYOFMONTH(created_at) AS day'),
+            DB::raw('SUM(montant_commission) AS sum'),
+        ])
+            ->whereBetween('created_at', [Carbon::now()->subDay(7), Carbon::now()])
+            ->groupBy('day')
+            ->orderBy('day', 'ASC')
+            ->get()
+            ->toArray();
+
+        $chartDatas2 =VirementExterne::select([
+                DB::raw('DAYOFMONTH(created_at) AS day'),
+                DB::raw('SUM(amount_commission) AS sum'),
+            ]
+        )
+            ->whereBetween('created_at', [Carbon::now()->subDay(7), Carbon::now()])
+            ->groupBy('day')
+            ->orderBy('day', 'ASC')
+            ->get()
+            ->toArray();
+
+
+
+        $commMens = MensuelleCommission::select([
+                DB::raw('DAY(created_at) AS day'),
+                DB::raw('SUM(amount) AS sum'),
+            ]
+        )->whereBetween('created_at', [Carbon::now()->subDay(7), Carbon::now()])
+            ->groupBy('day')
+            ->orderBy('day', 'ASC')
+            ->get()
+            ->toArray();
+
+        // menseulles
+        $date = new Carbon;
+        for ($i = 0; $i < 7; $i++) {
+            if (!isset($commMens[$i])) {
+                $commMens[$i]['sum'] = 0;
+            }
+        }
+
+//        $dateString = $date->day;
+        for($i = 25; $i > 1; $i--) {
+            if(!isset($chartDatas1[ $i ])){
+                $chartDatas1[ $i ]['day'] = $i;
+                $chartDatas1[ $i ]['sum'] = 0;
+            }
+//            $dateString = $date->subDay();
+        }
+
+        for($i = 25; $i > 1; $i--) {
+            if(!isset($chartDatas2[ $i ])){
+                $chartDatas1[ $i ]['day'] = $i;
+                $chartDatas2[ $i ]['sum'] = 0;
+            }
+        }
+
+        for ($i = 0; $i < 7; $i++) {
+            if (!isset($chartDatas2[$i])) {
+                $chartDatas2[$i]['day'] = $chartDatas1[$i]['day'];
+                $chartDatas2[$i]['sum'] = $chartDatas1[$i]['sum'] + $commMens[$i]['sum'];
+            }else{
+                $chartDatas2[$i]['day'] = $chartDatas1[$i]['day'];
+                $chartDatas2[$i]['sum'] =  $chartDatas2[$i]['sum']+$chartDatas1[$i]['sum']+$commMens[$i]['sum'];
+            }
+        }
+
+        return $chartDatas2;
     }
 
 }

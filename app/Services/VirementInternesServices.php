@@ -115,13 +115,31 @@ class VirementInternesServices
      */
     public function getValideTransferByAccountId($id_account)
     {
-        $virements = VirementInterne::where(function($q)use ($id_account){
-            $q->where('num_acc_sender',$id_account);
-//            $q->where('status',1);            // Not just the valid ones
+        $virements = VirementInterne::select('num_acc_receiver','code_bnk_sender','code_curr_sender','num_acc_receiver',
+            'code_bnk_receiver','code_curr_receiver','montant_virement' ,'status','montant_commission'
+            ,'created_at')->where(function($q)use ($id_account){
+            $q->where('num_acc_sender',$id_account)
+              ->select('num_acc_receiver','code_bnk_sender','code_curr_sender','num_acc_receiver',
+                  'code_bnk_receiver','code_curr_receiver','montant_virement' ,'status','montant_commission'
+                  ,'created_at');
            })->orWhere(function($q)use ($id_account){
-                $q->where('num_acc_receiver',$id_account);
-                $q->where('status',1);
+                $q->where('num_acc_receiver',$id_account)
+                ->where('status',1);
             })
+            ->union( VirementExterne::select(['num_acc AS num_acc_receiver','code_bnk AS code_bnk_sender',
+            'code_curr AS code_curr_sender','num_acc_ext AS num_acc_receiver',
+            'code_bnk_ext AS code_bnk_receiver','code_curr_ext AS code_curr_receiver',
+            'amount_vir AS montant_virement' ,'status','amount_commission AS montant_commission'
+            ,'created_at'])->where(function($q)use ($id_account){
+                $q ->where('num_acc',$id_account);
+//                    ->where('status',1);
+
+            })
+                ->orWhere(function($q)use ($id_account) {
+                $q->where('num_acc_ext', $id_account)
+                  ->where('status', 1);
+            })
+    )
             ->orderBy('created_at','DESC')
             ->simplePaginate(8)->setPath('');
 
@@ -393,16 +411,15 @@ class VirementInternesServices
                 ->toArray();
             $chartDataByDay = array();
             foreach($chartDatas as $data) {
-                $chartDataByDay[$data['year']] = $data['count'];
+                $i=1;
+                $chartDataByDay[$i] = $data['count'];
+                $i++;
             }
 
-            $date = new Carbon;
-            for($i = 0; $i < $nbYear; $i++) {
-                $dateString = $date->year;
-                if(!isset($chartDataByDay[ $dateString ])){
-                    $chartDataByDay[$dateString] = 0;
+            for($i = 1; $i < $nbYear+1; $i++) {
+                if(!isset($chartDataByDay[$i])){
+                    $chartDataByDay[$i] = 0;
                 }
-                $date->subYear();
             }
             return $chartDataByDay;
     }

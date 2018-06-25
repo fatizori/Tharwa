@@ -41,10 +41,10 @@ class VirementExternesServices
     {
         $virements = VirementExterne::where(function($q)use ($id_account){
             $q->where('num_acc',$id_account);
-            $q->where('status',1);
+//            $q->where('status',1);
         })->orWhere(function($q)use ($id_account){
             $q->where('num_acc_ext',$id_account);
-            $q->where('status',1);
+//            $q->where('status',1);
         })->simplePaginate(8)->setPath('');
 
         return $virements;
@@ -84,7 +84,7 @@ class VirementExternesServices
 
     /**
      * Create the externe virement
-     * @param $sender_account
+     * @param $local_account
      * @param $data
      * @param $amount
      * @param $status
@@ -333,16 +333,15 @@ class VirementExternesServices
             ->toArray();
         $chartDataByDay = array();
         foreach($chartDatas as $data) {
-            $chartDataByDay[$data['year']] = $data['count'];
+            $i=1;
+            $chartDataByDay[$i] = $data['count'];
+            $i++;
         }
 
-        $date = new Carbon;
-        for($i = 0; $i < $nbYear; $i++) {
-            $dateString = $date->year;
-            if(!isset($chartDataByDay[ $dateString ])){
-                $chartDataByDay[$dateString] = 0;
+        for($i = 1; $i < $nbYear+1; $i++) {
+            if(!isset($chartDataByDay[ $i])){
+                $chartDataByDay[$i] = 0;
             }
-            $date->subYear();
         }
         return $chartDataByDay;
     }

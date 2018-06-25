@@ -25,7 +25,8 @@ class BanksServices
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     public function findAllValidIds(){
-        $ids = Bank::where('status',1)->select('id')->get()->all();
+        $ids = Bank::where('status',1)
+            ->whereNotIn('id',['THW'])->select('id')->get()->all();
         return $ids;
     }
 
