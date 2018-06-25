@@ -21,6 +21,15 @@ class BanksServices
     }
 
     /**
+     * Find all banks
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function findAllValidIds(){
+        $ids = Bank::where('status',1)->select('id')->get()->all();
+        return $ids;
+    }
+
+    /**
      * Find a bank by id
      * @param $id
      * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|null|static|static[]

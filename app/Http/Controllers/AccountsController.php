@@ -343,7 +343,7 @@ class AccountsController extends Controller
     public function getUnblockDemandByAccountId(Request $request, $account_id){
         $justifServices = new JustificationServices();
         $accountServ = new AccountsServices();
-        try {
+//        try {
             $invalidatedJustif = $justifServices->getInvalidatedJustifByAccountId($account_id);
             // Get blocking info
             if(!is_null($invalidatedJustif)) {
@@ -352,9 +352,9 @@ class AccountsController extends Controller
                 $invalidatedJustif->setAttribute('motif_justif', $motif['justification']);
             }
             return response()->json($invalidatedJustif, 200);
-        }catch (\Exception $exception){
-            return response()->json(['message' => 'erreur serveur'], 500);
-        }
+//        }catch (\Exception $exception){
+//            return response()->json(['message' => 'erreur serveur'], 500);
+//        }
     }
 
 

@@ -71,6 +71,8 @@ $app->group( ['prefix' => 'bankers',
 });
 //get the list of banks
 $app->get('banks',['uses' => 'BanksController@index','middleware' => ['auth','role:manager'] ]);
+//get the list of banks ids
+$app->get('banks/id',['uses' => 'BanksController@indexId','middleware' => ['auth','role:customer'] ]);
 //route to add a bank
 $app->post('banks',['uses' => 'BanksController@store','middleware' => ['auth','role:manager']]);
 //route to change personal info manager
@@ -94,7 +96,7 @@ $app->put('virements/intern/justif/{id_justif:[0-9]+}',['uses' => 'VirementInter
 //validate justif externe transfer
 $app->put('virements/extern/justif/{id_justif:[0-9]+}',['uses' => 'VirementExternesController@validateTransfer','middleware' => ['auth','role:banker']]);
 //get Dashboard stat
-$app->get('dashboard',['uses' => 'DashboardController@getStat','middleware' => ['auth','role:banker']]);
+$app->get('dashboard',['uses' => 'DashboardController@getStat','middleware' => ['auth','role:manager']]);
 
 
 //Customers

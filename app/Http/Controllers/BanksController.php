@@ -31,6 +31,14 @@ class BanksController extends Controller
     }
 
     /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function indexId(){
+        $bankIds = $this->bankService->findAllValidIds();
+        return response()->json($bankIds, 200);
+    }
+
+    /**
      * Find a bank by id
      * @param $id
      * @return \Illuminate\Http\JsonResponse
