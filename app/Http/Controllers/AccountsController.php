@@ -30,6 +30,12 @@ class AccountsController extends Controller
     public function index(){
         //get the list of accounts
         $accounts = $this->accountsService->findAll();
+        $customerServices = new CustomersServices();
+        foreach ($accounts as $account){
+            $customer = $customerServices->findById($account->id_customer);
+            $account->setAttribute('nom',$customer->name);
+            $account->setAttribute('code',$account->getCode());
+        }
         //if no account exists in the database
         if(!$accounts){
             return response()->json(['message' => 'No account was found'], 404);
